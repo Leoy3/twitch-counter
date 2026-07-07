@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from "react";
 
-const MEXICO_TIMEZONE = "America/Mexico_City";
 const US_TIMEZONE = "America/New_York";
 
-const STREAM_HOUR_MX = 13;
-const STREAM_MINUTE_MX = 0;
+const STREAM_HOUR_US = 15;
+const STREAM_MINUTE_US = 0;
 
 function getTimeParts(date, timeZone) {
   const formatter = new Intl.DateTimeFormat("en-US", {
@@ -62,16 +61,16 @@ function makeDateInTimeZone(year, month, day, hour, minute, second, timeZone) {
 
 function getNextStreamDate() {
   const now = new Date();
-  const mx = getTimeParts(now, MEXICO_TIMEZONE);
+  const us = getTimeParts(now, US_TIMEZONE);
 
   let target = makeDateInTimeZone(
-    mx.year,
-    mx.month,
-    mx.day,
-    STREAM_HOUR_MX,
-    STREAM_MINUTE_MX,
+    us.year,
+    us.month,
+    us.day,
+    STREAM_HOUR_US,
+    STREAM_MINUTE_US,
     0,
-    MEXICO_TIMEZONE
+    US_TIMEZONE
   );
 
   if (target <= now) {
@@ -102,21 +101,9 @@ function formatCountdown(milliseconds) {
   return `${hh}h ${mm}m ${ss}s`;
 }
 
-function formatClock(date, timeZone) {
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone,
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true
-  }).format(date);
-}
-
 export default function Home() {
   const [status, setStatus] = useState(null);
   const [countdown, setCountdown] = useState("");
-  const [mexicoTime, setMexicoTime] = useState("");
-  const [usTime, setUsTime] = useState("");
   const [error, setError] = useState("");
 
   async function loadStatus() {
@@ -150,20 +137,17 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    function updateTime() {
-      const now = new Date();
+    function updateCountdown() {
       const nextStreamDate = getNextStreamDate();
-      const difference = nextStreamDate.getTime() - now.getTime();
+      const difference = nextStreamDate.getTime() - Date.now();
 
       setCountdown(formatCountdown(difference));
-      setMexicoTime(formatClock(now, MEXICO_TIMEZONE));
-      setUsTime(formatClock(now, US_TIMEZONE));
     }
 
-    updateTime();
+    updateCountdown();
 
     const timer = setInterval(() => {
-      updateTime();
+      updateCountdown();
     }, 1000);
 
     return () => clearInterval(timer);
@@ -178,18 +162,6 @@ export default function Home() {
       <div className="overlay"></div>
 
       <section className="card">
-        <div className="clock-grid">
-          <div className="clock-card">
-            <span>Mexico City</span>
-            <strong>{mexicoTime}</strong>
-          </div>
-
-          <div className="clock-card">
-            <span>United States ET</span>
-            <strong>{usTime}</strong>
-          </div>
-        </div>
-
         {error ? (
           <>
             <p className="label">Error</p>
@@ -203,7 +175,9 @@ export default function Home() {
         ) : status.isLive ? (
           <>
             <p className="label live-dot">Live now</p>
-            <h1>{channelName} is live right now</h1>
+            <h1>
+              <span className="channel-name">{channelName}</span> is live right now
+            </h1>
 
             {status.title ? <p className="stream-title">{status.title}</p> : null}
             {status.gameName ? <p className="game-name">{status.gameName}</p> : null}
@@ -215,12 +189,15 @@ export default function Home() {
         ) : (
           <>
             <p className="label">Next stream</p>
-            <h1>Time remaining until {channelName}'s stream</h1>
+            <h1>
+              Time remaining until{" "}
+              <span className="channel-name">{channelName}</span>'s stream
+            </h1>
 
             <div className="countdown">{countdown}</div>
 
             <p className="time-note">
-              The stream starts at 1:00 PM Mexico City time.
+              The stream starts at 3:00 PM United States ET.
             </p>
 
             <a className="button secondary" href={channelUrl} target="_blank" rel="noreferrer">
@@ -228,6 +205,13 @@ export default function Home() {
             </a>
           </>
         )}
+
+        <div className="reference-times">
+          <span>Reference times</span>
+          <p>United States ET: 3:00 PM</p>
+          <p>Mexico City: 1:00 PM</p>
+          <p>Argentina: 4:00 PM</p>
+        </div>
       </section>
     </main>
   );
