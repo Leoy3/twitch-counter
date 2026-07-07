@@ -214,7 +214,6 @@ export default function Home() {
           <div className="reference-times-row">
             <p>United States ET: 3:00 PM</p>
             <p>Mexico City: 1:00 PM</p>
-            <p>Argentina: 4:00 PM</p>
           </div>
         </div>
       </section>
