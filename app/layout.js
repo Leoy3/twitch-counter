@@ -1,13 +1,13 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Stream Counter",
-  description: "Contador de stream de Twitch"
+  title: "Brains Counter Stream",
+  description: "Countdown until the next eatfreshbrains stream"
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="es">
+    <html lang="en">
       <body>{children}</body>
     </html>
   );
