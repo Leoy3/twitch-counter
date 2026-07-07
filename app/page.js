@@ -175,6 +175,7 @@ export default function Home() {
         ) : status.isLive ? (
           <>
             <p className="label live-dot">Live now</p>
+
             <h1>
               <span className="channel-name">{channelName}</span> is live right now
             </h1>
