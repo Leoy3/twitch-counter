@@ -161,19 +161,19 @@ h1 {
     width: 100%;
   }
 .channel-name {
-  color: #ff6fcf;
+  color: #ff6fcf !important;
 }
 
 .reference-times {
   margin-top: 34px;
   padding-top: 22px;
   border-top: 1px solid rgba(255, 255, 255, 0.16);
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(255, 255, 255, 0.72);
 }
 
 .reference-times span {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-size: 12px;
   font-weight: 800;
   text-transform: uppercase;
@@ -181,7 +181,26 @@ h1 {
   color: rgba(255, 255, 255, 0.46);
 }
 
-.reference-times p {
-  margin: 4px 0;
+.reference-times-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+.reference-times-row p {
+  margin: 0;
   font-size: 14px;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .reference-times-row {
+    gap: 10px;
+  }
+
+  .reference-times-row p {
+    font-size: 12px;
+  }
 }
