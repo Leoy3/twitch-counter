@@ -50,7 +50,7 @@ body {
 .card {
   position: relative;
   z-index: 2;
-  width: min(760px, 100%);
+  width: min(900px, 100%);
   padding: 44px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 26px;
@@ -90,6 +90,10 @@ h1 {
   font-size: clamp(32px, 6vw, 64px);
   line-height: 1.04;
   letter-spacing: -0.05em;
+}
+
+.channel-name {
+  color: #ff6fcf !important;
 }
 
 .stream-title {
@@ -147,23 +151,6 @@ h1 {
   border: 1px solid rgba(255, 255, 255, 0.24);
 }
 
-@media (max-width: 560px) {
-  .page {
-    padding: 18px;
-  }
-
-  .card {
-    padding: 30px 22px;
-    border-radius: 20px;
-  }
-
-  .button {
-    width: 100%;
-  }
-.channel-name {
-  color: #ff6fcf !important;
-}
-
 .reference-times {
   margin-top: 34px;
   padding-top: 22px;
@@ -196,6 +183,19 @@ h1 {
 }
 
 @media (max-width: 560px) {
+  .page {
+    padding: 18px;
+  }
+
+  .card {
+    padding: 30px 22px;
+    border-radius: 20px;
+  }
+
+  .button {
+    width: 100%;
+  }
+
   .reference-times-row {
     gap: 10px;
   }
