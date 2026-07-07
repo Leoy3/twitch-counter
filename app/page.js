@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 
 const MEXICO_TIMEZONE = "America/Mexico_City";
+const US_TIMEZONE = "America/New_York";
+
 const STREAM_HOUR_MX = 13;
 const STREAM_MINUTE_MX = 0;
 
-function getMexicoParts(date) {
+function getTimeParts(date, timeZone) {
   const formatter = new Intl.DateTimeFormat("en-US", {
-    timeZone: MEXICO_TIMEZONE,
+    timeZone,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -60,7 +62,7 @@ function makeDateInTimeZone(year, month, day, hour, minute, second, timeZone) {
 
 function getNextStreamDate() {
   const now = new Date();
-  const mx = getMexicoParts(now);
+  const mx = getTimeParts(now, MEXICO_TIMEZONE);
 
   let target = makeDateInTimeZone(
     mx.year,
@@ -100,9 +102,21 @@ function formatCountdown(milliseconds) {
   return `${hh}h ${mm}m ${ss}s`;
 }
 
+function formatClock(date, timeZone) {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
+  }).format(date);
+}
+
 export default function Home() {
   const [status, setStatus] = useState(null);
   const [countdown, setCountdown] = useState("");
+  const [mexicoTime, setMexicoTime] = useState("");
+  const [usTime, setUsTime] = useState("");
   const [error, setError] = useState("");
 
   async function loadStatus() {
@@ -114,14 +128,14 @@ export default function Home() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || "Error consultando Twitch.");
+        setError(data.error || "Error checking Twitch status.");
         return;
       }
 
       setError("");
       setStatus(data);
     } catch {
-      setError("No se pudo conectar con la API.");
+      setError("Could not connect to the API.");
     }
   }
 
@@ -136,23 +150,26 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    function updateCountdown() {
+    function updateTime() {
+      const now = new Date();
       const nextStreamDate = getNextStreamDate();
-      const difference = nextStreamDate.getTime() - Date.now();
+      const difference = nextStreamDate.getTime() - now.getTime();
 
       setCountdown(formatCountdown(difference));
+      setMexicoTime(formatClock(now, MEXICO_TIMEZONE));
+      setUsTime(formatClock(now, US_TIMEZONE));
     }
 
-    updateCountdown();
+    updateTime();
 
     const timer = setInterval(() => {
-      updateCountdown();
+      updateTime();
     }, 1000);
 
     return () => clearInterval(timer);
   }, []);
 
-  const channelName = status?.displayName || status?.channel || "El canal";
+  const channelName = status?.displayName || status?.channel || "The channel";
   const channelUrl = status?.url || "#";
 
   return (
@@ -161,6 +178,18 @@ export default function Home() {
       <div className="overlay"></div>
 
       <section className="card">
+        <div className="clock-grid">
+          <div className="clock-card">
+            <span>Mexico City</span>
+            <strong>{mexicoTime}</strong>
+          </div>
+
+          <div className="clock-card">
+            <span>United States ET</span>
+            <strong>{usTime}</strong>
+          </div>
+        </div>
+
         {error ? (
           <>
             <p className="label">Error</p>
@@ -168,34 +197,34 @@ export default function Home() {
           </>
         ) : !status ? (
           <>
-            <p className="label">Cargando</p>
-            <h1>Consultando estado del stream...</h1>
+            <p className="label">Loading</p>
+            <h1>Checking stream status...</h1>
           </>
         ) : status.isLive ? (
           <>
-            <p className="label live-dot">En directo</p>
-            <h1>{channelName} está en directo ahora mismo</h1>
+            <p className="label live-dot">Live now</p>
+            <h1>{channelName} is live right now</h1>
 
             {status.title ? <p className="stream-title">{status.title}</p> : null}
             {status.gameName ? <p className="game-name">{status.gameName}</p> : null}
 
             <a className="button" href={channelUrl} target="_blank" rel="noreferrer">
-              Ir al canal
+              Watch on Twitch
             </a>
           </>
         ) : (
           <>
-            <p className="label">Próximo stream</p>
-            <h1>Horas restantes para el stream de {channelName}</h1>
+            <p className="label">Next stream</p>
+            <h1>Time remaining until {channelName}'s stream</h1>
 
             <div className="countdown">{countdown}</div>
 
             <p className="time-note">
-              El stream comienza a las 13:00 MX / 16:00 Argentina
+              The stream starts at 1:00 PM Mexico City time.
             </p>
 
             <a className="button secondary" href={channelUrl} target="_blank" rel="noreferrer">
-              Ver canal
+              Open channel
             </a>
           </>
         )}
