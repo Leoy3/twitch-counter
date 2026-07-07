@@ -1,0 +1,163 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  color: white;
+  background: black;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.page {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  overflow: hidden;
+}
+
+.background {
+  position: fixed;
+  inset: -20px;
+  background-image: url("/background.jpg");
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px);
+  transform: scale(1.04);
+  z-index: 0;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at center, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.78)),
+    rgba(0, 0, 0, 0.35);
+  z-index: 1;
+}
+
+.card {
+  position: relative;
+  z-index: 2;
+  width: min(760px, 100%);
+  padding: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 26px;
+  background: rgba(10, 10, 14, 0.68);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 26px 80px rgba(0, 0, 0, 0.45);
+  text-align: center;
+}
+
+.label {
+  margin: 0 0 16px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.live-dot {
+  color: #ff4b6a;
+}
+
+.live-dot::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 9px;
+  border-radius: 50%;
+  background: #ff174d;
+  box-shadow: 0 0 18px #ff174d;
+  vertical-align: 1px;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(32px, 6vw, 64px);
+  line-height: 1.04;
+  letter-spacing: -0.05em;
+}
+
+.stream-title {
+  margin: 22px auto 0;
+  max-width: 620px;
+  font-size: 20px;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.game-name {
+  margin: 10px 0 0;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.countdown {
+  margin: 28px 0 0;
+  font-size: clamp(42px, 9vw, 92px);
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  font-variant-numeric: tabular-nums;
+}
+
+.time-note {
+  margin: 18px 0 0;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 190px;
+  min-height: 52px;
+  margin-top: 34px;
+  padding: 0 24px;
+  border-radius: 999px;
+  background: white;
+  color: black;
+  font-size: 16px;
+  font-weight: 800;
+  text-decoration: none;
+  transition: transform 0.16s ease, opacity 0.16s ease;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+.button.secondary {
+  background: rgba(255, 255, 255, 0.16);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+@media (max-width: 560px) {
+  .page {
+    padding: 18px;
+  }
+
+  .card {
+    padding: 30px 22px;
+    border-radius: 20px;
+  }
+
+  .button {
+    width: 100%;
+  }
+}
