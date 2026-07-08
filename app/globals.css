@@ -269,29 +269,43 @@ h1 {
   font-size: 15px;
 }
 
+.vods-carousel {
+  position: relative;
+  width: 100%;
+}
+
 .vods-scroll {
   display: flex;
   flex-direction: row;
   gap: 14px;
   width: 100%;
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: hidden;
-  padding: 2px 2px 12px;
+  padding: 2px 54px 4px 2px;
   scroll-snap-type: x mandatory;
 }
 
-.vods-scroll::-webkit-scrollbar {
-  height: 8px;
+.vods-arrow-button {
+  position: absolute;
+  top: 58px;
+  right: 8px;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: black;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.42);
+  transition: transform 0.16s ease, opacity 0.16s ease;
+  z-index: 4;
 }
 
-.vods-scroll::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
-}
-
-.vods-scroll::-webkit-scrollbar-thumb {
-  background: rgba(255, 111, 207, 0.42);
-  border-radius: 999px;
+.vods-arrow-button:hover {
+  transform: translateY(-2px) scale(1.04);
 }
 
 .vod-card {
