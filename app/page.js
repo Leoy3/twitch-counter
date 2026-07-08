@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const US_TIMEZONE = "America/New_York";
 
@@ -191,6 +191,8 @@ export default function Home() {
   const [error, setError] = useState("");
   const [vodsError, setVodsError] = useState("");
 
+  const vodsScrollRef = useRef(null);
+
   async function loadStatus() {
     try {
       const response = await fetch("/api/twitch-status", {
@@ -229,6 +231,31 @@ export default function Home() {
     } catch {
       setVodsError("Could not load recent broadcasts.");
     }
+  }
+
+  function slideVodsNext() {
+    const container = vodsScrollRef.current;
+
+    if (!container) {
+      return;
+    }
+
+    const maxScrollLeft = container.scrollWidth - container.clientWidth;
+    const nextScrollLeft = container.scrollLeft + 560;
+
+    if (nextScrollLeft >= maxScrollLeft - 20) {
+      container.scrollTo({
+        left: 0,
+        behavior: "smooth"
+      });
+
+      return;
+    }
+
+    container.scrollTo({
+      left: nextScrollLeft,
+      behavior: "smooth"
+    });
   }
 
   useEffect(() => {
@@ -360,34 +387,40 @@ export default function Home() {
         ) : vods.length === 0 ? (
           <p className="vods-message">No recent broadcasts found.</p>
         ) : (
-          <div className="vods-scroll">
-            {vods.map((vod) => (
-              <a
-                key={vod.id}
-                className="vod-card"
-                href={vod.url}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <div className="vod-thumbnail-wrap">
-                  {vod.thumbnailUrl ? (
-                    <img className="vod-thumbnail" src={vod.thumbnailUrl} alt={vod.title} />
-                  ) : (
-                    <div className="vod-thumbnail-placeholder"></div>
-                  )}
+          <div className="vods-carousel">
+            <div className="vods-scroll" ref={vodsScrollRef}>
+              {vods.map((vod) => (
+                <a
+                  key={vod.id}
+                  className="vod-card"
+                  href={vod.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <div className="vod-thumbnail-wrap">
+                    {vod.thumbnailUrl ? (
+                      <img className="vod-thumbnail" src={vod.thumbnailUrl} alt={vod.title} />
+                    ) : (
+                      <div className="vod-thumbnail-placeholder"></div>
+                    )}
 
-                  <span className="vod-duration">{vod.duration}</span>
-                </div>
+                    <span className="vod-duration">{vod.duration}</span>
+                  </div>
 
-                <div className="vod-info">
-                  <h3>{vod.title}</h3>
+                  <div className="vod-info">
+                    <h3>{vod.title}</h3>
 
-                  <p>
-                    {formatViews(vod.viewCount)} · {formatTimeAgo(vod.createdAt)}
-                  </p>
-                </div>
-              </a>
-            ))}
+                    <p>
+                      {formatViews(vod.viewCount)} · {formatTimeAgo(vod.createdAt)}
+                    </p>
+                  </div>
+                </a>
+              ))}
+            </div>
+
+            <button className="vods-arrow-button" type="button" onClick={slideVodsNext}>
+              ›
+            </button>
           </div>
         )}
       </section>
