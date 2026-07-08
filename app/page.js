@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const US_TIMEZONE = "America/New_York";
 
 const STREAM_HOUR_US = 15;
 const STREAM_MINUTE_US = 0;
+
+const VODS_PER_PAGE = 4;
 
 const SOCIAL_LINKS = [
   {
@@ -184,14 +186,25 @@ function formatTimeAgo(dateString) {
   return `${years}y ago`;
 }
 
+function getVisibleVods(vods, startIndex) {
+  if (vods.length <= VODS_PER_PAGE) {
+    return vods;
+  }
+
+  return vods.slice(startIndex, startIndex + VODS_PER_PAGE);
+}
+
+function getLastVodStartIndex(vodsLength) {
+  return Math.max(0, vodsLength - VODS_PER_PAGE);
+}
+
 export default function Home() {
   const [status, setStatus] = useState(null);
   const [vodsData, setVodsData] = useState(null);
   const [countdown, setCountdown] = useState("");
   const [error, setError] = useState("");
   const [vodsError, setVodsError] = useState("");
-
-  const vodsScrollRef = useRef(null);
+  const [vodStartIndex, setVodStartIndex] = useState(0);
 
   async function loadStatus() {
     try {
@@ -234,38 +247,38 @@ export default function Home() {
   }
 
   function slideVodsNext() {
-    const container = vodsScrollRef.current;
+    const vods = vodsData?.vods || [];
 
-    if (!container) {
+    if (vods.length <= VODS_PER_PAGE) {
       return;
     }
 
-    const cards = container.querySelectorAll(".vod-card");
-    const firstCard = cards[0];
+    setVodStartIndex((currentIndex) => {
+      const lastStartIndex = getLastVodStartIndex(vods.length);
 
-    if (!firstCard) {
+      if (currentIndex >= lastStartIndex) {
+        return 0;
+      }
+
+      return Math.min(currentIndex + VODS_PER_PAGE, lastStartIndex);
+    });
+  }
+
+  function slideVodsPrevious() {
+    const vods = vodsData?.vods || [];
+
+    if (vods.length <= VODS_PER_PAGE) {
       return;
     }
 
-    const containerStyle = window.getComputedStyle(container);
-    const gap = parseFloat(containerStyle.columnGap || containerStyle.gap || "0") || 0;
-    const cardWidth = firstCard.getBoundingClientRect().width;
-    const step = cardWidth + gap;
+    setVodStartIndex((currentIndex) => {
+      const lastStartIndex = getLastVodStartIndex(vods.length);
 
-    const visibleCount = Math.max(1, Math.round((container.clientWidth + gap) / step));
-    const totalCards = cards.length;
-    const maxStartIndex = Math.max(0, totalCards - visibleCount);
-    const currentIndex = Math.round(container.scrollLeft / step);
+      if (currentIndex <= 0) {
+        return lastStartIndex;
+      }
 
-    let nextIndex = currentIndex + visibleCount;
-
-    if (nextIndex > maxStartIndex) {
-      nextIndex = 0;
-    }
-
-    container.scrollTo({
-      left: nextIndex * step,
-      behavior: "smooth"
+      return Math.max(currentIndex - VODS_PER_PAGE, 0);
     });
   }
 
@@ -301,6 +314,7 @@ export default function Home() {
   const channelName = status?.displayName || status?.channel || "The channel";
   const channelUrl = status?.url || "#";
   const vods = vodsData?.vods || [];
+  const visibleVods = getVisibleVods(vods, vodStartIndex);
   const videosUrl = vodsData?.videosUrl || `${channelUrl}/videos`;
 
   return (
@@ -399,8 +413,18 @@ export default function Home() {
           <p className="vods-message">No recent broadcasts found.</p>
         ) : (
           <div className="vods-carousel">
-            <div className="vods-scroll" ref={vodsScrollRef}>
-              {vods.map((vod) => (
+            {vods.length > VODS_PER_PAGE ? (
+              <button
+                className="vods-arrow-button vods-arrow-left"
+                type="button"
+                onClick={slideVodsPrevious}
+              >
+                ‹
+              </button>
+            ) : null}
+
+            <div className="vods-grid">
+              {visibleVods.map((vod) => (
                 <a
                   key={vod.id}
                   className="vod-card"
@@ -429,9 +453,15 @@ export default function Home() {
               ))}
             </div>
 
-            <button className="vods-arrow-button" type="button" onClick={slideVodsNext}>
-              ›
-            </button>
+            {vods.length > VODS_PER_PAGE ? (
+              <button
+                className="vods-arrow-button vods-arrow-right"
+                type="button"
+                onClick={slideVodsNext}
+              >
+                ›
+              </button>
+            ) : null}
           </div>
         )}
       </section>
