@@ -133,10 +133,63 @@ function formatCountdown(milliseconds) {
   return `${hh}h ${mm}m ${ss}s`;
 }
 
+function formatViews(viewCount) {
+  if (viewCount === 1) {
+    return "1 view";
+  }
+
+  return `${viewCount || 0} views`;
+}
+
+function formatTimeAgo(dateString) {
+  if (!dateString) {
+    return "";
+  }
+
+  const date = new Date(dateString);
+  const now = new Date();
+  const difference = now.getTime() - date.getTime();
+
+  const minutes = Math.floor(difference / 60000);
+  const hours = Math.floor(difference / 3600000);
+  const days = Math.floor(difference / 86400000);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30);
+  const years = Math.floor(days / 365);
+
+  if (minutes < 1) {
+    return "just now";
+  }
+
+  if (minutes < 60) {
+    return `${minutes}m ago`;
+  }
+
+  if (hours < 24) {
+    return `${hours}h ago`;
+  }
+
+  if (days < 7) {
+    return `${days}d ago`;
+  }
+
+  if (weeks < 5) {
+    return `${weeks}w ago`;
+  }
+
+  if (months < 12) {
+    return `${months}mo ago`;
+  }
+
+  return `${years}y ago`;
+}
+
 export default function Home() {
   const [status, setStatus] = useState(null);
+  const [vodsData, setVodsData] = useState(null);
   const [countdown, setCountdown] = useState("");
   const [error, setError] = useState("");
+  const [vodsError, setVodsError] = useState("");
 
   async function loadStatus() {
     try {
@@ -158,11 +211,33 @@ export default function Home() {
     }
   }
 
+  async function loadVods() {
+    try {
+      const response = await fetch("/api/latest-vods", {
+        cache: "no-store"
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setVodsError(data.error || "Error loading recent broadcasts.");
+        return;
+      }
+
+      setVodsError("");
+      setVodsData(data);
+    } catch {
+      setVodsError("Could not load recent broadcasts.");
+    }
+  }
+
   useEffect(() => {
     loadStatus();
+    loadVods();
 
     const apiInterval = setInterval(() => {
       loadStatus();
+      loadVods();
     }, 60000);
 
     return () => clearInterval(apiInterval);
@@ -187,6 +262,8 @@ export default function Home() {
 
   const channelName = status?.displayName || status?.channel || "The channel";
   const channelUrl = status?.url || "#";
+  const vods = vodsData?.vods || [];
+  const videosUrl = vodsData?.videosUrl || `${channelUrl}/videos`;
 
   return (
     <main className="page">
@@ -262,6 +339,57 @@ export default function Home() {
             </a>
           ))}
         </div>
+      </section>
+
+      <section className="card vods-card">
+        <div className="vods-header">
+          <div>
+            <p className="label vods-label">Recent broadcasts</p>
+            <h2>Latest streams</h2>
+          </div>
+
+          <a className="view-all-button" href={videosUrl} target="_blank" rel="noreferrer">
+            View all
+          </a>
+        </div>
+
+        {vodsError ? (
+          <p className="vods-message">{vodsError}</p>
+        ) : !vodsData ? (
+          <p className="vods-message">Loading recent broadcasts...</p>
+        ) : vods.length === 0 ? (
+          <p className="vods-message">No recent broadcasts found.</p>
+        ) : (
+          <div className="vods-scroll">
+            {vods.map((vod) => (
+              <a
+                key={vod.id}
+                className="vod-card"
+                href={vod.url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <div className="vod-thumbnail-wrap">
+                  {vod.thumbnailUrl ? (
+                    <img className="vod-thumbnail" src={vod.thumbnailUrl} alt={vod.title} />
+                  ) : (
+                    <div className="vod-thumbnail-placeholder"></div>
+                  )}
+
+                  <span className="vod-duration">{vod.duration}</span>
+                </div>
+
+                <div className="vod-info">
+                  <h3>{vod.title}</h3>
+
+                  <p>
+                    {formatViews(vod.viewCount)} · {formatTimeAgo(vod.createdAt)}
+                  </p>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
       </section>
     </main>
   );
