@@ -371,6 +371,8 @@ h1 {
   border: 0;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.96);
+  color: transparent;
+  font-size: 0;
   cursor: pointer;
   box-shadow: 0 8px 26px rgba(0, 0, 0, 0.42);
   transition: opacity 0.16s ease, background 0.16s ease, transform 0.16s ease;
@@ -381,7 +383,8 @@ h1 {
   padding: 0;
 }
 
-.vods-arrow-icon {
+.vods-arrow-button::before {
+  content: "";
   display: block;
   width: 13px;
   height: 13px;
@@ -389,20 +392,24 @@ h1 {
   border-right: 4px solid black;
 }
 
-.vods-arrow-icon-left {
-  transform: translateX(2px) rotate(-135deg);
-}
-
-.vods-arrow-icon-right {
-  transform: translateX(-2px) rotate(45deg);
+.vods-arrow-button span {
+  display: none;
 }
 
 .vods-arrow-left {
   left: 0;
 }
 
+.vods-arrow-left::before {
+  transform: translateX(2px) rotate(-135deg);
+}
+
 .vods-arrow-right {
   right: 0;
+}
+
+.vods-arrow-right::before {
+  transform: translateX(-2px) rotate(45deg);
 }
 
 .vods-arrow-button:hover {
@@ -477,7 +484,7 @@ h1 {
     height: 38px;
   }
 
-  .vods-arrow-icon {
+  .vods-arrow-button::before {
     width: 12px;
     height: 12px;
     border-top-width: 4px;
