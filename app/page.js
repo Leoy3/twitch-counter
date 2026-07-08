@@ -253,21 +253,25 @@ export default function Home() {
     }
 
     setVodPageIndex((currentIndex) => {
-      if (currentIndex >= pages.length - 1) {
+      const nextIndex = currentIndex + 1;
+
+      if (nextIndex > pages.length - 1) {
         return currentIndex;
       }
 
-      return currentIndex + 1;
+      return nextIndex;
     });
   }
 
   function slideVodsPrevious() {
     setVodPageIndex((currentIndex) => {
-      if (currentIndex <= 0) {
-        return 0;
+      const previousIndex = currentIndex - 1;
+
+      if (previousIndex < 0) {
+        return currentIndex;
       }
 
-      return currentIndex - 1;
+      return previousIndex;
     });
   }
 
@@ -304,6 +308,11 @@ export default function Home() {
     const vods = vodsData?.vods || [];
     const pages = chunkVods(vods);
 
+    if (pages.length === 0) {
+      setVodPageIndex(0);
+      return;
+    }
+
     if (vodPageIndex > pages.length - 1) {
       setVodPageIndex(0);
     }
@@ -314,6 +323,7 @@ export default function Home() {
   const vods = vodsData?.vods || [];
   const vodPages = chunkVods(vods);
   const videosUrl = vodsData?.videosUrl || `${channelUrl}/videos`;
+
   const canGoPrevious = vodPageIndex > 0;
   const canGoNext = vodPageIndex < vodPages.length - 1;
 
