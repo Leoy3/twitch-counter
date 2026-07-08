@@ -22,7 +22,7 @@ const SOCIAL_LINKS = [
   },
   {
     label: "VGen",
-    url: "https://vgen.co/eatfreshbrainss"
+    url: "https://vgen.co/eatfreshbrains"
   },
   {
     label: "Throne",
