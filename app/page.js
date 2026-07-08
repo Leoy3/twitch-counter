@@ -186,16 +186,14 @@ function formatTimeAgo(dateString) {
   return `${years}y ago`;
 }
 
-function getVisibleVods(vods, startIndex) {
-  if (vods.length <= VODS_PER_PAGE) {
-    return vods;
+function chunkVods(vods) {
+  const pages = [];
+
+  for (let i = 0; i < vods.length; i += VODS_PER_PAGE) {
+    pages.push(vods.slice(i, i + VODS_PER_PAGE));
   }
 
-  return vods.slice(startIndex, startIndex + VODS_PER_PAGE);
-}
-
-function getLastVodStartIndex(vodsLength) {
-  return Math.max(0, vodsLength - VODS_PER_PAGE);
+  return pages;
 }
 
 export default function Home() {
@@ -204,7 +202,7 @@ export default function Home() {
   const [countdown, setCountdown] = useState("");
   const [error, setError] = useState("");
   const [vodsError, setVodsError] = useState("");
-  const [vodStartIndex, setVodStartIndex] = useState(0);
+  const [vodPageIndex, setVodPageIndex] = useState(0);
 
   async function loadStatus() {
     try {
@@ -248,37 +246,28 @@ export default function Home() {
 
   function slideVodsNext() {
     const vods = vodsData?.vods || [];
+    const pages = chunkVods(vods);
 
-    if (vods.length <= VODS_PER_PAGE) {
+    if (pages.length <= 1) {
       return;
     }
 
-    setVodStartIndex((currentIndex) => {
-      const lastStartIndex = getLastVodStartIndex(vods.length);
-
-      if (currentIndex >= lastStartIndex) {
-        return 0;
+    setVodPageIndex((currentIndex) => {
+      if (currentIndex >= pages.length - 1) {
+        return currentIndex;
       }
 
-      return Math.min(currentIndex + VODS_PER_PAGE, lastStartIndex);
+      return currentIndex + 1;
     });
   }
 
   function slideVodsPrevious() {
-    const vods = vodsData?.vods || [];
-
-    if (vods.length <= VODS_PER_PAGE) {
-      return;
-    }
-
-    setVodStartIndex((currentIndex) => {
-      const lastStartIndex = getLastVodStartIndex(vods.length);
-
+    setVodPageIndex((currentIndex) => {
       if (currentIndex <= 0) {
-        return lastStartIndex;
+        return 0;
       }
 
-      return Math.max(currentIndex - VODS_PER_PAGE, 0);
+      return currentIndex - 1;
     });
   }
 
@@ -311,11 +300,22 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    const vods = vodsData?.vods || [];
+    const pages = chunkVods(vods);
+
+    if (vodPageIndex > pages.length - 1) {
+      setVodPageIndex(0);
+    }
+  }, [vodsData, vodPageIndex]);
+
   const channelName = status?.displayName || status?.channel || "The channel";
   const channelUrl = status?.url || "#";
   const vods = vodsData?.vods || [];
-  const visibleVods = getVisibleVods(vods, vodStartIndex);
+  const vodPages = chunkVods(vods);
   const videosUrl = vodsData?.videosUrl || `${channelUrl}/videos`;
+  const canGoPrevious = vodPageIndex > 0;
+  const canGoNext = vodPageIndex < vodPages.length - 1;
 
   return (
     <main className="page">
@@ -413,51 +413,64 @@ export default function Home() {
           <p className="vods-message">No recent broadcasts found.</p>
         ) : (
           <div className="vods-carousel">
-            {vods.length > VODS_PER_PAGE ? (
+            {canGoPrevious ? (
               <button
                 className="vods-arrow-button vods-arrow-left"
                 type="button"
                 onClick={slideVodsPrevious}
+                aria-label="Previous broadcasts"
               >
                 ‹
               </button>
             ) : null}
 
-            <div className="vods-grid">
-              {visibleVods.map((vod) => (
-                <a
-                  key={vod.id}
-                  className="vod-card"
-                  href={vod.url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <div className="vod-thumbnail-wrap">
-                    {vod.thumbnailUrl ? (
-                      <img className="vod-thumbnail" src={vod.thumbnailUrl} alt={vod.title} />
-                    ) : (
-                      <div className="vod-thumbnail-placeholder"></div>
-                    )}
+            <div className="vods-viewport">
+              <div
+                className="vods-pages-track"
+                style={{
+                  transform: `translateX(-${vodPageIndex * 100}%)`
+                }}
+              >
+                {vodPages.map((page, pageIndex) => (
+                  <div className="vods-page" key={`vod-page-${pageIndex}`}>
+                    {page.map((vod) => (
+                      <a
+                        key={vod.id}
+                        className="vod-card"
+                        href={vod.url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <div className="vod-thumbnail-wrap">
+                          {vod.thumbnailUrl ? (
+                            <img className="vod-thumbnail" src={vod.thumbnailUrl} alt={vod.title} />
+                          ) : (
+                            <div className="vod-thumbnail-placeholder"></div>
+                          )}
 
-                    <span className="vod-duration">{vod.duration}</span>
+                          <span className="vod-duration">{vod.duration}</span>
+                        </div>
+
+                        <div className="vod-info">
+                          <h3>{vod.title}</h3>
+
+                          <p>
+                            {formatViews(vod.viewCount)} · {formatTimeAgo(vod.createdAt)}
+                          </p>
+                        </div>
+                      </a>
+                    ))}
                   </div>
-
-                  <div className="vod-info">
-                    <h3>{vod.title}</h3>
-
-                    <p>
-                      {formatViews(vod.viewCount)} · {formatTimeAgo(vod.createdAt)}
-                    </p>
-                  </div>
-                </a>
-              ))}
+                ))}
+              </div>
             </div>
 
-            {vods.length > VODS_PER_PAGE ? (
+            {canGoNext ? (
               <button
                 className="vods-arrow-button vods-arrow-right"
                 type="button"
                 onClick={slideVodsNext}
+                aria-label="Next broadcasts"
               >
                 ›
               </button>
