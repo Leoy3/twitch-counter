@@ -13,20 +13,20 @@ const SOCIAL_LINKS = [
     url: "https://www.twitch.tv/eatfreshbrains"
   },
   {
-    label: "Throne",
-    url: "https://throne.com/brains"
-  },
-  {
-    label: "VGen",
-    url: "https://vgen.co/eatfreshbrains"
+    label: "X",
+    url: "https://x.com/soybrains"
   },
   {
     label: "TikTok",
     url: "https://www.tiktok.com/@imbrains"
   },
   {
-    label: "X",
-    url: "https://x.com/soybrains"
+    label: "VGen",
+    url: "https://vgen.co/eatfreshbrainss"
+  },
+  {
+    label: "Throne",
+    url: "https://throne.com/brains"
   }
 ];
 
