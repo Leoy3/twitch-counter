@@ -272,32 +272,25 @@ h1 {
 .vods-carousel {
   position: relative;
   width: 100%;
-  display: flex;
-  justify-content: center;
 }
 
-.vods-scroll {
-  display: flex;
-  flex-direction: row;
+.vods-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 14px;
-  width: calc((260px * 4) + (14px * 3));
-  overflow-x: hidden;
-  overflow-y: hidden;
-  padding: 2px 0 4px;
-  scroll-behavior: smooth;
+  width: 100%;
 }
 
 .vod-card {
-  flex: 0 0 260px;
-  width: 260px;
+  min-width: 0;
   color: white;
   text-decoration: none;
 }
 
 .vod-thumbnail-wrap {
   position: relative;
-  width: 260px;
-  height: 146px;
+  width: 100%;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.08);
@@ -361,42 +354,44 @@ h1 {
 
 .vods-arrow-button {
   position: absolute;
-  top: 54px;
-  right: 0;
+  top: 50%;
   width: 42px;
   height: 42px;
+  transform: translateY(-50%);
   border: 0;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.96);
   color: black;
   font-size: 34px;
   font-weight: 900;
-  line-height: 1;
+  line-height: 34px;
   cursor: pointer;
   box-shadow: 0 8px 26px rgba(0, 0, 0, 0.42);
-  transition: transform 0.16s ease, opacity 0.16s ease;
+  transition: opacity 0.16s ease, background 0.16s ease;
   z-index: 4;
 }
 
+.vods-arrow-left {
+  left: -19px;
+}
+
+.vods-arrow-right {
+  right: -19px;
+}
+
 .vods-arrow-button:hover {
-  transform: translateY(-2px) scale(1.04);
+  background: white;
 }
 
-@media (max-width: 1180px) {
-  .vods-scroll {
-    width: calc((260px * 3) + (14px * 2));
+@media (max-width: 980px) {
+  .vods-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@media (max-width: 900px) {
-  .vods-scroll {
-    width: calc((260px * 2) + 14px);
-  }
-}
-
-@media (max-width: 620px) {
-  .vods-scroll {
-    width: 260px;
+@media (max-width: 760px) {
+  .vods-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -442,25 +437,22 @@ h1 {
     flex-direction: column;
   }
 
-  .vods-scroll {
-    width: 230px;
-  }
-
-  .vod-card {
-    flex-basis: 230px;
-    width: 230px;
-  }
-
-  .vod-thumbnail-wrap {
-    width: 230px;
-    height: 129px;
+  .vods-grid {
+    grid-template-columns: 1fr;
   }
 
   .vods-arrow-button {
-    top: 45px;
-    right: 4px;
     width: 38px;
     height: 38px;
     font-size: 30px;
+    line-height: 30px;
+  }
+
+  .vods-arrow-left {
+    left: -14px;
+  }
+
+  .vods-arrow-right {
+    right: -14px;
   }
 }
