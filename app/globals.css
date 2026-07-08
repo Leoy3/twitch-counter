@@ -272,40 +272,19 @@ h1 {
 .vods-carousel {
   position: relative;
   width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .vods-scroll {
   display: flex;
   flex-direction: row;
   gap: 14px;
-  width: 100%;
+  width: calc((260px * 4) + (14px * 3));
   overflow-x: hidden;
   overflow-y: hidden;
-  padding: 2px 54px 4px 2px;
-  scroll-snap-type: x mandatory;
-}
-
-.vods-arrow-button {
-  position: absolute;
-  top: 58px;
-  right: 8px;
-  width: 42px;
-  height: 42px;
-  border: 0;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.92);
-  color: black;
-  font-size: 34px;
-  font-weight: 900;
-  line-height: 1;
-  cursor: pointer;
-  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.42);
-  transition: transform 0.16s ease, opacity 0.16s ease;
-  z-index: 4;
-}
-
-.vods-arrow-button:hover {
-  transform: translateY(-2px) scale(1.04);
+  padding: 2px 0 4px;
+  scroll-behavior: smooth;
 }
 
 .vod-card {
@@ -313,7 +292,6 @@ h1 {
   width: 260px;
   color: white;
   text-decoration: none;
-  scroll-snap-align: start;
 }
 
 .vod-thumbnail-wrap {
@@ -381,6 +359,47 @@ h1 {
   opacity: 0.88;
 }
 
+.vods-arrow-button {
+  position: absolute;
+  top: 54px;
+  right: 0;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  color: black;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.42);
+  transition: transform 0.16s ease, opacity 0.16s ease;
+  z-index: 4;
+}
+
+.vods-arrow-button:hover {
+  transform: translateY(-2px) scale(1.04);
+}
+
+@media (max-width: 1180px) {
+  .vods-scroll {
+    width: calc((260px * 3) + (14px * 2));
+  }
+}
+
+@media (max-width: 900px) {
+  .vods-scroll {
+    width: calc((260px * 2) + 14px);
+  }
+}
+
+@media (max-width: 620px) {
+  .vods-scroll {
+    width: 260px;
+  }
+}
+
 @media (max-width: 560px) {
   .page {
     justify-content: flex-start;
@@ -423,6 +442,10 @@ h1 {
     flex-direction: column;
   }
 
+  .vods-scroll {
+    width: 230px;
+  }
+
   .vod-card {
     flex-basis: 230px;
     width: 230px;
@@ -431,5 +454,13 @@ h1 {
   .vod-thumbnail-wrap {
     width: 230px;
     height: 129px;
+  }
+
+  .vods-arrow-button {
+    top: 45px;
+    right: 4px;
+    width: 38px;
+    height: 38px;
+    font-size: 30px;
   }
 }
