@@ -240,20 +240,31 @@ export default function Home() {
       return;
     }
 
-    const maxScrollLeft = container.scrollWidth - container.clientWidth;
-    const nextScrollLeft = container.scrollLeft + 560;
+    const cards = container.querySelectorAll(".vod-card");
+    const firstCard = cards[0];
 
-    if (nextScrollLeft >= maxScrollLeft - 20) {
-      container.scrollTo({
-        left: 0,
-        behavior: "smooth"
-      });
-
+    if (!firstCard) {
       return;
     }
 
+    const containerStyle = window.getComputedStyle(container);
+    const gap = parseFloat(containerStyle.columnGap || containerStyle.gap || "0") || 0;
+    const cardWidth = firstCard.getBoundingClientRect().width;
+    const step = cardWidth + gap;
+
+    const visibleCount = Math.max(1, Math.round((container.clientWidth + gap) / step));
+    const totalCards = cards.length;
+    const maxStartIndex = Math.max(0, totalCards - visibleCount);
+    const currentIndex = Math.round(container.scrollLeft / step);
+
+    let nextIndex = currentIndex + visibleCount;
+
+    if (nextIndex > maxStartIndex) {
+      nextIndex = 0;
+    }
+
     container.scrollTo({
-      left: nextScrollLeft,
+      left: nextIndex * step,
       behavior: "smooth"
     });
   }
