@@ -2,12 +2,7 @@ import "./globals.css";
 
 export const metadata = {
   title: "Brains Counter Stream",
-  description: "Countdown until the next eatfreshbrains stream",
-  icons: {
-    icon: "/favicon.png",
-    shortcut: "/favicon.png",
-    apple: "/favicon.png"
-  }
+  description: "Countdown until the next eatfreshbrains stream"
 };
 
 export default function RootLayout({ children }) {
