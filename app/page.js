@@ -7,6 +7,29 @@ const US_TIMEZONE = "America/New_York";
 const STREAM_HOUR_US = 15;
 const STREAM_MINUTE_US = 0;
 
+const SOCIAL_LINKS = [
+  {
+    label: "Twitch",
+    url: "https://www.twitch.tv/eatfreshbrains"
+  },
+  {
+    label: "Throne",
+    url: "https://throne.com/brains"
+  },
+  {
+    label: "VGen",
+    url: "https://vgen.co/eatfreshbrains"
+  },
+  {
+    label: "TikTok",
+    url: "https://www.tiktok.com/@imbrains"
+  },
+  {
+    label: "X",
+    url: "https://x.com/soybrains"
+  }
+];
+
 function getTimeParts(date, timeZone) {
   const formatter = new Intl.DateTimeFormat("en-US", {
     timeZone,
@@ -215,6 +238,20 @@ export default function Home() {
             <p>United States ET: 3:00 PM</p>
             <p>Mexico City: 1:00 PM</p>
           </div>
+        </div>
+
+        <div className="social-footer">
+          {SOCIAL_LINKS.map((link) => (
+            <a
+              key={link.label}
+              className="social-button"
+              href={link.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {link.label}
+            </a>
+          ))}
         </div>
       </section>
     </main>
