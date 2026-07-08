@@ -82,6 +82,13 @@ function makeDateInTimeZone(year, month, day, hour, minute, second, timeZone) {
   return new Date(utcDate.getTime() - offset);
 }
 
+function getDayOfWeekInTimeZone(date, timeZone) {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    weekday: "short"
+  }).format(date);
+}
+
 function getNextStreamDate() {
   const now = new Date();
   const us = getTimeParts(now, US_TIMEZONE);
@@ -97,9 +104,11 @@ function getNextStreamDate() {
   );
 
   if (target <= now) {
-    const tomorrow = new Date(target);
-    tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
-    target = tomorrow;
+    target.setUTCDate(target.getUTCDate() + 1);
+  }
+
+  while (getDayOfWeekInTimeZone(target, US_TIMEZONE) === "Sun") {
+    target.setUTCDate(target.getUTCDate() + 1);
   }
 
   return target;
