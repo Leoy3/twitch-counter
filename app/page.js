@@ -406,7 +406,6 @@ export default function Home() {
       <section className="card vods-card">
         <div className="vods-header">
           <div>
-            <p className="label vods-label">Recent broadcasts</p>
             <h2>Latest streams</h2>
           </div>
 
@@ -430,7 +429,7 @@ export default function Home() {
                 onClick={slideVodsPrevious}
                 aria-label="Previous broadcasts"
               >
-                ‹
+                <span className="vods-arrow-icon vods-arrow-icon-left"></span>
               </button>
             ) : null}
 
@@ -482,7 +481,7 @@ export default function Home() {
                 onClick={slideVodsNext}
                 aria-label="Next broadcasts"
               >
-                ›
+                <span className="vods-arrow-icon vods-arrow-icon-right"></span>
               </button>
             ) : null}
           </div>
