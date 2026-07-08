@@ -272,16 +272,19 @@ h1 {
 .vods-carousel {
   position: relative;
   width: 100%;
+  padding: 0 34px;
 }
 
 .vods-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 14px;
   width: 100%;
+  align-items: start;
 }
 
 .vod-card {
+  display: block;
   min-width: 0;
   color: white;
   text-decoration: none;
@@ -362,36 +365,54 @@ h1 {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.96);
   color: black;
-  font-size: 34px;
-  font-weight: 900;
-  line-height: 34px;
+  font-size: 0;
   cursor: pointer;
   box-shadow: 0 8px 26px rgba(0, 0, 0, 0.42);
-  transition: opacity 0.16s ease, background 0.16s ease;
+  transition: opacity 0.16s ease, background 0.16s ease, transform 0.16s ease;
   z-index: 4;
 }
 
+.vods-arrow-button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 11px;
+  height: 11px;
+  border-top: 4px solid black;
+  border-right: 4px solid black;
+}
+
 .vods-arrow-left {
-  left: -19px;
+  left: 0;
+}
+
+.vods-arrow-left::before {
+  transform: translate(-35%, -50%) rotate(-135deg);
 }
 
 .vods-arrow-right {
-  right: -19px;
+  right: 0;
+}
+
+.vods-arrow-right::before {
+  transform: translate(-65%, -50%) rotate(45deg);
 }
 
 .vods-arrow-button:hover {
   background: white;
+  transform: translateY(-50%) scale(1.05);
 }
 
 @media (max-width: 980px) {
   .vods-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 760px) {
   .vods-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -437,6 +458,10 @@ h1 {
     flex-direction: column;
   }
 
+  .vods-carousel {
+    padding: 0 30px;
+  }
+
   .vods-grid {
     grid-template-columns: 1fr;
   }
@@ -444,15 +469,12 @@ h1 {
   .vods-arrow-button {
     width: 38px;
     height: 38px;
-    font-size: 30px;
-    line-height: 30px;
   }
 
-  .vods-arrow-left {
-    left: -14px;
-  }
-
-  .vods-arrow-right {
-    right: -14px;
+  .vods-arrow-button::before {
+    width: 10px;
+    height: 10px;
+    border-top-width: 4px;
+    border-right-width: 4px;
   }
 }
