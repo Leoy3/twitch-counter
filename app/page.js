@@ -10,6 +10,20 @@ const STREAM_MINUTE_US = 0;
 const WAIT_AFTER_STREAM_MS = 60 * 60 * 1000;
 const VODS_PER_PAGE = 4;
 
+const BRAINCELLS_TOP = {
+  month: "July",
+  highest: {
+    title: "Highest braincells",
+    username: "UsernameA",
+    braincells: 9999
+  },
+  lowest: {
+    title: "Lowest braincells",
+    username: "UsernameB",
+    braincells: 1
+  }
+};
+
 const SOCIAL_LINKS = [
   {
     label: "Twitch",
@@ -158,6 +172,10 @@ function formatViews(viewCount) {
   }
 
   return `${viewCount || 0} views`;
+}
+
+function formatBraincells(value) {
+  return new Intl.NumberFormat("en-US").format(value);
 }
 
 function formatTimeAgo(dateString) {
@@ -459,6 +477,31 @@ export default function Home() {
               {link.label}
             </a>
           ))}
+        </div>
+      </section>
+
+      <section className="card braincells-card">
+        <div className="braincells-header">
+          <div>
+            <p className="label braincells-label">{BRAINCELLS_TOP.month}</p>
+            <h2>Monthly Braincells</h2>
+          </div>
+        </div>
+
+        <div className="braincells-grid">
+          <div className="braincell-stat-card braincell-stat-high">
+            <p>{BRAINCELLS_TOP.highest.title}</p>
+            <h3>{BRAINCELLS_TOP.highest.username}</h3>
+            <strong>{formatBraincells(BRAINCELLS_TOP.highest.braincells)}</strong>
+            <span>braincells</span>
+          </div>
+
+          <div className="braincell-stat-card braincell-stat-low">
+            <p>{BRAINCELLS_TOP.lowest.title}</p>
+            <h3>{BRAINCELLS_TOP.lowest.username}</h3>
+            <strong>{formatBraincells(BRAINCELLS_TOP.lowest.braincells)}</strong>
+            <span>braincells</span>
+          </div>
         </div>
       </section>
 
