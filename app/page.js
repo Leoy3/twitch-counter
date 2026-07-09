@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const US_TIMEZONE = "America/New_York";
 
@@ -245,13 +245,16 @@ export default function Home() {
   const braincellsAnimationFrameRef = useRef(null);
 
   const [status, setStatus] = useState(null);
+  const [statusLoaded, setStatusLoaded] = useState(false);
   const [vodsData, setVodsData] = useState(null);
+  const [vodsLoaded, setVodsLoaded] = useState(false);
   const [countdown, setCountdown] = useState("");
   const [waitingCountdown, setWaitingCountdown] = useState("");
   const [streamPhase, setStreamPhase] = useState("countdown");
   const [error, setError] = useState("");
   const [vodsError, setVodsError] = useState("");
   const [vodPageIndex, setVodPageIndex] = useState(0);
+  const [braincellsVisible, setBraincellsVisible] = useState(false);
   const [animatedBraincells, setAnimatedBraincells] = useState({
     highest: 0,
     lowest: 0
@@ -274,6 +277,8 @@ export default function Home() {
       setStatus(data);
     } catch {
       setError("Could not connect to the API.");
+    } finally {
+      setStatusLoaded(true);
     }
   }
 
@@ -294,6 +299,8 @@ export default function Home() {
       setVodsData(data);
     } catch {
       setVodsError("Could not load recent broadcasts.");
+    } finally {
+      setVodsLoaded(true);
     }
   }
 
@@ -328,7 +335,7 @@ export default function Home() {
     });
   }
 
-  function startBraincellsAnimation() {
+  const startBraincellsAnimation = useCallback(() => {
     if (braincellsAnimationDoneRef.current) {
       return;
     }
@@ -372,7 +379,7 @@ export default function Home() {
     }
 
     braincellsAnimationFrameRef.current = requestAnimationFrame(animate);
-  }
+  }, []);
 
   useEffect(() => {
     loadVods();
@@ -448,13 +455,10 @@ export default function Home() {
     const observer = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-
-        if (entry.isIntersecting) {
-          startBraincellsAnimation();
-        }
+        setBraincellsVisible(entry.isIntersecting);
       },
       {
-        threshold: 0.35
+        threshold: 0.45
       }
     );
 
@@ -468,6 +472,18 @@ export default function Home() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!braincellsVisible) {
+      return;
+    }
+
+    if (!statusLoaded || !vodsLoaded) {
+      return;
+    }
+
+    startBraincellsAnimation();
+  }, [braincellsVisible, statusLoaded, vodsLoaded, startBraincellsAnimation]);
 
   const channelName = status?.displayName || status?.channel || "The channel";
   const channelUrl = status?.url || "#";
@@ -483,7 +499,7 @@ export default function Home() {
       <div className="background"></div>
       <div className="overlay"></div>
 
-      <section className="card">
+      <section className="card hero-card">
         {error ? (
           <>
             <p className="label">Error</p>
@@ -587,7 +603,19 @@ export default function Home() {
         {vodsError ? (
           <p className="vods-message">{vodsError}</p>
         ) : !vodsData ? (
-          <p className="vods-message">Loading recent broadcasts...</p>
+          <div className="vods-loading-area">
+            <p className="vods-message">Loading recent broadcasts...</p>
+
+            <div className="vods-skeleton-grid" aria-hidden="true">
+              {[0, 1, 2, 3].map((item) => (
+                <div className="vod-skeleton-card" key={item}>
+                  <div className="vod-skeleton-thumb"></div>
+                  <div className="vod-skeleton-line vod-skeleton-line-title"></div>
+                  <div className="vod-skeleton-line vod-skeleton-line-meta"></div>
+                </div>
+              ))}
+            </div>
+          </div>
         ) : vods.length === 0 ? (
           <p className="vods-message">No recent broadcasts found.</p>
         ) : (
