@@ -482,14 +482,52 @@ h1 {
 
 .braincell-stat-card p {
   margin: 0;
-  width: 140px;
-  flex: 0 0 140px;
+  width: 160px;
+  flex: 0 0 160px;
   color: rgba(255, 255, 255, 0.58);
   font-size: 12px;
   font-weight: 900;
   line-height: 1.25;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.braincell-stat-card p::after {
+  content: "";
+  display: block;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+
+.braincell-stat-high p::after {
+  background: #43d46b;
+  clip-path: polygon(
+    50% 0%,
+    100% 42%,
+    74% 42%,
+    74% 100%,
+    26% 100%,
+    26% 42%,
+    0% 42%
+  );
+}
+
+.braincell-stat-low p::after {
+  background: #ff4b5c;
+  clip-path: polygon(
+    26% 0%,
+    74% 0%,
+    74% 58%,
+    100% 58%,
+    50% 100%,
+    0% 58%,
+    26% 58%
+  );
 }
 
 .braincell-stat-card div {
@@ -548,7 +586,7 @@ h1 {
   }
 
   .braincell-stat-card p {
-    width: auto;
+    width: 100%;
     flex: none;
   }
 
@@ -626,7 +664,14 @@ h1 {
   }
 
   .braincell-stat-card p {
+    width: 100%;
     font-size: 10px;
+  }
+
+  .braincell-stat-card p::after {
+    width: 16px;
+    height: 16px;
+    flex-basis: 16px;
   }
 
   .braincell-stat-card h3 {
