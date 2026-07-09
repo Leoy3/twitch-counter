@@ -484,17 +484,18 @@ h1 {
   padding: 0;
 }
 
-.vods-arrow-button::before,
-.vods-arrow-button::after {
+.vods-arrow-button::before {
   content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 14px;
-  height: 4px;
-  border-radius: 999px;
-  background: black;
-  transform-origin: center;
+  display: block;
+  width: 18px;
+  height: 18px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.vods-arrow-button::after {
+  display: none;
 }
 
 .vods-arrow-button span {
@@ -506,11 +507,7 @@ h1 {
 }
 
 .vods-arrow-left::before {
-  transform: translate(-60%, -4px) rotate(-45deg);
-}
-
-.vods-arrow-left::after {
-  transform: translate(-60%, 4px) rotate(45deg);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 5L8 12L15 19" fill="none" stroke="%23000" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/></svg>');
 }
 
 .vods-arrow-right {
@@ -518,11 +515,7 @@ h1 {
 }
 
 .vods-arrow-right::before {
-  transform: translate(-40%, -4px) rotate(45deg);
-}
-
-.vods-arrow-right::after {
-  transform: translate(-40%, 4px) rotate(-45deg);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 5L16 12L9 19" fill="none" stroke="%23000" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/></svg>');
 }
 
 .vods-arrow-button:hover {
@@ -797,9 +790,8 @@ h1 {
     height: 38px;
   }
 
-  .vods-arrow-button::before,
-  .vods-arrow-button::after {
-    width: 13px;
-    height: 4px;
+  .vods-arrow-button::before {
+    width: 16px;
+    height: 16px;
   }
 }
