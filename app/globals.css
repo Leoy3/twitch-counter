@@ -11,6 +11,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   color: white;
   background: black;
+  overflow-anchor: none;
 }
 
 body {
@@ -73,8 +74,11 @@ body {
 }
 
 .hero-card {
-  min-height: 430px;
+  min-height: 620px;
   animation-delay: 0.05s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .vods-card {
@@ -707,7 +711,7 @@ h1 {
   }
 
   .hero-card {
-    min-height: 420px;
+    min-height: 600px;
   }
 
   .button {
