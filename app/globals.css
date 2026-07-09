@@ -383,13 +383,17 @@ h1 {
   padding: 0;
 }
 
-.vods-arrow-button::before {
+.vods-arrow-button::before,
+.vods-arrow-button::after {
   content: "";
-  display: block;
-  width: 13px;
-  height: 13px;
-  border-top: 4px solid black;
-  border-right: 4px solid black;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 18px;
+  height: 7px;
+  border-radius: 999px;
+  background: black;
+  transform-origin: center;
 }
 
 .vods-arrow-button span {
@@ -401,7 +405,11 @@ h1 {
 }
 
 .vods-arrow-left::before {
-  transform: translateX(2px) rotate(-135deg);
+  transform: translate(-58%, -6px) rotate(-45deg);
+}
+
+.vods-arrow-left::after {
+  transform: translate(-58%, 5px) rotate(45deg);
 }
 
 .vods-arrow-right {
@@ -409,7 +417,11 @@ h1 {
 }
 
 .vods-arrow-right::before {
-  transform: translateX(-2px) rotate(45deg);
+  transform: translate(-42%, -6px) rotate(45deg);
+}
+
+.vods-arrow-right::after {
+  transform: translate(-42%, 5px) rotate(-45deg);
 }
 
 .vods-arrow-button:hover {
@@ -510,11 +522,10 @@ h1 {
 }
 
 .braincell-stat-card strong {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
+  position: relative;
+  display: inline-block;
   margin-top: 6px;
+  padding-left: 48px;
   color: #ff9bdd;
   font-size: clamp(34px, 5vw, 56px);
   line-height: 0.95;
@@ -522,39 +533,45 @@ h1 {
   font-variant-numeric: tabular-nums;
 }
 
-.braincell-stat-card strong::before {
+.braincell-stat-card strong::before,
+.braincell-stat-card strong::after {
   content: "";
-  display: block;
-  width: 30px;
-  height: 34px;
-  flex: 0 0 30px;
-  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.35));
+  position: absolute;
+  top: 50%;
+  width: 28px;
+  height: 10px;
+  border-radius: 999px;
+  transform-origin: center;
+}
+
+.braincell-stat-high strong::before,
+.braincell-stat-high strong::after {
+  background: linear-gradient(180deg, #74ff93, #19b84c);
 }
 
 .braincell-stat-high strong::before {
-  background: linear-gradient(180deg, #6dff8f, #1dbb4b);
-  clip-path: polygon(
-    50% 0%,
-    100% 38%,
-    76% 38%,
-    76% 100%,
-    24% 100%,
-    24% 38%,
-    0% 38%
-  );
+  left: 0;
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+.braincell-stat-high strong::after {
+  left: 18px;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.braincell-stat-low strong::before,
+.braincell-stat-low strong::after {
+  background: linear-gradient(180deg, #ff7d87, #d91831);
 }
 
 .braincell-stat-low strong::before {
-  background: linear-gradient(180deg, #ff7580, #d71931);
-  clip-path: polygon(
-    24% 0%,
-    76% 0%,
-    76% 62%,
-    100% 62%,
-    50% 100%,
-    0% 62%,
-    24% 62%
-  );
+  left: 0;
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.braincell-stat-low strong::after {
+  left: 18px;
+  transform: translateY(-50%) rotate(-45deg);
 }
 
 .braincell-stat-card span {
@@ -593,10 +610,6 @@ h1 {
   .braincell-stat-card div {
     width: 100%;
     text-align: left;
-  }
-
-  .braincell-stat-card strong {
-    justify-content: flex-start;
   }
 }
 
@@ -676,14 +689,19 @@ h1 {
   }
 
   .braincell-stat-card strong {
-    gap: 8px;
+    padding-left: 36px;
     font-size: 34px;
   }
 
-  .braincell-stat-card strong::before {
+  .braincell-stat-card strong::before,
+  .braincell-stat-card strong::after {
     width: 22px;
-    height: 26px;
-    flex-basis: 22px;
+    height: 8px;
+  }
+
+  .braincell-stat-high strong::after,
+  .braincell-stat-low strong::after {
+    left: 14px;
   }
 
   .braincell-stat-card span {
@@ -703,10 +721,9 @@ h1 {
     height: 38px;
   }
 
-  .vods-arrow-button::before {
-    width: 12px;
-    height: 12px;
-    border-top-width: 4px;
-    border-right-width: 4px;
+  .vods-arrow-button::before,
+  .vods-arrow-button::after {
+    width: 16px;
+    height: 6px;
   }
 }
