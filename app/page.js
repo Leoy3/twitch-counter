@@ -480,31 +480,6 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="card braincells-card">
-        <div className="braincells-header">
-          <div>
-            <p className="label braincells-label">{BRAINCELLS_TOP.month}</p>
-            <h2>Monthly Braincells</h2>
-          </div>
-        </div>
-
-        <div className="braincells-grid">
-          <div className="braincell-stat-card braincell-stat-high">
-            <p>{BRAINCELLS_TOP.highest.title}</p>
-            <h3>{BRAINCELLS_TOP.highest.username}</h3>
-            <strong>{formatBraincells(BRAINCELLS_TOP.highest.braincells)}</strong>
-            <span>braincells</span>
-          </div>
-
-          <div className="braincell-stat-card braincell-stat-low">
-            <p>{BRAINCELLS_TOP.lowest.title}</p>
-            <h3>{BRAINCELLS_TOP.lowest.username}</h3>
-            <strong>{formatBraincells(BRAINCELLS_TOP.lowest.braincells)}</strong>
-            <span>braincells</span>
-          </div>
-        </div>
-      </section>
-
       <section className="card vods-card">
         <div className="vods-header">
           <div>
@@ -588,6 +563,35 @@ export default function Home() {
             ) : null}
           </div>
         )}
+      </section>
+
+      <section className="card braincells-card">
+        <div className="braincells-header">
+          <div>
+            <p className="label braincells-label">{BRAINCELLS_TOP.month}</p>
+            <h2>Monthly Braincells</h2>
+          </div>
+        </div>
+
+        <div className="braincells-grid">
+          <div className="braincell-stat-card braincell-stat-high">
+            <p>{BRAINCELLS_TOP.highest.title}</p>
+            <div>
+              <h3>{BRAINCELLS_TOP.highest.username}</h3>
+              <strong>{formatBraincells(BRAINCELLS_TOP.highest.braincells)}</strong>
+              <span>braincells</span>
+            </div>
+          </div>
+
+          <div className="braincell-stat-card braincell-stat-low">
+            <p>{BRAINCELLS_TOP.lowest.title}</p>
+            <div>
+              <h3>{BRAINCELLS_TOP.lowest.username}</h3>
+              <strong>{formatBraincells(BRAINCELLS_TOP.lowest.braincells)}</strong>
+              <span>braincells</span>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
   );
