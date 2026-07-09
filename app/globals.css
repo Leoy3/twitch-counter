@@ -63,8 +63,40 @@ body {
   text-align: center;
 }
 
+.hero-card,
+.vods-card,
+.braincells-card {
+  opacity: 0;
+  transform: translateY(26px);
+  filter: blur(8px);
+  animation: card-enter 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 .hero-card {
   min-height: 430px;
+  animation-delay: 0.05s;
+}
+
+.vods-card {
+  animation-delay: 0.18s;
+}
+
+.braincells-card {
+  animation-delay: 0.31s;
+}
+
+@keyframes card-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(26px);
+    filter: blur(8px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
 }
 
 .label {
@@ -616,6 +648,21 @@ h1 {
 
 .braincell-stat-low strong {
   color: rgba(255, 255, 255, 0.9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-card,
+  .vods-card,
+  .braincells-card {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    animation: none;
+  }
+
+  .vod-skeleton-thumb::after {
+    animation: none;
+  }
 }
 
 @media (max-width: 980px) {
