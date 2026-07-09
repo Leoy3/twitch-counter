@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const US_TIMEZONE = "America/New_York";
 
@@ -231,7 +231,19 @@ function chunkVods(vods) {
   return pages;
 }
 
+function easeInOutCubic(value) {
+  if (value < 0.5) {
+    return 4 * value * value * value;
+  }
+
+  return 1 - Math.pow(-2 * value + 2, 3) / 2;
+}
+
 export default function Home() {
+  const braincellsSectionRef = useRef(null);
+  const braincellsAnimationDoneRef = useRef(false);
+  const braincellsAnimationFrameRef = useRef(null);
+
   const [status, setStatus] = useState(null);
   const [vodsData, setVodsData] = useState(null);
   const [countdown, setCountdown] = useState("");
@@ -240,6 +252,10 @@ export default function Home() {
   const [error, setError] = useState("");
   const [vodsError, setVodsError] = useState("");
   const [vodPageIndex, setVodPageIndex] = useState(0);
+  const [animatedBraincells, setAnimatedBraincells] = useState({
+    highest: 0,
+    lowest: 0
+  });
 
   async function loadStatus() {
     try {
@@ -312,6 +328,52 @@ export default function Home() {
     });
   }
 
+  function startBraincellsAnimation() {
+    if (braincellsAnimationDoneRef.current) {
+      return;
+    }
+
+    braincellsAnimationDoneRef.current = true;
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (prefersReducedMotion) {
+      setAnimatedBraincells({
+        highest: BRAINCELLS_TOP.highest.braincells,
+        lowest: BRAINCELLS_TOP.lowest.braincells
+      });
+      return;
+    }
+
+    const duration = 1800;
+    const startTime = performance.now();
+
+    function animate(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easedProgress = easeInOutCubic(progress);
+
+      setAnimatedBraincells({
+        highest: Math.round(BRAINCELLS_TOP.highest.braincells * easedProgress),
+        lowest: Math.round(BRAINCELLS_TOP.lowest.braincells * easedProgress)
+      });
+
+      if (progress < 1) {
+        braincellsAnimationFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      setAnimatedBraincells({
+        highest: BRAINCELLS_TOP.highest.braincells,
+        lowest: BRAINCELLS_TOP.lowest.braincells
+      });
+    }
+
+    braincellsAnimationFrameRef.current = requestAnimationFrame(animate);
+  }
+
   useEffect(() => {
     loadVods();
 
@@ -375,6 +437,37 @@ export default function Home() {
       setVodPageIndex(0);
     }
   }, [vodsData, vodPageIndex]);
+
+  useEffect(() => {
+    const element = braincellsSectionRef.current;
+
+    if (!element) {
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+
+        if (entry.isIntersecting) {
+          startBraincellsAnimation();
+        }
+      },
+      {
+        threshold: 0.35
+      }
+    );
+
+    observer.observe(element);
+
+    return () => {
+      observer.disconnect();
+
+      if (braincellsAnimationFrameRef.current) {
+        cancelAnimationFrame(braincellsAnimationFrameRef.current);
+      }
+    };
+  }, []);
 
   const channelName = status?.displayName || status?.channel || "The channel";
   const channelUrl = status?.url || "#";
@@ -565,7 +658,7 @@ export default function Home() {
         )}
       </section>
 
-      <section className="card braincells-card">
+      <section className="card braincells-card" ref={braincellsSectionRef}>
         <div className="braincells-header">
           <div>
             <p className="label braincells-label">{BRAINCELLS_TOP.month}</p>
@@ -578,7 +671,7 @@ export default function Home() {
             <p>{BRAINCELLS_TOP.highest.title}</p>
             <div>
               <h3>{BRAINCELLS_TOP.highest.username}</h3>
-              <strong>{formatBraincells(BRAINCELLS_TOP.highest.braincells)}</strong>
+              <strong>{formatBraincells(animatedBraincells.highest)}</strong>
               <span>braincells</span>
             </div>
           </div>
@@ -587,7 +680,7 @@ export default function Home() {
             <p>{BRAINCELLS_TOP.lowest.title}</p>
             <div>
               <h3>{BRAINCELLS_TOP.lowest.username}</h3>
-              <strong>{formatBraincells(BRAINCELLS_TOP.lowest.braincells)}</strong>
+              <strong>{formatBraincells(animatedBraincells.lowest)}</strong>
               <span>braincells</span>
             </div>
           </div>
