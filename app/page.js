@@ -7,6 +7,7 @@ const US_TIMEZONE = "America/New_York";
 const STREAM_HOUR_US = 15;
 const STREAM_MINUTE_US = 0;
 
+const WAIT_AFTER_STREAM_MS = 60 * 60 * 1000;
 const VODS_PER_PAGE = 4;
 
 const SOCIAL_LINKS = [
@@ -91,7 +92,7 @@ function getDayOfWeekInTimeZone(date, timeZone) {
   }).format(date);
 }
 
-function getNextStreamDate() {
+function getStreamState() {
   const now = new Date();
   const us = getTimeParts(now, US_TIMEZONE);
 
@@ -105,7 +106,19 @@ function getNextStreamDate() {
     US_TIMEZONE
   );
 
-  if (target <= now) {
+  const targetDay = getDayOfWeekInTimeZone(target, US_TIMEZONE);
+  const isStreamDay = targetDay !== "Sun";
+  const waitEndsAt = new Date(target.getTime() + WAIT_AFTER_STREAM_MS);
+
+  if (isStreamDay && now >= target && now < waitEndsAt) {
+    return {
+      phase: "waiting",
+      target,
+      waitEndsAt
+    };
+  }
+
+  if (!isStreamDay || now >= waitEndsAt || now >= target) {
     target.setUTCDate(target.getUTCDate() + 1);
   }
 
@@ -113,7 +126,11 @@ function getNextStreamDate() {
     target.setUTCDate(target.getUTCDate() + 1);
   }
 
-  return target;
+  return {
+    phase: "countdown",
+    target,
+    waitEndsAt: null
+  };
 }
 
 function formatCountdown(milliseconds) {
@@ -200,6 +217,8 @@ export default function Home() {
   const [status, setStatus] = useState(null);
   const [vodsData, setVodsData] = useState(null);
   const [countdown, setCountdown] = useState("");
+  const [waitingCountdown, setWaitingCountdown] = useState("");
+  const [streamPhase, setStreamPhase] = useState("countdown");
   const [error, setError] = useState("");
   const [vodsError, setVodsError] = useState("");
   const [vodPageIndex, setVodPageIndex] = useState(0);
@@ -276,29 +295,50 @@ export default function Home() {
   }
 
   useEffect(() => {
-    loadStatus();
     loadVods();
 
-    const apiInterval = setInterval(() => {
-      loadStatus();
+    const vodsInterval = setInterval(() => {
       loadVods();
     }, 60000);
 
-    return () => clearInterval(apiInterval);
+    return () => clearInterval(vodsInterval);
   }, []);
 
   useEffect(() => {
-    function updateCountdown() {
-      const nextStreamDate = getNextStreamDate();
-      const difference = nextStreamDate.getTime() - Date.now();
+    loadStatus();
 
-      setCountdown(formatCountdown(difference));
+    const statusInterval = setInterval(
+      () => {
+        loadStatus();
+      },
+      streamPhase === "waiting" ? 10000 : 60000
+    );
+
+    return () => clearInterval(statusInterval);
+  }, [streamPhase]);
+
+  useEffect(() => {
+    function updateStreamTimer() {
+      const streamState = getStreamState();
+
+      setStreamPhase(streamState.phase);
+
+      if (streamState.phase === "waiting") {
+        setCountdown("00h 00m 00s");
+        setWaitingCountdown(
+          formatCountdown(streamState.waitEndsAt.getTime() - Date.now())
+        );
+        return;
+      }
+
+      setWaitingCountdown("");
+      setCountdown(formatCountdown(streamState.target.getTime() - Date.now()));
     }
 
-    updateCountdown();
+    updateStreamTimer();
 
     const timer = setInterval(() => {
-      updateCountdown();
+      updateStreamTimer();
     }, 1000);
 
     return () => clearInterval(timer);
@@ -356,6 +396,25 @@ export default function Home() {
 
             <a className="button" href={channelUrl} target="_blank" rel="noreferrer">
               Watch on Twitch
+            </a>
+          </>
+        ) : streamPhase === "waiting" ? (
+          <>
+            <p className="label">Waiting for stream</p>
+
+            <h1>
+              Waiting for <span className="channel-name">{channelName}</span>'s stream
+            </h1>
+
+            <div className="countdown">Waiting...</div>
+
+            <p className="time-note">
+              Checking if the stream is live. If it does not start in{" "}
+              {waitingCountdown}, the timer will move to the next stream.
+            </p>
+
+            <a className="button secondary" href={channelUrl} target="_blank" rel="noreferrer">
+              Open channel
             </a>
           </>
         ) : (
