@@ -424,12 +424,15 @@ h1 {
 }
 
 .braincells-header {
+  display: flex;
+  justify-content: flex-end;
   margin-bottom: 16px;
+  text-align: right;
 }
 
 .braincells-label {
   margin: 0 0 6px;
-  text-align: left;
+  text-align: right;
   color: rgba(255, 111, 207, 0.82);
 }
 
@@ -438,6 +441,7 @@ h1 {
   font-size: 28px;
   line-height: 1;
   letter-spacing: -0.04em;
+  text-align: right;
 }
 
 .braincells-grid {
