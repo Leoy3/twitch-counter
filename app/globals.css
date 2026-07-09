@@ -522,56 +522,13 @@ h1 {
 }
 
 .braincell-stat-card strong {
-  position: relative;
-  display: inline-block;
+  display: block;
   margin-top: 6px;
-  padding-left: 48px;
   color: #ff9bdd;
   font-size: clamp(34px, 5vw, 56px);
   line-height: 0.95;
   letter-spacing: -0.07em;
   font-variant-numeric: tabular-nums;
-}
-
-.braincell-stat-card strong::before,
-.braincell-stat-card strong::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  width: 28px;
-  height: 10px;
-  border-radius: 999px;
-  transform-origin: center;
-}
-
-.braincell-stat-high strong::before,
-.braincell-stat-high strong::after {
-  background: linear-gradient(180deg, #74ff93, #19b84c);
-}
-
-.braincell-stat-high strong::before {
-  left: 0;
-  transform: translateY(-50%) rotate(-45deg);
-}
-
-.braincell-stat-high strong::after {
-  left: 18px;
-  transform: translateY(-50%) rotate(45deg);
-}
-
-.braincell-stat-low strong::before,
-.braincell-stat-low strong::after {
-  background: linear-gradient(180deg, #ff7d87, #d91831);
-}
-
-.braincell-stat-low strong::before {
-  left: 0;
-  transform: translateY(-50%) rotate(45deg);
-}
-
-.braincell-stat-low strong::after {
-  left: 18px;
-  transform: translateY(-50%) rotate(-45deg);
 }
 
 .braincell-stat-card span {
@@ -689,19 +646,7 @@ h1 {
   }
 
   .braincell-stat-card strong {
-    padding-left: 36px;
     font-size: 34px;
-  }
-
-  .braincell-stat-card strong::before,
-  .braincell-stat-card strong::after {
-    width: 22px;
-    height: 8px;
-  }
-
-  .braincell-stat-high strong::after,
-  .braincell-stat-low strong::after {
-    left: 14px;
   }
 
   .braincell-stat-card span {
