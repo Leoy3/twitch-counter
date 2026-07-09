@@ -490,8 +490,8 @@ h1 {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 18px;
-  height: 7px;
+  width: 14px;
+  height: 4px;
   border-radius: 999px;
   background: black;
   transform-origin: center;
@@ -506,11 +506,11 @@ h1 {
 }
 
 .vods-arrow-left::before {
-  transform: translate(-58%, -6px) rotate(-45deg);
+  transform: translate(-60%, -4px) rotate(-45deg);
 }
 
 .vods-arrow-left::after {
-  transform: translate(-58%, 5px) rotate(45deg);
+  transform: translate(-60%, 4px) rotate(45deg);
 }
 
 .vods-arrow-right {
@@ -518,11 +518,11 @@ h1 {
 }
 
 .vods-arrow-right::before {
-  transform: translate(-42%, -6px) rotate(45deg);
+  transform: translate(-40%, -4px) rotate(45deg);
 }
 
 .vods-arrow-right::after {
-  transform: translate(-42%, 5px) rotate(-45deg);
+  transform: translate(-40%, 4px) rotate(-45deg);
 }
 
 .vods-arrow-button:hover {
@@ -799,7 +799,7 @@ h1 {
 
   .vods-arrow-button::before,
   .vods-arrow-button::after {
-    width: 16px;
-    height: 6px;
+    width: 13px;
+    height: 4px;
   }
 }
