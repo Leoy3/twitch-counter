@@ -11,16 +11,16 @@ const WAIT_AFTER_STREAM_MS = 60 * 60 * 1000;
 const VODS_PER_PAGE = 4;
 
 const BRAINCELLS_TOP = {
-  month: "July",
+  month: "August",
   highest: {
     title: "Highest braincells",
-    username: "ThatFooLemon",
-    braincells: 9961
+    username: "rbubbafps",
+    braincells: 9556
   },
   lowest: {
     title: "Lowest braincells",
-    username: "emugoofy",
-    braincells: 8
+    username: "zizouolympiadarkwitch",
+    braincells: 223
   }
 };
 
