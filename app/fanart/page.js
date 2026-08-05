@@ -5,16 +5,12 @@ import { useEffect, useState } from "react";
 const FANARTS = [
   {
     image: "/fanart/fanart-01.png",
-    artist: "ArtistName"
-  },
-  {
-    image: "/fanart/fanart-02.jpg",
     artist: ""
   },
   {
-    image: "/fanart/fanart-03.jpg",
-    artist: "ArtistName"
-  }
+    image: "/fanart/fanart-02.png",
+    artist: ""
+  },
 ];
 
 export default function FanartPage() {
