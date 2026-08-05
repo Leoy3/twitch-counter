@@ -239,6 +239,52 @@ function easeInOutCubic(value) {
   return 1 - Math.pow(-2 * value + 2, 3) / 2;
 }
 
+function normalizeTitle(title) {
+  return String(title || "")
+    .trim()
+    .toLowerCase();
+}
+
+function isCurrentLiveVod(vod, streamStatus) {
+  if (!streamStatus?.isLive) {
+    return false;
+  }
+
+  const streamStartedAt = streamStatus.startedAt
+    ? new Date(streamStatus.startedAt).getTime()
+    : null;
+
+  const vodCreatedAt = vod?.createdAt
+    ? new Date(vod.createdAt).getTime()
+    : null;
+
+  const hasValidStreamDate = Number.isFinite(streamStartedAt);
+  const hasValidVodDate = Number.isFinite(vodCreatedAt);
+
+  if (hasValidStreamDate && hasValidVodDate) {
+    const difference = Math.abs(vodCreatedAt - streamStartedAt);
+
+    if (difference <= 30 * 60 * 1000) {
+      return true;
+    }
+  }
+
+  const streamTitle = normalizeTitle(streamStatus.title);
+  const vodTitle = normalizeTitle(vod?.title);
+
+  if (!streamTitle || !vodTitle || streamTitle !== vodTitle) {
+    return false;
+  }
+
+  if (!hasValidVodDate) {
+    return false;
+  }
+
+  const isVeryRecent = Date.now() - vodCreatedAt <= 24 * 60 * 60 * 1000;
+
+  return isVeryRecent;
+}
+
 export default function Home() {
   const braincellsSectionRef = useRef(null);
   const braincellsAnimationDoneRef = useRef(false);
@@ -304,8 +350,14 @@ export default function Home() {
     }
   }
 
+  function getVisibleVods() {
+    const rawVods = vodsData?.vods || [];
+
+    return rawVods.filter((vod) => !isCurrentLiveVod(vod, status));
+  }
+
   function slideVodsNext() {
-    const vods = vodsData?.vods || [];
+    const vods = getVisibleVods();
     const pages = chunkVods(vods);
 
     if (pages.length <= 1) {
@@ -432,8 +484,8 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const vods = vodsData?.vods || [];
-    const pages = chunkVods(vods);
+    const visibleVods = getVisibleVods();
+    const pages = chunkVods(visibleVods);
 
     if (pages.length === 0) {
       setVodPageIndex(0);
@@ -443,7 +495,7 @@ export default function Home() {
     if (vodPageIndex > pages.length - 1) {
       setVodPageIndex(0);
     }
-  }, [vodsData, vodPageIndex]);
+  }, [vodsData, status, vodPageIndex]);
 
   useEffect(() => {
     const element = braincellsSectionRef.current;
@@ -487,7 +539,7 @@ export default function Home() {
 
   const channelName = status?.displayName || status?.channel || "The channel";
   const channelUrl = status?.url || "#";
-  const vods = vodsData?.vods || [];
+  const vods = getVisibleVods();
   const vodPages = chunkVods(vods);
   const videosUrl = vodsData?.videosUrl || `${channelUrl}/videos`;
 
