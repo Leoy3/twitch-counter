@@ -11,12 +11,15 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <nav className="site-nav">
+          <div className="site-nav-side site-nav-left">
+            <Link href="/">Home</Link>
+          </div>
+
           <Link className="site-nav-logo" href="/">
-            Brains
+            EatFreshBrains
           </Link>
 
-          <div className="site-nav-links">
-            <Link href="/">Home</Link>
+          <div className="site-nav-side site-nav-right">
             <Link href="/fanart">Fanarts</Link>
           </div>
         </nav>
