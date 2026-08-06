@@ -10,7 +10,7 @@ const FANARTS = [
   {
     image: "/fanart/fanart-02.png",
     artist: ""
-  },
+  }
 ];
 
 export default function FanartPage() {
@@ -39,15 +39,13 @@ export default function FanartPage() {
       <div className="background"></div>
       <div className="overlay"></div>
 
-      <section className="card fanart-card">
-        <div className="fanart-header">
-          <p className="label fanart-label">Community</p>
-          <h1>Fanart Gallery</h1>
-          <p className="fanart-description">
-            Latest fanarts made by the community.
-          </p>
-        </div>
+      <section className="fanart-gallery-hero">
+        <p className="label fanart-label">Community</p>
+        <h1>Fanart Gallery</h1>
+        <p>Latest fanarts made by the community.</p>
+      </section>
 
+      <section className="card fanart-card">
         <div className="fanart-grid">
           {FANARTS.map((fanart, index) => (
             <button
