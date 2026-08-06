@@ -68,6 +68,7 @@ body {
 }
 
 .home-page {
+  padding: 0 32px 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -89,9 +90,9 @@ body {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(circle at 70% 8%, rgba(255, 47, 161, 0.24), transparent 34%),
-    linear-gradient(180deg, rgba(4, 3, 7, 0.35), rgba(4, 3, 7, 0.94) 58%, rgba(4, 3, 7, 1)),
-    rgba(0, 0, 0, 0.52);
+    radial-gradient(circle at 70% 8%, rgba(255, 47, 161, 0.22), transparent 34%),
+    linear-gradient(180deg, rgba(4, 3, 7, 0.22), rgba(4, 3, 7, 0.82) 58%, rgba(4, 3, 7, 1)),
+    rgba(0, 0, 0, 0.46);
   z-index: 1;
 }
 
@@ -121,17 +122,20 @@ body {
   position: relative;
   z-index: 2;
   overflow: hidden;
-  width: min(1280px, 100%);
-  min-height: 520px;
-  border-radius: 0 0 22px 22px;
-  border-bottom: 1px solid rgba(255, 47, 161, 0.52);
+  width: 100vw;
+  min-height: 620px;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid rgba(255, 47, 161, 0.48);
   background-image:
-    linear-gradient(90deg, rgba(5, 3, 8, 0.96) 0%, rgba(5, 3, 8, 0.88) 34%, rgba(5, 3, 8, 0.42) 64%, rgba(5, 3, 8, 0.76) 100%),
+    linear-gradient(90deg, rgba(5, 3, 8, 0.97) 0%, rgba(5, 3, 8, 0.86) 34%, rgba(5, 3, 8, 0.26) 65%, rgba(5, 3, 8, 0.58) 100%),
     url("/hero-banner.png"),
     url("/background.jpg");
   background-size: cover, cover, cover;
   background-position: center, center right, center;
-  box-shadow: 0 30px 100px rgba(255, 47, 161, 0.12);
+  box-shadow: 0 34px 110px rgba(255, 47, 161, 0.12);
   animation-delay: 0.05s;
 }
 
@@ -140,16 +144,38 @@ body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 78% 34%, rgba(255, 47, 161, 0.14), transparent 28%),
-    linear-gradient(180deg, transparent 0%, rgba(5, 3, 8, 0.2) 58%, rgba(5, 3, 8, 0.94) 100%);
+    radial-gradient(circle at 72% 36%, rgba(255, 47, 161, 0.16), transparent 30%),
+    linear-gradient(180deg, rgba(5, 3, 8, 0.18) 0%, rgba(5, 3, 8, 0.08) 52%, rgba(5, 3, 8, 0.95) 100%);
+  pointer-events: none;
+}
+
+.hero-banner::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 90px;
+  background: linear-gradient(180deg, transparent, #050308);
   pointer-events: none;
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
-  max-width: 680px;
-  padding: 90px 44px 74px;
+  width: min(1120px, calc(100% - 64px));
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 150px 0 110px;
+}
+
+.hero-content h1,
+.hero-content .stream-title,
+.hero-content .game-name,
+.hero-content .countdown,
+.hero-content .time-note,
+.hero-content .hero-actions {
+  max-width: 660px;
 }
 
 @keyframes card-enter {
@@ -193,9 +219,9 @@ body {
 
 h1 {
   margin: 0;
-  font-size: clamp(46px, 7vw, 86px);
-  line-height: 0.98;
-  letter-spacing: -0.07em;
+  font-size: clamp(52px, 7.4vw, 96px);
+  line-height: 0.96;
+  letter-spacing: -0.08em;
 }
 
 .channel-name {
@@ -204,7 +230,6 @@ h1 {
 
 .stream-title {
   margin: 24px 0 0;
-  max-width: 680px;
   font-size: 17px;
   line-height: 1.38;
   color: rgba(255, 255, 255, 0.9);
@@ -301,12 +326,12 @@ h1 {
 
 .home-grid {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   width: min(1120px, 100%);
   display: grid;
   grid-template-columns: minmax(0, 1.55fr) minmax(260px, 0.8fr) minmax(260px, 0.8fr);
   gap: 14px;
-  margin-top: 0;
+  margin-top: -26px;
 }
 
 .panel-card {
@@ -955,22 +980,31 @@ h1 {
     padding: 82px 18px 24px;
   }
 
+  .home-page {
+    padding: 0 18px 24px;
+  }
+
   .hero-banner {
-    min-height: 560px;
-    border-radius: 0 0 18px 18px;
+    min-height: 600px;
+    background-image:
+      linear-gradient(90deg, rgba(5, 3, 8, 0.96) 0%, rgba(5, 3, 8, 0.76) 52%, rgba(5, 3, 8, 0.48) 100%),
+      url("/hero-banner.png"),
+      url("/background.jpg");
     background-position: center, center, center;
   }
 
   .hero-content {
-    padding: 78px 22px 46px;
+    width: calc(100% - 36px);
+    padding: 130px 0 70px;
   }
 
   h1 {
-    font-size: clamp(42px, 12vw, 64px);
+    font-size: clamp(44px, 13vw, 66px);
   }
 
   .home-grid {
     grid-template-columns: 1fr;
+    margin-top: -16px;
   }
 
   .vods-page,
@@ -1020,14 +1054,17 @@ h1 {
     padding: 76px 14px 20px;
   }
 
+  .home-page {
+    padding: 0 14px 20px;
+  }
+
   .hero-banner {
-    width: calc(100% + 28px);
-    min-height: 560px;
-    border-radius: 0 0 18px 18px;
+    min-height: 590px;
   }
 
   .hero-content {
-    padding: 76px 18px 42px;
+    width: calc(100% - 28px);
+    padding: 120px 0 58px;
   }
 
   .stream-title {
