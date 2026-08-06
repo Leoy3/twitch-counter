@@ -273,7 +273,7 @@ body {
   width: min(1120px, calc(100% - 64px));
   max-width: 1120px;
   margin: 0 auto;
-  padding: 170px 0 230px;
+  padding: 220px 0 180px;
 }
 
 .hero-content h1,
@@ -1160,7 +1160,7 @@ h1 {
 
   .hero-content {
     width: calc(100% - 36px);
-    padding: 170px 0 190px;
+    padding: 200px 0 160px;
   }
 
   h1 {
@@ -1253,7 +1253,7 @@ h1 {
 
   .hero-content {
     width: calc(100% - 28px);
-    padding: 150px 0 170px;
+    padding: 185px 0 135px;
   }
 
   .stream-title {
