@@ -23,39 +23,117 @@ body {
   top: 18px;
   left: 50%;
   z-index: 30;
-  min-height: 54px;
-  padding: 0 14px;
-  border: 1px solid rgba(255, 111, 207, 0.28);
-  border-radius: 999px;
-  background: rgba(6, 5, 10, 0.72);
-  backdrop-filter: blur(16px);
+  width: min(1180px, calc(100% - 36px));
+  min-height: 58px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 18px;
+  background: rgba(6, 5, 10, 0.64);
+  backdrop-filter: blur(18px);
   box-shadow: 0 18px 55px rgba(0, 0, 0, 0.48);
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) auto minmax(220px, 1fr);
   align-items: center;
-  justify-content: center;
-  gap: 8px;
   transform: translateX(-50%);
 }
 
-.site-nav a {
+.site-nav-brand {
+  display: inline-flex;
+  align-items: center;
+  justify-self: flex-start;
+  gap: 10px;
+  color: white;
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.site-nav-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: rgba(255, 111, 207, 0.2);
+  border: 1px solid rgba(255, 111, 207, 0.36);
+  color: #ff7fd6;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 34px;
-  padding: 0 18px;
-  border-radius: 999px;
-  background: rgba(255, 111, 207, 0.12);
-  border: 1px solid rgba(255, 111, 207, 0.22);
-  color: #ff9bdd;
-  font-size: 13px;
-  font-weight: 900;
-  text-decoration: none;
-  transition: background 0.16s ease, color 0.16s ease, transform 0.16s ease;
+  font-size: 16px;
+  line-height: 1;
+  box-shadow: 0 0 22px rgba(255, 47, 161, 0.28);
 }
 
-.site-nav a:hover {
-  color: white;
-  background: rgba(255, 111, 207, 0.24);
+.site-nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 34px;
+}
+
+.site-nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 14px;
+  font-weight: 900;
+  text-decoration: none;
+  transition: color 0.16s ease;
+}
+
+.site-nav-link::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  border-radius: 999px;
+  background: #ff6fcf;
+  transform: translateX(-50%);
+  box-shadow: 0 0 14px rgba(255, 111, 207, 0.8);
+  transition: width 0.16s ease;
+}
+
+.site-nav-link:hover,
+.site-nav-link-active {
+  color: #ff9bdd;
+}
+
+.site-nav-link:hover::after,
+.site-nav-link-active::after {
+  width: 44px;
+}
+
+.site-nav-socials {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 20px;
+}
+
+.site-nav-icon {
+  width: 22px;
+  height: 22px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 15px;
+  font-weight: 900;
+  line-height: 1;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.9;
+  transition: color 0.16s ease, transform 0.16s ease, opacity 0.16s ease;
+}
+
+.site-nav-icon:hover {
+  color: #ff9bdd;
+  opacity: 1;
   transform: translateY(-1px);
 }
 
@@ -987,6 +1065,14 @@ h1 {
 }
 
 @media (max-width: 1080px) {
+  .site-nav {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .site-nav-socials {
+    gap: 14px;
+  }
+
   .home-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -1002,6 +1088,21 @@ h1 {
 }
 
 @media (max-width: 760px) {
+  .site-nav {
+    width: calc(100% - 28px);
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+  }
+
+  .site-nav-socials {
+    display: none;
+  }
+
+  .site-nav-links {
+    justify-content: flex-end;
+    gap: 22px;
+  }
+
   .page {
     padding: 82px 18px 24px;
   }
@@ -1097,15 +1198,32 @@ h1 {
 @media (max-width: 560px) {
   .site-nav {
     top: 12px;
+    width: calc(100% - 24px);
     min-height: 50px;
-    padding: 0 10px;
-    gap: 8px;
+    padding: 0 12px;
   }
 
-  .site-nav a {
-    min-height: 31px;
-    padding: 0 13px;
+  .site-nav-brand span:last-child {
+    display: none;
+  }
+
+  .site-nav-mark {
+    width: 30px;
+    height: 30px;
+  }
+
+  .site-nav-links {
+    gap: 18px;
+  }
+
+  .site-nav-link {
+    min-height: 36px;
     font-size: 12px;
+  }
+
+  .site-nav-link:hover::after,
+  .site-nav-link-active::after {
+    width: 34px;
   }
 
   .page {
