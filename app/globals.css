@@ -66,8 +66,8 @@ body {
   padding: 88px 32px 32px;
   overflow: hidden;
   background:
-    radial-gradient(circle at 72% 0%, rgba(255, 47, 161, 0.12), transparent 36%),
-    radial-gradient(circle at 20% 26%, rgba(255, 111, 207, 0.08), transparent 32%),
+    radial-gradient(circle at 72% 0%, rgba(255, 47, 161, 0.1), transparent 36%),
+    radial-gradient(circle at 20% 26%, rgba(255, 111, 207, 0.07), transparent 32%),
     linear-gradient(180deg, #050308 0%, #07040b 48%, #050308 100%);
 }
 
@@ -87,47 +87,50 @@ body {
   left: 50%;
   z-index: 0;
   width: 100vw;
-  height: 880px;
+  height: 1040px;
   transform: translateX(-50%);
   background-image:
-    linear-gradient(90deg, rgba(5, 3, 8, 0.98) 0%, rgba(5, 3, 8, 0.9) 30%, rgba(5, 3, 8, 0.28) 63%, rgba(5, 3, 8, 0.5) 100%),
+    linear-gradient(
+      180deg,
+      rgba(5, 3, 8, 0) 0%,
+      rgba(5, 3, 8, 0.04) 45%,
+      rgba(5, 3, 8, 0.28) 62%,
+      rgba(5, 3, 8, 0.68) 78%,
+      #050308 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(5, 3, 8, 0.98) 0%,
+      rgba(5, 3, 8, 0.9) 30%,
+      rgba(5, 3, 8, 0.26) 63%,
+      rgba(5, 3, 8, 0.5) 100%
+    ),
     url("/hero-banner.png");
-  background-size: cover, cover;
-  background-position: center, center right;
+  background-size: cover, cover, cover;
+  background-position: center, center, center right;
   pointer-events: none;
   -webkit-mask-image: linear-gradient(
     180deg,
     #000 0%,
-    #000 42%,
-    rgba(0, 0, 0, 0.92) 54%,
-    rgba(0, 0, 0, 0.68) 68%,
-    rgba(0, 0, 0, 0.28) 84%,
+    #000 50%,
+    rgba(0, 0, 0, 0.92) 62%,
+    rgba(0, 0, 0, 0.68) 76%,
+    rgba(0, 0, 0, 0.32) 90%,
     transparent 100%
   );
   mask-image: linear-gradient(
     180deg,
     #000 0%,
-    #000 42%,
-    rgba(0, 0, 0, 0.92) 54%,
-    rgba(0, 0, 0, 0.68) 68%,
-    rgba(0, 0, 0, 0.28) 84%,
+    #000 50%,
+    rgba(0, 0, 0, 0.92) 62%,
+    rgba(0, 0, 0, 0.68) 76%,
+    rgba(0, 0, 0, 0.32) 90%,
     transparent 100%
   );
 }
 
 .home-page::after {
-  content: "";
-  position: absolute;
-  top: 520px;
-  left: 50%;
-  z-index: 0;
-  width: 100vw;
-  height: 380px;
-  transform: translateX(-50%);
-  background:
-    radial-gradient(circle at 72% 0%, rgba(255, 47, 161, 0.08), transparent 42%),
-    linear-gradient(180deg, rgba(5, 3, 8, 0), #050308 82%);
-  pointer-events: none;
+  display: none;
 }
 
 .background {
@@ -135,13 +138,7 @@ body {
 }
 
 .overlay {
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(circle at 70% 8%, rgba(255, 47, 161, 0.1), transparent 34%),
-    linear-gradient(180deg, rgba(4, 3, 7, 0.05), rgba(4, 3, 7, 0.66) 62%, rgba(4, 3, 7, 1));
-  z-index: 1;
-  pointer-events: none;
+  display: none;
 }
 
 .card {
@@ -182,14 +179,7 @@ body {
 }
 
 .hero-banner::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background:
-    radial-gradient(circle at 72% 34%, rgba(255, 47, 161, 0.15), transparent 30%),
-    linear-gradient(180deg, rgba(5, 3, 8, 0.02) 0%, rgba(5, 3, 8, 0.08) 52%, rgba(5, 3, 8, 0.42) 78%, rgba(5, 3, 8, 0.76) 100%);
-  pointer-events: none;
+  display: none;
 }
 
 .hero-banner::after {
@@ -1021,32 +1011,40 @@ h1 {
   }
 
   .home-page::before {
-    height: 880px;
+    height: 1040px;
     background-image:
-      linear-gradient(90deg, rgba(5, 3, 8, 0.96) 0%, rgba(5, 3, 8, 0.78) 52%, rgba(5, 3, 8, 0.46) 100%),
+      linear-gradient(
+        180deg,
+        rgba(5, 3, 8, 0) 0%,
+        rgba(5, 3, 8, 0.08) 44%,
+        rgba(5, 3, 8, 0.38) 66%,
+        rgba(5, 3, 8, 0.76) 82%,
+        #050308 100%
+      ),
+      linear-gradient(
+        90deg,
+        rgba(5, 3, 8, 0.96) 0%,
+        rgba(5, 3, 8, 0.78) 52%,
+        rgba(5, 3, 8, 0.46) 100%
+      ),
       url("/hero-banner.png");
-    background-position: center, center;
+    background-position: center, center, center;
     -webkit-mask-image: linear-gradient(
       180deg,
       #000 0%,
-      #000 44%,
-      rgba(0, 0, 0, 0.82) 62%,
-      rgba(0, 0, 0, 0.38) 82%,
+      #000 52%,
+      rgba(0, 0, 0, 0.84) 68%,
+      rgba(0, 0, 0, 0.46) 86%,
       transparent 100%
     );
     mask-image: linear-gradient(
       180deg,
       #000 0%,
-      #000 44%,
-      rgba(0, 0, 0, 0.82) 62%,
-      rgba(0, 0, 0, 0.38) 82%,
+      #000 52%,
+      rgba(0, 0, 0, 0.84) 68%,
+      rgba(0, 0, 0, 0.46) 86%,
       transparent 100%
     );
-  }
-
-  .home-page::after {
-    top: 520px;
-    height: 360px;
   }
 
   .hero-banner {
@@ -1119,12 +1117,7 @@ h1 {
   }
 
   .home-page::before {
-    height: 830px;
-  }
-
-  .home-page::after {
-    top: 480px;
-    height: 350px;
+    height: 980px;
   }
 
   .hero-banner {
