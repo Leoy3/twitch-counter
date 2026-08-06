@@ -8,7 +8,7 @@ const STREAM_HOUR_US = 15;
 const STREAM_MINUTE_US = 0;
 
 const WAIT_AFTER_STREAM_MS = 60 * 60 * 1000;
-const VODS_PER_PAGE = 4;
+const VODS_PER_PAGE = 3;
 
 const BRAINCELLS_TOP = {
   month: "August",
@@ -23,6 +23,17 @@ const BRAINCELLS_TOP = {
     braincells: 96
   }
 };
+
+const HOME_FANARTS = [
+  {
+    image: "/fanart/fanart-01.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-02.png",
+    artist: ""
+  }
+];
 
 const SOCIAL_LINKS = [
   {
@@ -537,235 +548,276 @@ export default function Home() {
     startBraincellsAnimation();
   }, [braincellsVisible, statusLoaded, vodsLoaded, startBraincellsAnimation]);
 
-  const channelName = status?.displayName || status?.channel || "The channel";
-  const channelUrl = status?.url || "#";
+  const channelName = status?.displayName || status?.channel || "eatfreshbrains";
+  const channelUrl = status?.url || "https://www.twitch.tv/eatfreshbrains";
   const vods = getVisibleVods();
   const vodPages = chunkVods(vods);
   const videosUrl = vodsData?.videosUrl || `${channelUrl}/videos`;
+  const featuredFanart = HOME_FANARTS[0] || null;
 
   const canGoPrevious = vodPageIndex > 0;
   const canGoNext = vodPageIndex < vodPages.length - 1;
 
   return (
-    <main className="page">
+    <main className="page home-page">
       <div className="background"></div>
       <div className="overlay"></div>
 
-      <section className="card hero-card">
-        {error ? (
-          <>
-            <p className="label">Error</p>
-            <h1>{error}</h1>
-          </>
-        ) : !status ? (
-          <>
-            <p className="label">Loading</p>
-            <h1>Checking stream status...</h1>
-          </>
-        ) : status.isLive ? (
-          <>
-            <p className="label live-dot">Live now</p>
+      <section className="hero-banner">
+        <div className="hero-content">
+          {error ? (
+            <>
+              <p className="label">Error</p>
+              <h1>{error}</h1>
+            </>
+          ) : !status ? (
+            <>
+              <p className="label">Loading</p>
+              <h1>Checking stream status...</h1>
+            </>
+          ) : status.isLive ? (
+            <>
+              <p className="label live-dot">Live now</p>
 
-            <h1>
-              <span className="channel-name">{channelName}</span> is live right now
-            </h1>
+              <h1>
+                <span className="channel-name">{channelName}</span>
+                <br />
+                is live right now!
+              </h1>
 
-            {status.title ? <p className="stream-title">{status.title}</p> : null}
-            {status.gameName ? <p className="game-name">{status.gameName}</p> : null}
+              {status.title ? <p className="stream-title">{status.title}</p> : null}
+              {status.gameName ? <p className="game-name">{status.gameName}</p> : null}
 
-            <a className="button" href={channelUrl} target="_blank" rel="noreferrer">
-              Watch on Twitch
-            </a>
-          </>
-        ) : streamPhase === "waiting" ? (
-          <>
-            <p className="label">Waiting for stream</p>
+              <div className="hero-actions">
+                <a className="button hero-button" href={channelUrl} target="_blank" rel="noreferrer">
+                  Watch on Twitch
+                </a>
 
-            <h1>
-              Waiting for <span className="channel-name">{channelName}</span>'s stream
-            </h1>
+                {status.viewerCount ? (
+                  <div className="viewer-badge">
+                    <strong>{status.viewerCount}</strong>
+                    <span>Viewers</span>
+                  </div>
+                ) : null}
+              </div>
+            </>
+          ) : streamPhase === "waiting" ? (
+            <>
+              <p className="label">Waiting for stream</p>
 
-            <div className="countdown">Waiting...</div>
+              <h1>
+                Waiting for <span className="channel-name">{channelName}</span>
+              </h1>
 
-            <p className="time-note">
-              Checking if the stream is live. If it does not start in{" "}
-              {waitingCountdown}, the timer will move to the next stream.
-            </p>
+              <p className="stream-title">
+                Checking if the stream is live. If it does not start in{" "}
+                {waitingCountdown}, the timer will move to the next stream.
+              </p>
 
-            <a className="button secondary" href={channelUrl} target="_blank" rel="noreferrer">
-              Open channel
-            </a>
-          </>
-        ) : (
-          <>
-            <p className="label">Next stream</p>
+              <div className="hero-actions">
+                <a className="button hero-button secondary" href={channelUrl} target="_blank" rel="noreferrer">
+                  Open channel
+                </a>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="label">Next stream</p>
 
-            <h1>
-              Time remaining until{" "}
-              <span className="channel-name">{channelName}</span>'s stream
-            </h1>
+              <h1>
+                <span className="channel-name">{channelName}</span>
+                <br />
+                starts soon
+              </h1>
 
-            <div className="countdown">{countdown}</div>
+              <div className="countdown">{countdown}</div>
 
-            <p className="time-note">
-              The stream starts at 3:00 PM United States ET.
-            </p>
+              <p className="time-note">
+                The stream starts at 3:00 PM United States ET.
+              </p>
 
-            <a className="button secondary" href={channelUrl} target="_blank" rel="noreferrer">
-              Open channel
-            </a>
-          </>
-        )}
-
-        <div className="reference-times">
-          <span>Reference times</span>
-
-          <div className="reference-times-row">
-            <p>United States ET: 3:00 PM</p>
-            <p>Mexico City: 1:00 PM</p>
-          </div>
-        </div>
-
-        <div className="social-footer">
-          {SOCIAL_LINKS.map((link) => (
-            <a
-              key={link.label}
-              className="social-button"
-              href={link.url}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {link.label}
-            </a>
-          ))}
+              <div className="hero-actions">
+                <a className="button hero-button secondary" href={channelUrl} target="_blank" rel="noreferrer">
+                  Open channel
+                </a>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
-      <section className="card vods-card">
-        <div className="vods-header">
-          <div>
-            <h2>Latest streams</h2>
+      <section className="home-grid">
+        <section className="card panel-card streams-panel">
+          <div className="panel-header">
+            <h2>Latest Streams</h2>
+
+            <a className="view-all-button" href={videosUrl} target="_blank" rel="noreferrer">
+              View all
+            </a>
           </div>
 
-          <a className="view-all-button" href={videosUrl} target="_blank" rel="noreferrer">
-            View all
-          </a>
-        </div>
+          {vodsError ? (
+            <p className="vods-message">{vodsError}</p>
+          ) : !vodsData ? (
+            <div className="vods-loading-area">
+              <p className="vods-message">Loading recent broadcasts...</p>
 
-        {vodsError ? (
-          <p className="vods-message">{vodsError}</p>
-        ) : !vodsData ? (
-          <div className="vods-loading-area">
-            <p className="vods-message">Loading recent broadcasts...</p>
-
-            <div className="vods-skeleton-grid" aria-hidden="true">
-              {[0, 1, 2, 3].map((item) => (
-                <div className="vod-skeleton-card" key={item}>
-                  <div className="vod-skeleton-thumb"></div>
-                  <div className="vod-skeleton-line vod-skeleton-line-title"></div>
-                  <div className="vod-skeleton-line vod-skeleton-line-meta"></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : vods.length === 0 ? (
-          <p className="vods-message">No recent broadcasts found.</p>
-        ) : (
-          <div className="vods-carousel">
-            {canGoPrevious ? (
-              <button
-                className="vods-arrow-button vods-arrow-left"
-                type="button"
-                onClick={slideVodsPrevious}
-                aria-label="Previous broadcasts"
-              >
-                <span className="vods-arrow-icon vods-arrow-icon-left"></span>
-              </button>
-            ) : null}
-
-            <div className="vods-viewport">
-              <div
-                className="vods-pages-track"
-                style={{
-                  transform: `translateX(-${vodPageIndex * 100}%)`
-                }}
-              >
-                {vodPages.map((page, pageIndex) => (
-                  <div className="vods-page" key={`vod-page-${pageIndex}`}>
-                    {page.map((vod) => (
-                      <a
-                        key={vod.id}
-                        className="vod-card"
-                        href={vod.url}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        <div className="vod-thumbnail-wrap">
-                          {vod.thumbnailUrl ? (
-                            <img className="vod-thumbnail" src={vod.thumbnailUrl} alt={vod.title} />
-                          ) : (
-                            <div className="vod-thumbnail-placeholder"></div>
-                          )}
-
-                          <span className="vod-duration">{vod.duration}</span>
-                        </div>
-
-                        <div className="vod-info">
-                          <h3>{vod.title}</h3>
-
-                          <p>
-                            {formatViews(vod.viewCount)} · {formatTimeAgo(vod.createdAt)}
-                          </p>
-                        </div>
-                      </a>
-                    ))}
+              <div className="vods-skeleton-grid" aria-hidden="true">
+                {[0, 1, 2].map((item) => (
+                  <div className="vod-skeleton-card" key={item}>
+                    <div className="vod-skeleton-thumb"></div>
+                    <div className="vod-skeleton-line vod-skeleton-line-title"></div>
+                    <div className="vod-skeleton-line vod-skeleton-line-meta"></div>
                   </div>
                 ))}
               </div>
             </div>
+          ) : vods.length === 0 ? (
+            <p className="vods-message">No recent broadcasts found.</p>
+          ) : (
+            <div className="vods-carousel">
+              {canGoPrevious ? (
+                <button
+                  className="vods-arrow-button vods-arrow-left"
+                  type="button"
+                  onClick={slideVodsPrevious}
+                  aria-label="Previous broadcasts"
+                >
+                  <span className="vods-arrow-icon vods-arrow-icon-left"></span>
+                </button>
+              ) : null}
 
-            {canGoNext ? (
-              <button
-                className="vods-arrow-button vods-arrow-right"
-                type="button"
-                onClick={slideVodsNext}
-                aria-label="Next broadcasts"
-              >
-                <span className="vods-arrow-icon vods-arrow-icon-right"></span>
-              </button>
-            ) : null}
-          </div>
-        )}
-      </section>
+              <div className="vods-viewport">
+                <div
+                  className="vods-pages-track"
+                  style={{
+                    transform: `translateX(-${vodPageIndex * 100}%)`
+                  }}
+                >
+                  {vodPages.map((page, pageIndex) => (
+                    <div className="vods-page" key={`vod-page-${pageIndex}`}>
+                      {page.map((vod) => (
+                        <a
+                          key={vod.id}
+                          className="vod-card"
+                          href={vod.url}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <div className="vod-thumbnail-wrap">
+                            {vod.thumbnailUrl ? (
+                              <img className="vod-thumbnail" src={vod.thumbnailUrl} alt={vod.title} />
+                            ) : (
+                              <div className="vod-thumbnail-placeholder"></div>
+                            )}
 
-      <section className="card braincells-card" ref={braincellsSectionRef}>
-        <div className="braincells-header">
-          <div>
-            <p className="label braincells-label">{BRAINCELLS_TOP.month}</p>
+                            <span className="vod-duration">{vod.duration}</span>
+                          </div>
+
+                          <div className="vod-info">
+                            <h3>{vod.title}</h3>
+
+                            <p>
+                              {formatTimeAgo(vod.createdAt)} · {formatViews(vod.viewCount)}
+                            </p>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {canGoNext ? (
+                <button
+                  className="vods-arrow-button vods-arrow-right"
+                  type="button"
+                  onClick={slideVodsNext}
+                  aria-label="Next broadcasts"
+                >
+                  <span className="vods-arrow-icon vods-arrow-icon-right"></span>
+                </button>
+              ) : null}
+            </div>
+          )}
+        </section>
+
+        <section className="card panel-card braincells-panel" ref={braincellsSectionRef}>
+          <div className="panel-header">
             <h2>Monthly Braincells</h2>
+            <span className="panel-month">{BRAINCELLS_TOP.month}</span>
           </div>
+
+          <div className="braincells-stack">
+            <div className="braincell-feature braincell-feature-high">
+              <p>{BRAINCELLS_TOP.highest.title}</p>
+              <strong>{formatBraincells(animatedBraincells.highest)}</strong>
+              <span>{BRAINCELLS_TOP.highest.username}</span>
+            </div>
+
+            <div className="braincell-feature braincell-feature-low">
+              <p>{BRAINCELLS_TOP.lowest.title}</p>
+              <strong>{formatBraincells(animatedBraincells.lowest)}</strong>
+              <span>{BRAINCELLS_TOP.lowest.username}</span>
+            </div>
+          </div>
+        </section>
+
+        <section className="card panel-card fanart-spotlight-card">
+          <div className="panel-header">
+            <h2>Fanart Spotlight</h2>
+
+            <a className="view-all-button" href="/fanart">
+              View all
+            </a>
+          </div>
+
+          {featuredFanart ? (
+            <a className="fanart-spotlight" href="/fanart">
+              <img src={featuredFanart.image} alt={featuredFanart.artist || "Fanart"} />
+
+              {featuredFanart.artist ? (
+                <p>art by {featuredFanart.artist}</p>
+              ) : (
+                <p>Community fanart</p>
+              )}
+            </a>
+          ) : (
+            <p className="vods-message">No fanarts added yet.</p>
+          )}
+        </section>
+      </section>
+
+      <section className="community-cta">
+        <div className="community-cta-icon">♡</div>
+
+        <div className="community-cta-text">
+          <h2>Join the Community</h2>
+          <p>Follow the stream, check recent broadcasts, and browse community fanarts.</p>
         </div>
 
-        <div className="braincells-grid">
-          <div className="braincell-stat-card braincell-stat-high">
-            <p>{BRAINCELLS_TOP.highest.title}</p>
-            <div>
-              <h3>{BRAINCELLS_TOP.highest.username}</h3>
-              <strong>{formatBraincells(animatedBraincells.highest)}</strong>
-              <span>braincells</span>
-            </div>
-          </div>
+        <div className="community-cta-actions">
+          <a className="button secondary" href={channelUrl} target="_blank" rel="noreferrer">
+            Watch on Twitch
+          </a>
 
-          <div className="braincell-stat-card braincell-stat-low">
-            <p>{BRAINCELLS_TOP.lowest.title}</p>
-            <div>
-              <h3>{BRAINCELLS_TOP.lowest.username}</h3>
-              <strong>{formatBraincells(animatedBraincells.lowest)}</strong>
-              <span>braincells</span>
-            </div>
-          </div>
+          <a className="button" href="/fanart">
+            View Fanarts
+          </a>
         </div>
       </section>
+
+      <footer className="site-footer">
+        <p>© 2026 EatFreshBrains</p>
+
+        <div className="site-footer-links">
+          {SOCIAL_LINKS.map((link) => (
+            <a key={link.label} href={link.url} target="_blank" rel="noreferrer">
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </footer>
     </main>
   );
 }
