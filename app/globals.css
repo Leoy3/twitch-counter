@@ -66,17 +66,68 @@ body {
   padding: 88px 32px 32px;
   overflow: hidden;
   background:
-    radial-gradient(circle at 72% 0%, rgba(255, 47, 161, 0.13), transparent 34%),
+    radial-gradient(circle at 72% 0%, rgba(255, 47, 161, 0.12), transparent 36%),
     radial-gradient(circle at 20% 26%, rgba(255, 111, 207, 0.08), transparent 32%),
     linear-gradient(180deg, #050308 0%, #07040b 48%, #050308 100%);
 }
 
 .home-page {
+  position: relative;
   padding: 0 32px 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 22px;
+}
+
+.home-page::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 0;
+  width: 100vw;
+  height: 880px;
+  transform: translateX(-50%);
+  background-image:
+    linear-gradient(90deg, rgba(5, 3, 8, 0.98) 0%, rgba(5, 3, 8, 0.9) 30%, rgba(5, 3, 8, 0.28) 63%, rgba(5, 3, 8, 0.5) 100%),
+    url("/hero-banner.png");
+  background-size: cover, cover;
+  background-position: center, center right;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    #000 42%,
+    rgba(0, 0, 0, 0.92) 54%,
+    rgba(0, 0, 0, 0.68) 68%,
+    rgba(0, 0, 0, 0.28) 84%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    #000 42%,
+    rgba(0, 0, 0, 0.92) 54%,
+    rgba(0, 0, 0, 0.68) 68%,
+    rgba(0, 0, 0, 0.28) 84%,
+    transparent 100%
+  );
+}
+
+.home-page::after {
+  content: "";
+  position: absolute;
+  top: 520px;
+  left: 50%;
+  z-index: 0;
+  width: 100vw;
+  height: 380px;
+  transform: translateX(-50%);
+  background:
+    radial-gradient(circle at 72% 0%, rgba(255, 47, 161, 0.08), transparent 42%),
+    linear-gradient(180deg, rgba(5, 3, 8, 0), #050308 82%);
+  pointer-events: none;
 }
 
 .background {
@@ -87,8 +138,8 @@ body {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(circle at 70% 8%, rgba(255, 47, 161, 0.12), transparent 34%),
-    linear-gradient(180deg, rgba(4, 3, 7, 0.08), rgba(4, 3, 7, 0.72) 62%, rgba(4, 3, 7, 1));
+    radial-gradient(circle at 70% 8%, rgba(255, 47, 161, 0.1), transparent 34%),
+    linear-gradient(180deg, rgba(4, 3, 7, 0.05), rgba(4, 3, 7, 0.66) 62%, rgba(4, 3, 7, 1));
   z-index: 1;
   pointer-events: none;
 }
@@ -118,19 +169,15 @@ body {
 .hero-banner {
   position: relative;
   z-index: 2;
-  overflow: hidden;
+  overflow: visible;
   width: 100vw;
   min-height: 650px;
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
   border-radius: 0;
   border: 0;
-  background-image:
-    linear-gradient(90deg, rgba(5, 3, 8, 0.97) 0%, rgba(5, 3, 8, 0.86) 32%, rgba(5, 3, 8, 0.2) 64%, rgba(5, 3, 8, 0.48) 100%),
-    url("/hero-banner.png");
-  background-size: cover, cover;
-  background-position: center, center right;
-  box-shadow: 0 34px 120px rgba(255, 47, 161, 0.1);
+  background: transparent;
+  box-shadow: none;
   animation-delay: 0.05s;
 }
 
@@ -138,28 +185,15 @@ body {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 0;
   background:
-    radial-gradient(circle at 72% 34%, rgba(255, 47, 161, 0.18), transparent 30%),
-    linear-gradient(180deg, rgba(5, 3, 8, 0.05) 0%, rgba(5, 3, 8, 0.02) 42%, rgba(5, 3, 8, 0.38) 72%, rgba(5, 3, 8, 0.94) 100%);
+    radial-gradient(circle at 72% 34%, rgba(255, 47, 161, 0.15), transparent 30%),
+    linear-gradient(180deg, rgba(5, 3, 8, 0.02) 0%, rgba(5, 3, 8, 0.08) 52%, rgba(5, 3, 8, 0.42) 78%, rgba(5, 3, 8, 0.76) 100%);
   pointer-events: none;
 }
 
 .hero-banner::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 240px;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(5, 3, 8, 0) 0%,
-      rgba(5, 3, 8, 0.28) 28%,
-      rgba(5, 3, 8, 0.72) 64%,
-      #050308 100%
-    );
-  pointer-events: none;
+  display: none;
 }
 
 .hero-content {
@@ -333,7 +367,7 @@ h1 {
   display: grid;
   grid-template-columns: minmax(0, 1.55fr) minmax(260px, 0.8fr) minmax(260px, 0.8fr);
   gap: 14px;
-  margin-top: -92px;
+  margin-top: -132px;
 }
 
 .panel-card {
@@ -986,12 +1020,37 @@ h1 {
     padding: 0 18px 24px;
   }
 
-  .hero-banner {
-    min-height: 620px;
+  .home-page::before {
+    height: 880px;
     background-image:
       linear-gradient(90deg, rgba(5, 3, 8, 0.96) 0%, rgba(5, 3, 8, 0.78) 52%, rgba(5, 3, 8, 0.46) 100%),
       url("/hero-banner.png");
     background-position: center, center;
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      #000 0%,
+      #000 44%,
+      rgba(0, 0, 0, 0.82) 62%,
+      rgba(0, 0, 0, 0.38) 82%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      180deg,
+      #000 0%,
+      #000 44%,
+      rgba(0, 0, 0, 0.82) 62%,
+      rgba(0, 0, 0, 0.38) 82%,
+      transparent 100%
+    );
+  }
+
+  .home-page::after {
+    top: 520px;
+    height: 360px;
+  }
+
+  .hero-banner {
+    min-height: 620px;
   }
 
   .hero-content {
@@ -1005,7 +1064,7 @@ h1 {
 
   .home-grid {
     grid-template-columns: 1fr;
-    margin-top: -70px;
+    margin-top: -92px;
   }
 
   .vods-page,
@@ -1057,6 +1116,15 @@ h1 {
 
   .home-page {
     padding: 0 14px 20px;
+  }
+
+  .home-page::before {
+    height: 830px;
+  }
+
+  .home-page::after {
+    top: 480px;
+    height: 350px;
   }
 
   .hero-banner {
