@@ -6,6 +6,28 @@ export const metadata = {
   description: "Countdown until the next eatfreshbrains stream"
 };
 
+function MaskIcon({ url, size = 19 }) {
+  return (
+    <span
+      aria-hidden="true"
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        display: "block",
+        backgroundColor: "currentColor",
+        WebkitMaskImage: `url("${url}")`,
+        maskImage: `url("${url}")`,
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+        WebkitMaskPosition: "center",
+        maskPosition: "center",
+        WebkitMaskSize: "contain",
+        maskSize: "contain"
+      }}
+    />
+  );
+}
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -34,12 +56,10 @@ export default function RootLayout({ children }) {
               aria-label="Twitch"
               title="Twitch"
             >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  fill="currentColor"
-                  d="M4.3 3h16.4v11.2l-4.7 4.7h-3.8L9.8 21H7.1v-2.1H3.3V6.8L4.3 3Zm2.1 2.1v11.7h4v2.1l2.1-2.1h3.8l2.3-2.3V5.1H6.4Zm3.8 3.2h2.1v5.7h-2.1V8.3Zm5.2 0h2.1v5.7h-2.1V8.3Z"
-                />
-              </svg>
+              <MaskIcon
+                url="https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/twitch.svg"
+                size={19}
+              />
             </a>
 
             <a
@@ -82,16 +102,10 @@ export default function RootLayout({ children }) {
               aria-label="VGen"
               title="VGen"
             >
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path
-                  fill="currentColor"
-                  d="M2.8 4.2h4.3l4.9 12.1 4.9-12.1h4.3L14.3 20h-4.6L2.8 4.2Z"
-                />
-                <path
-                  fill="currentColor"
-                  d="M15.2 13.3h5.9v2.1h-3.5v1.2h3.1v2h-3.1V20h-2.4v-6.7Z"
-                />
-              </svg>
+              <MaskIcon
+                url="https://help.vgen.co/hc/article_attachments/13004249258519"
+                size={21}
+              />
             </a>
 
             <a
