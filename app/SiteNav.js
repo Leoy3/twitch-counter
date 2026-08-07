@@ -9,6 +9,28 @@ function getLinkClassName(isActive) {
     : "site-nav-link";
 }
 
+function MaskIcon({ url, size = 19 }) {
+  return (
+    <span
+      aria-hidden="true"
+      style={{
+        width: `${size}px`,
+        height: `${size}px`,
+        display: "block",
+        backgroundColor: "currentColor",
+        WebkitMaskImage: `url("${url}")`,
+        maskImage: `url("${url}")`,
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+        WebkitMaskPosition: "center",
+        maskPosition: "center",
+        WebkitMaskSize: "contain",
+        maskSize: "contain"
+      }}
+    />
+  );
+}
+
 export default function SiteNav() {
   const pathname = usePathname();
 
@@ -41,12 +63,10 @@ export default function SiteNav() {
           aria-label="Twitch"
           title="Twitch"
         >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              fill="currentColor"
-              d="M4.3 3h16.4v11.2l-4.7 4.7h-3.8L9.8 21H7.1v-2.1H3.3V6.8L4.3 3Zm2.1 2.1v11.7h4v2.1l2.1-2.1h3.8l2.3-2.3V5.1H6.4Zm3.8 3.2h2.1v5.7h-2.1V8.3Zm5.2 0h2.1v5.7h-2.1V8.3Z"
-            />
-          </svg>
+          <MaskIcon
+            url="https://upload.wikimedia.org/wikipedia/commons/4/41/Twitch_Glitch_Logo_White.svg"
+            size={18}
+          />
         </a>
 
         <a
@@ -89,12 +109,10 @@ export default function SiteNav() {
           aria-label="VGen"
           title="VGen"
         >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              fill="currentColor"
-              d="M2.8 4.2h4.3l4.9 12.1 4.9-12.1h4.3L14.3 20h-4.6L2.8 4.2Z"
-            />
-          </svg>
+          <MaskIcon
+            url="https://help.vgen.co/hc/article_attachments/13004232167575"
+            size={21}
+          />
         </a>
 
         <a
