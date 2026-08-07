@@ -10,7 +10,129 @@ const FANARTS = [
   {
     image: "/fanart/fanart-02.png",
     artist: ""
+  },
+   {
+    image: "/fanart/fanart-03.png",
+    artist: ""
+  },
+   {
+    image: "/fanart/fanart-04.png",
+    artist: ""
+  }, 
+  {
+    image: "/fanart/fanart-05.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-06.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-07.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-08.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-09.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-10.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-11.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-12.jpg",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-13.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-14.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-15.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-16.jpg",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-17.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-18.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-19.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-20.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-21.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-22.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-23.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-24.jpg",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-25.png",
+    artist: ""
+  },
+
+    {
+    image: "/fanart/fanart-26.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-27.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-28.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-29.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-30.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-31.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-32.png",
+    artist: ""
   }
+  
 ];
 
 export default function FanartPage() {
