@@ -41,8 +41,8 @@ export default function FanartPage() {
 
       <section className="fanart-gallery-hero">
         <p className="label fanart-label">Community</p>
-        <h1>Fanart Gallery</h1>
-        <p>Latest fanarts made by the community.</p>
+        <h1>Art Gallery</h1>
+        <p>Latest artwork made by the community.</p>
       </section>
 
       <section className="card fanart-card">
@@ -54,7 +54,7 @@ export default function FanartPage() {
               type="button"
               onClick={() => setSelectedFanart(fanart)}
             >
-              <img src={fanart.image} alt={fanart.artist || "Fanart"} />
+              <img src={fanart.image} alt={fanart.artist || "Artwork"} />
 
               {fanart.artist ? (
                 <span>by {fanart.artist}</span>
@@ -70,7 +70,7 @@ export default function FanartPage() {
             className="fanart-modal-close"
             type="button"
             onClick={closeModal}
-            aria-label="Close fanart preview"
+            aria-label="Close artwork preview"
           >
             ×
           </button>
@@ -81,7 +81,7 @@ export default function FanartPage() {
           >
             <img
               src={selectedFanart.image}
-              alt={selectedFanart.artist || "Fanart"}
+              alt={selectedFanart.artist || "Artwork"}
             />
 
             {selectedFanart.artist ? (
