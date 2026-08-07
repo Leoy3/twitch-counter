@@ -3,19 +3,22 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+const VGEN_ICON_MASK =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 46'%3E%3Cg fill='none' stroke='%23000' stroke-width='7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M8 21C13 12 23 12 29 21L36 32L47 12C52 3 66 6 68 17C70 28 60 38 48 36C41 35 36 30 32 23L27 34C22 44 7 40 5 29'/%3E%3C/g%3E%3Ccircle cx='57' cy='17' r='5.5' fill='%23000'/%3E%3C/svg%3E";
+
 function getLinkClassName(isActive) {
   return isActive
     ? "site-nav-link site-nav-link-active"
     : "site-nav-link";
 }
 
-function MaskIcon({ url, size = 19 }) {
+function MaskIcon({ url, width = 19, height = 19 }) {
   return (
     <span
       aria-hidden="true"
       style={{
-        width: `${size}px`,
-        height: `${size}px`,
+        width: `${width}px`,
+        height: `${height}px`,
         display: "block",
         backgroundColor: "currentColor",
         WebkitMaskImage: `url("${url}")`,
@@ -65,7 +68,8 @@ export default function SiteNav() {
         >
           <MaskIcon
             url="https://upload.wikimedia.org/wikipedia/commons/4/41/Twitch_Glitch_Logo_White.svg"
-            size={18}
+            width={18}
+            height={18}
           />
         </a>
 
@@ -102,25 +106,14 @@ export default function SiteNav() {
         </a>
 
         <a
-          className="site-nav-icon site-nav-vgen-icon"
+          className="site-nav-icon"
           href="https://vgen.co/eatfreshbrains"
           target="_blank"
           rel="noreferrer"
           aria-label="VGen"
           title="VGen"
         >
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/c/c6/VGen_icon.png"
-            alt=""
-            aria-hidden="true"
-            style={{
-              width: "20px",
-              height: "20px",
-              display: "block",
-              objectFit: "contain",
-              borderRadius: "999px"
-            }}
-          />
+          <MaskIcon url={VGEN_ICON_MASK} width={23} height={17} />
         </a>
 
         <a
