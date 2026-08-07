@@ -40,9 +40,8 @@ export default function FanartPage() {
       <div className="overlay"></div>
 
       <section className="fanart-gallery-hero">
-        <p className="label fanart-label">Community</p>
+        <p className="label fanart-label">Brains</p>
         <h1>Art Gallery</h1>
-        <p>Latest artwork made by the community.</p>
       </section>
 
       <section className="card fanart-card">
