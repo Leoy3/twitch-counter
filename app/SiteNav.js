@@ -102,19 +102,25 @@ export default function SiteNav() {
         </a>
 
         <a
-          className="site-nav-icon"
+          className="site-nav-icon site-nav-vgen-icon"
           href="https://vgen.co/eatfreshbrains"
           target="_blank"
           rel="noreferrer"
           aria-label="VGen"
           title="VGen"
         >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              fill="currentColor"
-              d="M2.8 4.2h4.3l4.9 12.1 4.9-12.1h4.3L14.3 20h-4.6L2.8 4.2Z"
-            />
-          </svg>
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/c/c6/VGen_icon.png"
+            alt=""
+            aria-hidden="true"
+            style={{
+              width: "20px",
+              height: "20px",
+              display: "block",
+              objectFit: "contain",
+              borderRadius: "999px"
+            }}
+          />
         </a>
 
         <a
