@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 const FANARTS = [
   {
     image: "/fanart/fanart-01.png",
-    artist: "@Santa"
+    artist: ""
   },
   {
     image: "/fanart/fanart-02.png",
