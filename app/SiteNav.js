@@ -109,11 +109,12 @@ export default function SiteNav() {
           rel="noreferrer"
           aria-label="VGen"
           title="VGen"
+          style={{ width: "28px" }}
         >
           <MaskIcon
             url="https://help.vgen.co/hc/article_attachments/13004249258519"
-            width={22}
-            height={18}
+            width={26}
+            height={21}
           />
         </a>
 
