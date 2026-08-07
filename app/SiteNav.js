@@ -9,13 +9,13 @@ function getLinkClassName(isActive) {
     : "site-nav-link";
 }
 
-function MaskIcon({ url, size = 19 }) {
+function MaskIcon({ url, width = 19, height = 19 }) {
   return (
     <span
       aria-hidden="true"
       style={{
-        width: `${size}px`,
-        height: `${size}px`,
+        width: `${width}px`,
+        height: `${height}px`,
         display: "block",
         backgroundColor: "currentColor",
         WebkitMaskImage: `url("${url}")`,
@@ -65,7 +65,8 @@ export default function SiteNav() {
         >
           <MaskIcon
             url="https://upload.wikimedia.org/wikipedia/commons/4/41/Twitch_Glitch_Logo_White.svg"
-            size={18}
+            width={18}
+            height={18}
           />
         </a>
 
@@ -108,10 +109,12 @@ export default function SiteNav() {
           rel="noreferrer"
           aria-label="VGen"
           title="VGen"
+          style={{ width: "34px" }}
         >
           <MaskIcon
-            url="https://upload.wikimedia.org/wikipedia/commons/6/6c/VGen_icon_-_filled.png"
-            size={19}
+            url="https://upload.wikimedia.org/wikipedia/commons/f/f4/VGen_logo.png"
+            width={32}
+            height={14}
           />
         </a>
 
