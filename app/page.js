@@ -765,7 +765,7 @@ export default function Home() {
 
         <section className="card panel-card fanart-spotlight-card">
           <div className="panel-header">
-            <h2>Fanart Spotlight</h2>
+            <h2>Art Gallery</h2>
 
             <a className="view-all-button" href="/fanart">
               View all
@@ -774,16 +774,16 @@ export default function Home() {
 
           {featuredFanart ? (
             <a className="fanart-spotlight" href="/fanart">
-              <img src={featuredFanart.image} alt={featuredFanart.artist || "Fanart"} />
+              <img src={featuredFanart.image} alt={featuredFanart.artist || "Artwork"} />
 
               {featuredFanart.artist ? (
                 <p>art by {featuredFanart.artist}</p>
               ) : (
-                <p>Community fanart</p>
+                <p>Community artwork</p>
               )}
             </a>
           ) : (
-            <p className="vods-message">No fanarts added yet.</p>
+            <p className="vods-message">No artwork added yet.</p>
           )}
         </section>
       </section>
@@ -793,7 +793,7 @@ export default function Home() {
 
         <div className="community-cta-text">
           <h2>Join the Community</h2>
-          <p>Follow the stream, check recent broadcasts, and browse community fanarts.</p>
+          <p>Follow the stream, check recent broadcasts, and browse community artwork.</p>
         </div>
 
         <div className="community-cta-actions">
@@ -802,7 +802,7 @@ export default function Home() {
           </a>
 
           <a className="button" href="/fanart">
-            View Fanarts
+            View Art Gallery
           </a>
         </div>
       </section>
