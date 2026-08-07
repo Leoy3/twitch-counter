@@ -109,10 +109,12 @@ export default function SiteNav() {
           aria-label="VGen"
           title="VGen"
         >
-          <MaskIcon
-            url="https://help.vgen.co/hc/article_attachments/13004232167575"
-            size={21}
-          />
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill="currentColor"
+              d="M2.8 4.2h4.4L12 16.1l4.8-11.9h4.4L14.2 20h-4.4L2.8 4.2Z"
+            />
+          </svg>
         </a>
 
         <a
