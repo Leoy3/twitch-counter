@@ -974,21 +974,7 @@ h1 {
 }
 
 .fanart-item span {
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
-  min-height: 34px;
-  padding: 0 12px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.72);
-  color: white;
-  font-size: 13px;
-  font-weight: 900;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(8px);
+  display: none;
 }
 
 .fanart-modal {
@@ -1004,11 +990,12 @@ h1 {
 }
 
 .fanart-modal-content {
-  width: min(980px, 100%);
+  width: fit-content;
+  max-width: min(980px, 100%);
   max-height: 86vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
 }
 
 .fanart-modal-content img {
@@ -1022,10 +1009,12 @@ h1 {
 }
 
 .fanart-modal-content p {
+  width: 100%;
   margin: 16px 0 0;
   color: rgba(255, 255, 255, 0.76);
   font-size: 15px;
   font-weight: 900;
+  text-align: left;
 }
 
 .fanart-modal-close {
