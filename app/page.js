@@ -19,8 +19,8 @@ const BRAINCELLS_TOP = {
   },
   lowest: {
     title: "Lowest braincells",
-    username: "Leoy",
-    braincells: 234
+    username: "bobabullets",
+    braincells: 208
   }
 };
 
