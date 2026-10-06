@@ -14,8 +14,8 @@ const BRAINCELLS_TOP = {
   month: "October",
   highest: {
     title: "Highest braincells",
-    username: "TheRandomDonut",
-    braincells: 9904
+    username: "BeptoVT",
+    braincells: 9947
   },
   lowest: {
     title: "Lowest braincells",
