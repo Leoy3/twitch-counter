@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import FanartImage from "../FanartImage";
+import { useEffect, useRef, useState } from "react";
+import FanartImage, { preloadFanartImage } from "../FanartImage";
 
 const THUMBNAIL_SIZES = "(max-width: 560px) 100vw, (max-width: 760px) 50vw, 360px";
 const PREVIEW_SIZES = "(max-width: 1028px) 100vw, 980px";
+const PREVIEW_QUALITY = 90;
+const PRELOAD_HOVER_DELAY_MS = 120;
 
 const FANARTS = [
   {
@@ -139,9 +141,66 @@ const FANARTS = [
   
 ];
 
+function preloadPreview(fanart) {
+  preloadFanartImage({
+    src: fanart.image,
+    sizes: PREVIEW_SIZES,
+    quality: PREVIEW_QUALITY
+  });
+}
+
+function FanartPreview({ fanart }) {
+  const [ratio, setRatio] = useState(fanart.ratio || 1);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  function handleLoad(image) {
+    if (image && image.naturalWidth > 0 && image.naturalHeight > 0) {
+      setRatio(image.naturalWidth / image.naturalHeight);
+    }
+
+    setIsLoaded(true);
+  }
+
+  return (
+    <div
+      className={isLoaded ? "fanart-preview fanart-preview-loaded" : "fanart-preview"}
+      style={{ "--fanart-ratio": ratio }}
+    >
+      {fanart.thumbnail ? (
+        <img src={fanart.thumbnail} alt="" aria-hidden="true" />
+      ) : null}
+
+      <FanartImage
+        className="fanart-preview-full"
+        src={fanart.image}
+        alt={fanart.artist || "Artwork"}
+        sizes={PREVIEW_SIZES}
+        quality={PREVIEW_QUALITY}
+        loading="eager"
+        onLoad={handleLoad}
+      />
+    </div>
+  );
+}
+
 export default function FanartPage() {
+  const preloadTimerRef = useRef(null);
   const [selectedFanart, setSelectedFanart] = useState(null);
   const [loadedFanarts, setLoadedFanarts] = useState({});
+
+  function openFanart(fanart, button) {
+    const thumbnail = button.querySelector("img");
+    const isThumbnailReady =
+      thumbnail && thumbnail.complete && thumbnail.naturalWidth > 0;
+
+    setSelectedFanart({
+      ...fanart,
+      thumbnail: isThumbnailReady ? thumbnail.currentSrc : null,
+      ratio: isThumbnailReady
+        ? thumbnail.naturalWidth / thumbnail.naturalHeight
+        : null
+    });
+  }
 
   function closeModal() {
     setSelectedFanart(null);
@@ -149,6 +208,18 @@ export default function FanartPage() {
 
   function markFanartLoaded(index) {
     setLoadedFanarts((current) => ({ ...current, [index]: true }));
+  }
+
+  function schedulePreload(fanart) {
+    clearTimeout(preloadTimerRef.current);
+    preloadTimerRef.current = setTimeout(
+      () => preloadPreview(fanart),
+      PRELOAD_HOVER_DELAY_MS
+    );
+  }
+
+  function cancelPreload() {
+    clearTimeout(preloadTimerRef.current);
   }
 
   useEffect(() => {
@@ -162,6 +233,7 @@ export default function FanartPage() {
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
+      clearTimeout(preloadTimerRef.current);
     };
   }, []);
 
@@ -186,7 +258,11 @@ export default function FanartPage() {
               }
               key={`${fanart.image}-${index}`}
               type="button"
-              onClick={() => setSelectedFanart(fanart)}
+              onPointerEnter={() => schedulePreload(fanart)}
+              onPointerLeave={cancelPreload}
+              onPointerDown={() => preloadPreview(fanart)}
+              onFocus={() => preloadPreview(fanart)}
+              onClick={(event) => openFanart(fanart, event.currentTarget)}
             >
               <FanartImage
                 src={fanart.image}
@@ -218,14 +294,7 @@ export default function FanartPage() {
             className="fanart-modal-content"
             onClick={(event) => event.stopPropagation()}
           >
-            <FanartImage
-              key={selectedFanart.image}
-              src={selectedFanart.image}
-              alt={selectedFanart.artist || "Artwork"}
-              sizes={PREVIEW_SIZES}
-              quality={90}
-              loading="eager"
-            />
+            <FanartPreview key={selectedFanart.image} fanart={selectedFanart} />
 
             <div className="fanart-modal-footer">
               {selectedFanart.artist ? (
