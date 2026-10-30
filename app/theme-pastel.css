@@ -875,6 +875,10 @@ h1 {
   color: var(--ink);
 }
 
+.fanart-modal-original {
+  margin-right: 0;
+}
+
 .fanart-modal-close {
   border: 2px solid var(--pink-200);
   color: var(--on-pink);
