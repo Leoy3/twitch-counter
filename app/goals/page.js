@@ -10,13 +10,13 @@ const poppins = Poppins({
 
 // Imagen principal: subí tu imagen a public/goals/ con este mismo nombre
 // (o cambiá el nombre acá si tu archivo se llama distinto)
-const MAIN_IMAGE = "/goals/main-image.jpg";
+const MAIN_IMAGE = "/goals/Soon.jpg";
 
 // Alto de la imagen en % de la pantalla (50 = media pantalla, 100 = pantalla entera)
 const IMAGE_SCREEN_HEIGHT = 80;
 
 // "cover" = llena toda la card (puede recortar bordes), "contain" = muestra la imagen entera
-const IMAGE_FIT = "contain";
+const IMAGE_FIT = "cover";
 
 // Mostrar las cards debajo de la imagen: true = se ven / false = ocultas
 const SHOW_GOALS = false;
