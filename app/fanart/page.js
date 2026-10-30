@@ -227,9 +227,20 @@ export default function FanartPage() {
               loading="eager"
             />
 
-            {selectedFanart.artist ? (
-              <p>by {selectedFanart.artist}</p>
-            ) : null}
+            <div className="fanart-modal-footer">
+              {selectedFanart.artist ? (
+                <p>by {selectedFanart.artist}</p>
+              ) : null}
+
+              <a
+                className="view-all-button fanart-modal-original"
+                href={selectedFanart.image}
+                target="_blank"
+                rel="noreferrer"
+              >
+                View original
+              </a>
+            </div>
           </div>
         </div>
       ) : null}
