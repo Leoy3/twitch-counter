@@ -254,6 +254,17 @@ h1 {
   /* la parte de abajo se funde con el fondo de la página */
   -webkit-mask-image: linear-gradient(180deg, #000 58%, transparent 96%);
   mask-image: linear-gradient(180deg, #000 58%, transparent 96%);
+  /* entra deslizándose desde la derecha cuando termina de cargar */
+  opacity: 0;
+  transform: translateX(120px);
+  transition:
+    opacity 0.9s ease,
+    transform 1.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-model-loaded {
+  opacity: 1;
+  transform: none;
 }
 
 /* destellos flotantes alrededor del modelo */
@@ -276,7 +287,7 @@ h1 {
 }
 
 .hero-banner::after {
-  content: "♥";
+  content: "♥\FE0E";
   top: 120px;
   right: max(24px, calc(50% - 580px));
   color: var(--pink);
@@ -308,8 +319,15 @@ h1 {
   }
 }
 
+/* card del contador */
 .hero-content {
-  padding: 170px 0 150px;
+  width: min(540px, calc(100% - 64px));
+  margin: 140px auto 130px max(32px, calc(50% - 560px));
+  padding: 34px 38px 38px;
+  border: 2px solid var(--line);
+  border-radius: var(--r-lg);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: var(--shadow-card);
 }
 
 .hero-content h1,
@@ -318,13 +336,13 @@ h1 {
 .hero-content .countdown,
 .hero-content .time-note,
 .hero-content .hero-actions {
-  max-width: 520px;
+  max-width: none;
 }
 
 .hero-content h1 {
   margin-top: 6px;
   color: var(--ink);
-  font-size: clamp(44px, 5.4vw, 70px);
+  font-size: clamp(38px, 4.4vw, 56px);
 }
 
 .channel-name {
@@ -351,8 +369,10 @@ h1 {
 }
 
 .countdown {
+  margin-top: 22px;
   color: var(--rose);
   font-family: var(--font-display), sans-serif;
+  font-size: clamp(40px, 5.6vw, 64px);
   font-weight: 600;
   letter-spacing: 0;
 }
@@ -501,6 +521,21 @@ h1 {
   color: var(--ink-soft);
   font-size: 17px;
   line-height: 1.5;
+}
+
+.streams-section .section-head {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.streams-section .section-icon {
+  color: var(--pink);
+  font-size: 46px;
+}
+
+.fanart-section .section-head {
+  align-items: flex-start;
+  text-align: left;
 }
 
 .section-actions {
@@ -666,17 +701,38 @@ h1 {
   color: var(--peach-500);
 }
 
-/* Art Gallery: fila de fotos tipo sticker */
+/* Art Gallery: carrusel de fotos tipo sticker */
 
-.home-fanart-row {
+.home-fanart-carousel {
+  position: relative;
+}
+
+.home-fanart-track {
   display: flex;
-  justify-content: center;
-  gap: 18px;
+  gap: 22px;
+  margin: -26px 0 -34px;
+  padding: 26px 34px 34px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 34px;
+  scrollbar-width: none;
+  /* bordes que se desvanecen a los costados */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 34px, #000 calc(100% - 34px), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 34px, #000 calc(100% - 34px), transparent);
+}
+
+.home-fanart-track::-webkit-scrollbar {
+  display: none;
+}
+
+.home-fanart-carousel .vods-arrow-button {
+  top: 50%;
 }
 
 .home-fanart-item {
-  flex: 0 1 200px;
-  min-width: 0;
+  flex: 0 0 clamp(170px, 21vw, 240px);
+  scroll-snap-align: start;
   aspect-ratio: 3 / 4;
   overflow: hidden;
   border: 7px solid #fff;
@@ -740,15 +796,8 @@ h1 {
 }
 
 .site-footer {
+  justify-content: center;
   color: var(--ink-soft);
-}
-
-.site-footer-links a {
-  color: var(--ink-soft);
-}
-
-.site-footer-links a:hover {
-  color: var(--rose);
 }
 
 /* ---------- Art Gallery: fotos tipo sticker ---------- */
@@ -774,7 +823,6 @@ h1 {
 
 .fanart-grid {
   gap: 26px;
-  counter-reset: fanart;
 }
 
 .fanart-item {
@@ -806,27 +854,6 @@ h1 {
 
 .fanart-item:hover img {
   opacity: 1;
-}
-
-.fanart-item::before {
-  counter-increment: fanart;
-  content: counter(fanart, decimal-leading-zero);
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 2;
-  width: 34px;
-  height: 34px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: #fff;
-  color: var(--rose);
-  font-family: var(--font-display), sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  box-shadow: 0 2px 0 var(--pink-200);
 }
 
 .fanart-modal {
@@ -943,18 +970,8 @@ h1 {
     display: none;
   }
 
-  .hero-content h1,
-  .hero-content .stream-title,
-  .hero-content .hero-actions {
-    max-width: 50%;
-  }
-
-  .home-fanart-row {
-    flex-wrap: wrap;
-  }
-
-  .home-fanart-item {
-    flex-basis: 180px;
+  .hero-content {
+    width: min(480px, 52%);
   }
 }
 
@@ -986,14 +1003,10 @@ h1 {
   }
 
   .hero-content {
-    padding: 0 0 40px;
+    width: calc(100% - 28px);
+    margin: 0 auto 40px;
+    padding: 26px 22px 28px;
     text-align: center;
-  }
-
-  .hero-content h1,
-  .hero-content .stream-title,
-  .hero-content .hero-actions {
-    max-width: none;
   }
 
   .hero-actions {
@@ -1017,15 +1030,8 @@ h1 {
     right: -10px;
   }
 
-  .home-fanart-row {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .home-fanart-item:last-child:nth-child(odd) {
-    grid-column: 1 / -1;
-    justify-self: center;
-    width: 50%;
+  .home-fanart-item {
+    flex-basis: 62vw;
   }
 }
 
@@ -1047,6 +1053,11 @@ h1 {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-model {
+    transform: none;
+    transition: none;
+  }
+
   .home-section {
     opacity: 1;
     transform: none;

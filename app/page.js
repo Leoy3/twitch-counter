@@ -29,7 +29,7 @@ const BRAINCELLS_TOP = {
   }
 };
 
-// Fanarts que se muestran en fila en la home (podés agregar o sacar)
+// Fanarts del carrusel de la home (podés agregar o sacar)
 const HOME_FANARTS = [
   {
     image: "/fanart/fanart-01.png",
@@ -50,6 +50,14 @@ const HOME_FANARTS = [
   {
     image: "/fanart/fanart-06.png",
     artist: ""
+  },
+  {
+    image: "/fanart/fanart-07.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-08.png",
+    artist: ""
   }
 ];
 
@@ -57,31 +65,8 @@ const HOME_FANARTS = [
 const SECTION_INTROS = {
   streams: "Missed a stream? Catch up on the latest broadcasts.",
   braincells: "Who had the most (and the fewest) braincells this month.",
-  fanart: "Artwork made with love by the community."
+  fanart: "Artwork made with love for the community"
 };
-
-const SOCIAL_LINKS = [
-  {
-    label: "Twitch",
-    url: "https://www.twitch.tv/eatfreshbrains"
-  },
-  {
-    label: "X",
-    url: "https://x.com/soybrains"
-  },
-  {
-    label: "TikTok",
-    url: "https://www.tiktok.com/@imbrains"
-  },
-  {
-    label: "VGen",
-    url: "https://vgen.co/eatfreshbrains"
-  },
-  {
-    label: "Throne",
-    url: "https://throne.com/brains"
-  }
-];
 
 function getTimeParts(date, timeZone) {
   const formatter = new Intl.DateTimeFormat("en-US", {
@@ -325,6 +310,7 @@ export default function Home() {
   const braincellsSectionRef = useRef(null);
   const braincellsAnimationDoneRef = useRef(false);
   const braincellsAnimationFrameRef = useRef(null);
+  const fanartTrackRef = useRef(null);
 
   const [status, setStatus] = useState(null);
   const [statusLoaded, setStatusLoaded] = useState(false);
@@ -340,6 +326,11 @@ export default function Home() {
   const [animatedBraincells, setAnimatedBraincells] = useState({
     highest: 0,
     lowest: 0
+  });
+  const [heroModelLoaded, setHeroModelLoaded] = useState(false);
+  const [fanartScroll, setFanartScroll] = useState({
+    canGoPrevious: false,
+    canGoNext: true
   });
 
   async function loadStatus() {
@@ -420,6 +411,44 @@ export default function Home() {
       }
 
       return previousIndex;
+    });
+  }
+
+  function updateFanartScroll() {
+    const track = fanartTrackRef.current;
+
+    if (!track) {
+      return;
+    }
+
+    const maxScroll = track.scrollWidth - track.clientWidth;
+    const canGoPrevious = track.scrollLeft > 4;
+    const canGoNext = track.scrollLeft < maxScroll - 4;
+
+    setFanartScroll((current) =>
+      current.canGoPrevious === canGoPrevious && current.canGoNext === canGoNext
+        ? current
+        : { canGoPrevious, canGoNext }
+    );
+  }
+
+  function slideFanarts(direction) {
+    const track = fanartTrackRef.current;
+
+    if (!track) {
+      return;
+    }
+
+    const item = track.querySelector(".home-fanart-item");
+    const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
+    const step = item ? item.offsetWidth + gap : track.clientWidth / 2;
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    track.scrollBy({
+      left: direction * step,
+      behavior: prefersReducedMotion ? "auto" : "smooth"
     });
   }
 
@@ -562,6 +591,14 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    updateFanartScroll();
+
+    window.addEventListener("resize", updateFanartScroll);
+
+    return () => window.removeEventListener("resize", updateFanartScroll);
+  }, []);
+
+  useEffect(() => {
     if (!braincellsVisible) {
       return;
     }
@@ -670,19 +707,20 @@ export default function Home() {
         </div>
 
         <FanartImage
-          className="hero-model"
+          className={heroModelLoaded ? "hero-model hero-model-loaded" : "hero-model"}
           src={HERO_MODEL_IMAGE}
           alt=""
-          sizes="(max-width: 760px) 90vw, 560px"
+          sizes="(max-width: 760px) 90vw, 640px"
           quality={90}
           loading="eager"
+          onLoad={() => setHeroModelLoaded(true)}
         />
       </section>
 
       <section className="home-sections">
         <section className="home-section streams-section">
           <div className="section-head">
-            <span className="section-icon" aria-hidden="true">📺</span>
+            <span className="section-icon" aria-hidden="true">{"♥︎"}</span>
             <h2>Latest Streams</h2>
             <p>{SECTION_INTROS.streams}</p>
           </div>
@@ -810,16 +848,44 @@ export default function Home() {
           </div>
 
           {HOME_FANARTS.length > 0 ? (
-            <div className="home-fanart-row">
-              {HOME_FANARTS.map((fanart, index) => (
-                <a className="home-fanart-item" href="/fanart" key={`${fanart.image}-${index}`}>
-                  <FanartImage
-                    src={fanart.image}
-                    alt={fanart.artist ? `Art by ${fanart.artist}` : "Community artwork"}
-                    sizes="(max-width: 760px) 45vw, 220px"
-                  />
-                </a>
-              ))}
+            <div className="home-fanart-carousel">
+              {fanartScroll.canGoPrevious ? (
+                <button
+                  className="vods-arrow-button vods-arrow-left"
+                  type="button"
+                  onClick={() => slideFanarts(-1)}
+                  aria-label="Previous artwork"
+                >
+                  <span className="vods-arrow-icon vods-arrow-icon-left"></span>
+                </button>
+              ) : null}
+
+              <div
+                className="home-fanart-track"
+                ref={fanartTrackRef}
+                onScroll={updateFanartScroll}
+              >
+                {HOME_FANARTS.map((fanart, index) => (
+                  <a className="home-fanart-item" href="/fanart" key={`${fanart.image}-${index}`}>
+                    <FanartImage
+                      src={fanart.image}
+                      alt={fanart.artist ? `Art by ${fanart.artist}` : "Community artwork"}
+                      sizes="(max-width: 760px) 62vw, 240px"
+                    />
+                  </a>
+                ))}
+              </div>
+
+              {fanartScroll.canGoNext ? (
+                <button
+                  className="vods-arrow-button vods-arrow-right"
+                  type="button"
+                  onClick={() => slideFanarts(1)}
+                  aria-label="Next artwork"
+                >
+                  <span className="vods-arrow-icon vods-arrow-icon-right"></span>
+                </button>
+              ) : null}
             </div>
           ) : (
             <p className="vods-message">No artwork added yet.</p>
@@ -854,14 +920,6 @@ export default function Home() {
 
       <footer className="site-footer">
         <p>© 2026 EatFreshBrains</p>
-
-        <div className="site-footer-links">
-          {SOCIAL_LINKS.map((link) => (
-            <a key={link.label} href={link.url} target="_blank" rel="noreferrer">
-              {link.label}
-            </a>
-          ))}
-        </div>
       </footer>
     </main>
   );
