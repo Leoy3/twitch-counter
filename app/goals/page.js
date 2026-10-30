@@ -16,7 +16,7 @@ const MAIN_IMAGE = "/goals/main-image.jpg";
 const IMAGE_SCREEN_HEIGHT = 80;
 
 // "cover" = llena toda la card (puede recortar bordes), "contain" = muestra la imagen entera
-const IMAGE_FIT = "cover";
+const IMAGE_FIT = "contain";
 
 // Mostrar las cards debajo de la imagen: true = se ven / false = ocultas
 const SHOW_GOALS = false;
