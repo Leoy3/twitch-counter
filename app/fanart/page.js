@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import FanartImage from "../FanartImage";
+
+const THUMBNAIL_SIZES = "(max-width: 560px) 100vw, (max-width: 760px) 50vw, 360px";
+const PREVIEW_SIZES = "(max-width: 1028px) 100vw, 980px";
 
 const FANARTS = [
   {
@@ -137,9 +141,14 @@ const FANARTS = [
 
 export default function FanartPage() {
   const [selectedFanart, setSelectedFanart] = useState(null);
+  const [loadedFanarts, setLoadedFanarts] = useState({});
 
   function closeModal() {
     setSelectedFanart(null);
+  }
+
+  function markFanartLoaded(index) {
+    setLoadedFanarts((current) => ({ ...current, [index]: true }));
   }
 
   useEffect(() => {
@@ -170,12 +179,21 @@ export default function FanartPage() {
         <div className="fanart-grid">
           {FANARTS.map((fanart, index) => (
             <button
-              className="fanart-item"
+              className={
+                loadedFanarts[index]
+                  ? "fanart-item fanart-item-loaded"
+                  : "fanart-item"
+              }
               key={`${fanart.image}-${index}`}
               type="button"
               onClick={() => setSelectedFanart(fanart)}
             >
-              <img src={fanart.image} alt={fanart.artist || "Artwork"} />
+              <FanartImage
+                src={fanart.image}
+                alt={fanart.artist || "Artwork"}
+                sizes={THUMBNAIL_SIZES}
+                onLoad={() => markFanartLoaded(index)}
+              />
 
               {fanart.artist ? (
                 <span>by {fanart.artist}</span>
@@ -200,9 +218,13 @@ export default function FanartPage() {
             className="fanart-modal-content"
             onClick={(event) => event.stopPropagation()}
           >
-            <img
+            <FanartImage
+              key={selectedFanart.image}
               src={selectedFanart.image}
               alt={selectedFanart.artist || "Artwork"}
+              sizes={PREVIEW_SIZES}
+              quality={90}
+              loading="eager"
             />
 
             {selectedFanart.artist ? (

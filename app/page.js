@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import FanartImage from "./FanartImage";
 
 const US_TIMEZONE = "America/New_York";
 
@@ -774,7 +775,11 @@ export default function Home() {
 
           {featuredFanart ? (
             <a className="fanart-spotlight" href="/fanart">
-              <img src={featuredFanart.image} alt={featuredFanart.artist || "Artwork"} />
+              <FanartImage
+                src={featuredFanart.image}
+                alt={featuredFanart.artist || "Artwork"}
+                sizes="(max-width: 760px) 100vw, 360px"
+              />
 
               {featuredFanart.artist ? (
                 <p>art by {featuredFanart.artist}</p>

@@ -1003,6 +1003,29 @@ h1 {
   display: none;
 }
 
+.fanart-item::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  animation: skeleton-shimmer 1.35s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.fanart-item-loaded::after {
+  display: none;
+}
+
+.fanart-item:not(.fanart-item-loaded) img {
+  opacity: 0;
+}
+
 .fanart-modal {
   position: fixed;
   inset: 0;
@@ -1497,6 +1520,10 @@ h1 {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .fanart-item::after {
+    animation: none;
+  }
+
   .site-nav-link.site-nav-link-gold {
     animation: none;
     text-shadow:
