@@ -56,16 +56,17 @@ export default function SiteNav() {
           Home
         </Link>
 
-        <Link className={getLinkClassName(isArtGallery)} href="/fanart">
-          Art Gallery
-        </Link>
-
-        <Link
+    <Link
           className={`${getLinkClassName(isGoldLink)} site-nav-link-gold`}
           href={GOLD_LINK.href}
         >
           {GOLD_LINK.label}
         </Link>
+    
+        <Link className={getLinkClassName(isArtGallery)} href="/fanart">
+          Art Gallery
+        </Link>
+
       </div>
 
       <div className="site-nav-socials">
