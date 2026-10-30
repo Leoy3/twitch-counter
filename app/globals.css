@@ -1443,8 +1443,8 @@ h1 {
 }
 
 .goals-image-card {
-  width: min(1120px, 100%);
-  min-height: 220px;
+  width: fit-content;
+  max-width: min(1120px, 100%);
   overflow: hidden;
   opacity: 0;
   transform: translateY(26px);
@@ -1454,8 +1454,9 @@ h1 {
 }
 
 .goals-image-card img {
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
+  max-width: 100%;
   display: block;
 }
 

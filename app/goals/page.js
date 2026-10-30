@@ -12,11 +12,9 @@ const poppins = Poppins({
 // (o cambiá el nombre acá si tu archivo se llama distinto)
 const MAIN_IMAGE = "/goals/Soon.jpg";
 
-// Alto de la imagen en % de la pantalla (50 = media pantalla, 100 = pantalla entera)
+// Alto máximo de la imagen en % de la pantalla (50 = media pantalla, 100 = pantalla entera)
+// La imagen siempre se muestra entera, sin recortes
 const IMAGE_SCREEN_HEIGHT = 80;
-
-// "cover" = llena toda la card (puede recortar bordes), "contain" = muestra la imagen entera
-const IMAGE_FIT = "cover";
 
 // Mostrar las cards debajo de la imagen: true = se ven / false = ocultas
 const SHOW_GOALS = false;
@@ -110,11 +108,12 @@ export default function GoalsPage() {
 
   return (
     <main className="page goals-page">
-      <section
-        className="card goals-image-card"
-        style={{ height: `${IMAGE_SCREEN_HEIGHT}vh` }}
-      >
-        <img src={MAIN_IMAGE} alt="" style={{ objectFit: IMAGE_FIT }} />
+      <section className="card goals-image-card">
+        <img
+          src={MAIN_IMAGE}
+          alt=""
+          style={{ maxHeight: `${IMAGE_SCREEN_HEIGHT}vh` }}
+        />
       </section>
 
       {SHOW_GOALS ? (
