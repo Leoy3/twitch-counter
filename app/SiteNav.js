@@ -3,6 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+// Texto dorado de la navbar: cambiá "label" para mostrar otro texto
+const GOLD_LINK = {
+  label: "Próximamente",
+  href: "/goals"
+};
+
 function getLinkClassName(isActive) {
   return isActive
     ? "site-nav-link site-nav-link-active"
@@ -36,6 +42,7 @@ export default function SiteNav() {
 
   const isHome = pathname === "/";
   const isArtGallery = pathname.startsWith("/fanart");
+  const isGoldLink = pathname.startsWith(GOLD_LINK.href);
 
   return (
     <nav className="site-nav">
@@ -51,6 +58,13 @@ export default function SiteNav() {
 
         <Link className={getLinkClassName(isArtGallery)} href="/fanart">
           Art Gallery
+        </Link>
+
+        <Link
+          className={`${getLinkClassName(isGoldLink)} site-nav-link-gold`}
+          href={GOLD_LINK.href}
+        >
+          {GOLD_LINK.label}
         </Link>
       </div>
 
