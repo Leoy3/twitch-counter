@@ -25,7 +25,7 @@ const POINTS_LABEL = "PTS";
 // completed: true = verde (completado) / false = rosa (no completado)
 // Para agregar una card, copiá una línea y pegala donde quieras
 const GOALS = [
-  { points: 45, title: "Unmute", subtitle: "", completed: false },
+  { points: 45, title: "Unmute", subtitle: "", completed: true },
   { points: 50, title: "Discord PFP", subtitle: "(One month)", completed: true },
   { points: 55, title: "Vote food", subtitle: "", completed: true },
   { points: 60, title: "1hr Spanish", subtitle: "(Subtitles will be provided)", completed: false },
