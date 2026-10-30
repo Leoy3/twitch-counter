@@ -18,6 +18,9 @@ const IMAGE_SCREEN_HEIGHT = 80;
 // "cover" = llena toda la card (puede recortar bordes), "contain" = muestra la imagen entera
 const IMAGE_FIT = "cover";
 
+// Mostrar las cards debajo de la imagen: true = se ven / false = ocultas
+const SHOW_GOALS = false;
+
 const POINTS_LABEL = "PTS";
 
 // Cards: points = número, title = texto principal, subtitle = texto secundario
@@ -114,26 +117,28 @@ export default function GoalsPage() {
         <img src={MAIN_IMAGE} alt="" style={{ objectFit: IMAGE_FIT }} />
       </section>
 
-      <ul className={`goals-grid ${poppins.className}`} ref={goalsListRef}>
-        {GOALS.map((goal, index) => (
-          <li
-            className={getGoalClassName(goal, visibleGoals[index])}
-            key={`${goal.title}-${index}`}
-            data-index={index}
-            style={{ transitionDelay: `${(index % GOALS_PER_ROW) * 90}ms` }}
-          >
-            <div className="goal-points">
-              <strong>{goal.points}</strong>
-              <span>{POINTS_LABEL}</span>
-            </div>
+      {SHOW_GOALS ? (
+        <ul className={`goals-grid ${poppins.className}`} ref={goalsListRef}>
+          {GOALS.map((goal, index) => (
+            <li
+              className={getGoalClassName(goal, visibleGoals[index])}
+              key={`${goal.title}-${index}`}
+              data-index={index}
+              style={{ transitionDelay: `${(index % GOALS_PER_ROW) * 90}ms` }}
+            >
+              <div className="goal-points">
+                <strong>{goal.points}</strong>
+                <span>{POINTS_LABEL}</span>
+              </div>
 
-            <div className="goal-text">
-              <h3>{goal.title}</h3>
-              {goal.subtitle ? <p>{goal.subtitle}</p> : null}
-            </div>
-          </li>
-        ))}
-      </ul>
+              <div className="goal-text">
+                <h3>{goal.title}</h3>
+                {goal.subtitle ? <p>{goal.subtitle}</p> : null}
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : null}
     </main>
   );
 }
