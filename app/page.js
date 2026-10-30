@@ -11,6 +11,10 @@ const STREAM_MINUTE_US = 0;
 const WAIT_AFTER_STREAM_MS = 60 * 60 * 1000;
 const VODS_PER_PAGE = 3;
 
+// Imagen del modelo en la home: subí tu PNG a public/home/ con este mismo nombre
+// (o cambiá el nombre acá si tu archivo se llama distinto)
+const HERO_MODEL_IMAGE = "/home/model.png";
+
 const BRAINCELLS_TOP = {
   month: "October",
   highest: {
@@ -25,6 +29,7 @@ const BRAINCELLS_TOP = {
   }
 };
 
+// Fanarts del carrusel de la home (podés agregar o sacar)
 const HOME_FANARTS = [
   {
     image: "/fanart/fanart-01.png",
@@ -33,31 +38,35 @@ const HOME_FANARTS = [
   {
     image: "/fanart/fanart-02.png",
     artist: ""
+  },
+  {
+    image: "/fanart/fanart-03.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-05.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-06.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-07.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-08.png",
+    artist: ""
   }
 ];
 
-const SOCIAL_LINKS = [
-  {
-    label: "Twitch",
-    url: "https://www.twitch.tv/eatfreshbrains"
-  },
-  {
-    label: "X",
-    url: "https://x.com/soybrains"
-  },
-  {
-    label: "TikTok",
-    url: "https://www.tiktok.com/@imbrains"
-  },
-  {
-    label: "VGen",
-    url: "https://vgen.co/eatfreshbrains"
-  },
-  {
-    label: "Throne",
-    url: "https://throne.com/brains"
-  }
-];
+// Texto introductorio debajo del título de cada sección de la home
+const SECTION_INTROS = {
+  streams: "Missed a stream? Catch up on the latest broadcasts.",
+  braincells: "Who had the most (and the fewest) braincells this month.",
+  fanart: "Artwork made with love for the community"
+};
 
 function getTimeParts(date, timeZone) {
   const formatter = new Intl.DateTimeFormat("en-US", {
@@ -317,6 +326,7 @@ export default function Home() {
     highest: 0,
     lowest: 0
   });
+  const [heroModelLoaded, setHeroModelLoaded] = useState(false);
 
   async function loadStatus() {
     try {
@@ -396,6 +406,17 @@ export default function Home() {
       }
 
       return previousIndex;
+    });
+  }
+
+  function scrollToTop() {
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    window.scrollTo({
+      top: 0,
+      behavior: prefersReducedMotion ? "auto" : "smooth"
     });
   }
 
@@ -554,7 +575,6 @@ export default function Home() {
   const vods = getVisibleVods();
   const vodPages = chunkVods(vods);
   const videosUrl = vodsData?.videosUrl || `${channelUrl}/videos`;
-  const featuredFanart = HOME_FANARTS[0] || null;
 
   const canGoPrevious = vodPageIndex > 0;
   const canGoNext = vodPageIndex < vodPages.length - 1;
@@ -645,16 +665,24 @@ export default function Home() {
             </>
           )}
         </div>
+
+        <FanartImage
+          className={heroModelLoaded ? "hero-model hero-model-loaded" : "hero-model"}
+          src={HERO_MODEL_IMAGE}
+          alt=""
+          sizes="(max-width: 760px) 90vw, 800px"
+          quality={90}
+          loading="eager"
+          onLoad={() => setHeroModelLoaded(true)}
+        />
       </section>
 
-      <section className="home-grid">
-        <section className="card panel-card streams-panel">
-          <div className="panel-header">
+      <section className="home-sections">
+        <section className="home-section streams-section">
+          <div className="section-head">
+            <span className="section-icon" aria-hidden="true">{"♥︎"}</span>
             <h2>Latest Streams</h2>
-
-            <a className="view-all-button" href={videosUrl} target="_blank" rel="noreferrer">
-              View all
-            </a>
+            <p>{SECTION_INTROS.streams}</p>
           </div>
 
           {vodsError ? (
@@ -741,11 +769,19 @@ export default function Home() {
               ) : null}
             </div>
           )}
+
+          <div className="section-actions">
+            <a className="button secondary" href={videosUrl} target="_blank" rel="noreferrer">
+              View all streams
+            </a>
+          </div>
         </section>
 
-        <section className="card panel-card braincells-panel" ref={braincellsSectionRef}>
-          <div className="panel-header">
+        <section className="home-section braincells-section" ref={braincellsSectionRef}>
+          <div className="section-head">
+            <span className="section-icon" aria-hidden="true">🧠</span>
             <h2>Monthly Braincells</h2>
+            <p>{SECTION_INTROS.braincells}</p>
             <span className="panel-month">{BRAINCELLS_TOP.month}</span>
           </div>
 
@@ -764,32 +800,54 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="card panel-card fanart-spotlight-card">
-          <div className="panel-header">
+        <section className="home-section fanart-section">
+          <div className="section-head">
+            <span className="section-icon" aria-hidden="true">🎨</span>
             <h2>Art Gallery</h2>
-
-            <a className="view-all-button" href="/fanart">
-              View all
-            </a>
+            <p>{SECTION_INTROS.fanart}</p>
           </div>
 
-          {featuredFanart ? (
-            <a className="fanart-spotlight" href="/fanart">
-              <FanartImage
-                src={featuredFanart.image}
-                alt={featuredFanart.artist || "Artwork"}
-                sizes="(max-width: 760px) 100vw, 360px"
-              />
+          {HOME_FANARTS.length > 0 ? (
+            <div
+              className="home-fanart-carousel"
+              style={{ "--fanart-count": HOME_FANARTS.length }}
+            >
+              {/* La lista va dos veces seguidas para que el loop no tenga cortes */}
+              <div className="home-fanart-track">
+                {[...HOME_FANARTS, ...HOME_FANARTS].map((fanart, index) => {
+                  const position = index % HOME_FANARTS.length;
+                  const isCopy = index >= HOME_FANARTS.length;
 
-              {featuredFanart.artist ? (
-                <p>art by {featuredFanart.artist}</p>
-              ) : (
-                <p>Community artwork</p>
-              )}
-            </a>
+                  return (
+                    <a
+                      className={`home-fanart-item home-fanart-tilt-${position % 3}${
+                        isCopy ? " home-fanart-copy" : ""
+                      }`}
+                      href="/fanart"
+                      key={`${fanart.image}-${index}`}
+                      aria-hidden={isCopy ? "true" : undefined}
+                      tabIndex={isCopy ? -1 : undefined}
+                    >
+                      <FanartImage
+                        src={fanart.image}
+                        alt={fanart.artist ? `Art by ${fanart.artist}` : "Community artwork"}
+                        sizes="(max-width: 760px) 62vw, 240px"
+                        loading="eager"
+                      />
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
           ) : (
             <p className="vods-message">No artwork added yet.</p>
           )}
+
+          <div className="section-actions">
+            <a className="button" href="/fanart">
+              Open gallery
+            </a>
+          </div>
         </section>
       </section>
 
@@ -806,22 +864,14 @@ export default function Home() {
             Watch on Twitch
           </a>
 
-          <a className="button" href="/fanart">
-            View Art Gallery
-          </a>
+          <button className="button" type="button" onClick={scrollToTop}>
+            Back to top
+          </button>
         </div>
       </section>
 
       <footer className="site-footer">
         <p>© 2026 EatFreshBrains</p>
-
-        <div className="site-footer-links">
-          {SOCIAL_LINKS.map((link) => (
-            <a key={link.label} href={link.url} target="_blank" rel="noreferrer">
-              {link.label}
-            </a>
-          ))}
-        </div>
       </footer>
     </main>
   );
