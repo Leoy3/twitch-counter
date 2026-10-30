@@ -310,7 +310,6 @@ export default function Home() {
   const braincellsSectionRef = useRef(null);
   const braincellsAnimationDoneRef = useRef(false);
   const braincellsAnimationFrameRef = useRef(null);
-  const fanartTrackRef = useRef(null);
 
   const [status, setStatus] = useState(null);
   const [statusLoaded, setStatusLoaded] = useState(false);
@@ -328,10 +327,6 @@ export default function Home() {
     lowest: 0
   });
   const [heroModelLoaded, setHeroModelLoaded] = useState(false);
-  const [fanartScroll, setFanartScroll] = useState({
-    canGoPrevious: false,
-    canGoNext: true
-  });
 
   async function loadStatus() {
     try {
@@ -414,40 +409,13 @@ export default function Home() {
     });
   }
 
-  function updateFanartScroll() {
-    const track = fanartTrackRef.current;
-
-    if (!track) {
-      return;
-    }
-
-    const maxScroll = track.scrollWidth - track.clientWidth;
-    const canGoPrevious = track.scrollLeft > 4;
-    const canGoNext = track.scrollLeft < maxScroll - 4;
-
-    setFanartScroll((current) =>
-      current.canGoPrevious === canGoPrevious && current.canGoNext === canGoNext
-        ? current
-        : { canGoPrevious, canGoNext }
-    );
-  }
-
-  function slideFanarts(direction) {
-    const track = fanartTrackRef.current;
-
-    if (!track) {
-      return;
-    }
-
-    const item = track.querySelector(".home-fanart-item");
-    const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
-    const step = item ? item.offsetWidth + gap : track.clientWidth / 2;
+  function scrollToTop() {
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
-    track.scrollBy({
-      left: direction * step,
+    window.scrollTo({
+      top: 0,
       behavior: prefersReducedMotion ? "auto" : "smooth"
     });
   }
@@ -591,14 +559,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    updateFanartScroll();
-
-    window.addEventListener("resize", updateFanartScroll);
-
-    return () => window.removeEventListener("resize", updateFanartScroll);
-  }, []);
-
-  useEffect(() => {
     if (!braincellsVisible) {
       return;
     }
@@ -710,7 +670,7 @@ export default function Home() {
           className={heroModelLoaded ? "hero-model hero-model-loaded" : "hero-model"}
           src={HERO_MODEL_IMAGE}
           alt=""
-          sizes="(max-width: 760px) 90vw, 640px"
+          sizes="(max-width: 760px) 90vw, 800px"
           quality={90}
           loading="eager"
           onLoad={() => setHeroModelLoaded(true)}
@@ -848,44 +808,36 @@ export default function Home() {
           </div>
 
           {HOME_FANARTS.length > 0 ? (
-            <div className="home-fanart-carousel">
-              {fanartScroll.canGoPrevious ? (
-                <button
-                  className="vods-arrow-button vods-arrow-left"
-                  type="button"
-                  onClick={() => slideFanarts(-1)}
-                  aria-label="Previous artwork"
-                >
-                  <span className="vods-arrow-icon vods-arrow-icon-left"></span>
-                </button>
-              ) : null}
+            <div
+              className="home-fanart-carousel"
+              style={{ "--fanart-count": HOME_FANARTS.length }}
+            >
+              {/* La lista va dos veces seguidas para que el loop no tenga cortes */}
+              <div className="home-fanart-track">
+                {[...HOME_FANARTS, ...HOME_FANARTS].map((fanart, index) => {
+                  const position = index % HOME_FANARTS.length;
+                  const isCopy = index >= HOME_FANARTS.length;
 
-              <div
-                className="home-fanart-track"
-                ref={fanartTrackRef}
-                onScroll={updateFanartScroll}
-              >
-                {HOME_FANARTS.map((fanart, index) => (
-                  <a className="home-fanart-item" href="/fanart" key={`${fanart.image}-${index}`}>
-                    <FanartImage
-                      src={fanart.image}
-                      alt={fanart.artist ? `Art by ${fanart.artist}` : "Community artwork"}
-                      sizes="(max-width: 760px) 62vw, 240px"
-                    />
-                  </a>
-                ))}
+                  return (
+                    <a
+                      className={`home-fanart-item home-fanart-tilt-${position % 3}${
+                        isCopy ? " home-fanart-copy" : ""
+                      }`}
+                      href="/fanart"
+                      key={`${fanart.image}-${index}`}
+                      aria-hidden={isCopy ? "true" : undefined}
+                      tabIndex={isCopy ? -1 : undefined}
+                    >
+                      <FanartImage
+                        src={fanart.image}
+                        alt={fanart.artist ? `Art by ${fanart.artist}` : "Community artwork"}
+                        sizes="(max-width: 760px) 62vw, 240px"
+                        loading="eager"
+                      />
+                    </a>
+                  );
+                })}
               </div>
-
-              {fanartScroll.canGoNext ? (
-                <button
-                  className="vods-arrow-button vods-arrow-right"
-                  type="button"
-                  onClick={() => slideFanarts(1)}
-                  aria-label="Next artwork"
-                >
-                  <span className="vods-arrow-icon vods-arrow-icon-right"></span>
-                </button>
-              ) : null}
             </div>
           ) : (
             <p className="vods-message">No artwork added yet.</p>
@@ -912,9 +864,9 @@ export default function Home() {
             Watch on Twitch
           </a>
 
-          <a className="button" href="/fanart">
-            View Art Gallery
-          </a>
+          <button className="button" type="button" onClick={scrollToTop}>
+            Back to top
+          </button>
         </div>
       </section>
 

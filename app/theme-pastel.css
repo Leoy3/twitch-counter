@@ -237,17 +237,17 @@ h1 {
 }
 
 .hero-banner {
-  min-height: 700px;
+  min-height: 780px;
 }
 
 .hero-model {
   position: absolute;
-  right: max(16px, calc(50% - 600px));
+  right: max(0px, calc(50% - 640px));
   bottom: 0;
   z-index: 1;
   width: auto;
-  height: 600px;
-  max-width: 50%;
+  height: 740px;
+  max-width: 62%;
   object-fit: contain;
   object-position: bottom center;
   pointer-events: none;
@@ -279,8 +279,8 @@ h1 {
 
 .hero-banner::before {
   content: "✦";
-  top: 150px;
-  right: calc(max(16px, calc(50% - 600px)) + 560px);
+  top: 130px;
+  right: calc(max(0px, calc(50% - 640px)) + 690px);
   color: var(--pink);
   font-size: 34px;
   animation: pastel-twinkle 2.6s ease-in-out infinite;
@@ -322,11 +322,11 @@ h1 {
 /* card del contador */
 .hero-content {
   width: min(540px, calc(100% - 64px));
-  margin: 140px auto 130px max(32px, calc(50% - 560px));
+  margin: 170px auto 150px max(32px, calc(50% - 560px));
   padding: 34px 38px 38px;
   border: 2px solid var(--line);
   border-radius: var(--r-lg);
-  background: rgba(255, 255, 255, 0.92);
+  background: #fff;
   box-shadow: var(--shadow-card);
 }
 
@@ -385,6 +385,7 @@ h1 {
 
 .button {
   min-width: 0;
+  cursor: pointer;
   padding: 12px 26px;
   border: 2px solid transparent;
   border-radius: var(--r-pill);
@@ -704,50 +705,53 @@ h1 {
 /* Art Gallery: carrusel de fotos tipo sticker */
 
 .home-fanart-carousel {
-  position: relative;
+  margin: -26px 0 -34px;
+  padding: 26px 0 34px;
+  overflow: hidden;
+  /* bordes que se desvanecen a los costados */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 70px, #000 calc(100% - 70px), transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 70px, #000 calc(100% - 70px), transparent);
 }
 
+/* se mueve solo en loop; la velocidad se mantiene aunque agregues fanarts */
 .home-fanart-track {
   display: flex;
-  gap: 22px;
-  margin: -26px 0 -34px;
-  padding: 26px 34px 34px;
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scroll-snap-type: x mandatory;
-  scroll-padding-inline: 34px;
-  scrollbar-width: none;
-  /* bordes que se desvanecen a los costados */
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 34px, #000 calc(100% - 34px), transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 34px, #000 calc(100% - 34px), transparent);
+  width: max-content;
+  animation: pastel-marquee calc(var(--fanart-count, 7) * 6s) linear infinite;
 }
 
-.home-fanart-track::-webkit-scrollbar {
-  display: none;
+.home-fanart-carousel:hover .home-fanart-track,
+.home-fanart-carousel:focus-within .home-fanart-track {
+  animation-play-state: paused;
 }
 
-.home-fanart-carousel .vods-arrow-button {
-  top: 50%;
+@keyframes pastel-marquee {
+  to {
+    transform: translateX(-50%);
+  }
 }
 
 .home-fanart-item {
   flex: 0 0 clamp(170px, 21vw, 240px);
-  scroll-snap-align: start;
+  margin-right: 22px;
   aspect-ratio: 3 / 4;
   overflow: hidden;
   border: 7px solid #fff;
   border-radius: 24px;
   background: var(--pink-50);
   box-shadow: 0 0 0 2px var(--pink-200), 0 18px 34px -18px rgba(224, 96, 154, 0.65);
-  transform: rotate(-3deg);
   transition: transform 0.35s var(--bounce), box-shadow 0.3s ease;
 }
 
-.home-fanart-item:nth-child(even) {
+.home-fanart-tilt-0 {
+  transform: rotate(-3deg);
+}
+
+.home-fanart-tilt-1 {
   transform: rotate(2.5deg) translateY(10px);
 }
 
-.home-fanart-item:nth-child(3n) {
+.home-fanart-tilt-2 {
   transform: rotate(-1deg) translateY(-4px);
 }
 
@@ -962,8 +966,8 @@ h1 {
 
 @media (max-width: 1080px) {
   .hero-model {
-    height: 520px;
-    max-width: 48%;
+    height: 600px;
+    max-width: 58%;
   }
 
   .hero-banner::before {
@@ -1056,6 +1060,19 @@ h1 {
   .hero-model {
     transform: none;
     transition: none;
+  }
+
+  /* sin movimiento: fila quieta que se puede deslizar a mano */
+  .home-fanart-carousel {
+    overflow-x: auto;
+  }
+
+  .home-fanart-track {
+    animation: none;
+  }
+
+  .home-fanart-copy {
+    display: none;
   }
 
   .home-section {
