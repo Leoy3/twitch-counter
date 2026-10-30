@@ -1,34 +1,34 @@
 /* ============================================================
    Tema pastel tipo "sticker"
-   Se carga después de globals.css y pisa colores y formas.
-   Para volver al diseño oscuro, borrá su import en app/layout.js
+   Se carga después de globals.css y pisa colores y formas
    ============================================================ */
 
 :root {
   /* Rosa principal de botones y detalles: cambialo acá */
-  --pink: #ffa6d6;
-  --pink-hover: #ff93cd;
-  --pink-shadow: #e889bd;
-  --on-pink: #6e2a52;
+  --pink: #ff79b3;
+  --pink-hover: #ff66a8;
+  --pink-shadow: #e0609a;
+  --on-pink: #5c1838;
 
-  --bg: #fff7fb;
+  --bg: #fff7fa;
   --ink: #5a3946;
   --ink-soft: #8a6876;
-  --line: #fbd7ea;
-  --pink-50: #fff3fa;
-  --pink-100: #ffe6f4;
-  --pink-200: #ffd0ea;
-  --rose: #a63071;
+  --line: #fbd3e4;
+  --pink-50: #fff3f8;
+  --pink-100: #ffe4ef;
+  --pink-200: #ffcce2;
+  --rose: #b8336f;
   --peach-100: #ffeadd;
   --peach-300: #ffc9a8;
+  --peach-500: #f39a5f;
   --leaf: #a3d29c;
   --leaf-deep: #7fb879;
   --r-md: 22px;
   --r-lg: 32px;
   --r-xl: 44px;
   --r-pill: 999px;
-  --shadow-card: 0 10px 30px -14px rgba(232, 137, 189, 0.45), 0 2px 0 rgba(255, 255, 255, 0.9) inset;
-  --shadow-soft: 0 14px 40px -18px rgba(232, 137, 189, 0.55);
+  --shadow-card: 0 10px 30px -14px rgba(224, 96, 154, 0.4), 0 2px 0 rgba(255, 255, 255, 0.9) inset;
+  --shadow-soft: 0 14px 40px -18px rgba(224, 96, 154, 0.5);
   --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -41,10 +41,8 @@ body {
 
 body {
   background-image:
-    radial-gradient(circle at 1.5px 1.5px, rgba(255, 166, 214, 0.32) 1.5px, transparent 0),
     radial-gradient(1200px 600px at 100% -10%, var(--pink-100) 0%, transparent 60%),
     radial-gradient(900px 500px at -10% 30%, #fff0e6 0%, transparent 60%);
-  background-size: 22px 22px, auto, auto;
 }
 
 h1,
@@ -211,19 +209,19 @@ h3 {
   width: 10px;
   height: 10px;
   margin-right: 0;
-  background: #ff5fae;
-  box-shadow: 0 0 0 0 rgba(255, 95, 174, 0.55);
+  background: var(--pink);
+  box-shadow: 0 0 0 0 rgba(255, 121, 179, 0.6);
   vertical-align: 0;
   animation: pastel-pulse 1.8s ease-out infinite;
 }
 
 @keyframes pastel-pulse {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 95, 174, 0.55);
+    box-shadow: 0 0 0 0 rgba(255, 121, 179, 0.6);
   }
 
   100% {
-    box-shadow: 0 0 0 10px rgba(255, 95, 174, 0);
+    box-shadow: 0 0 0 10px rgba(255, 121, 179, 0);
   }
 }
 
@@ -239,7 +237,7 @@ h1 {
 }
 
 .hero-banner {
-  min-height: 720px;
+  min-height: 700px;
 }
 
 .hero-model {
@@ -248,14 +246,14 @@ h1 {
   bottom: 0;
   z-index: 1;
   width: auto;
-  height: 640px;
-  max-width: 48%;
+  height: 600px;
+  max-width: 50%;
   object-fit: contain;
   object-position: bottom center;
   pointer-events: none;
   /* la parte de abajo se funde con el fondo de la página */
-  -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent 96%);
-  mask-image: linear-gradient(180deg, #000 60%, transparent 96%);
+  -webkit-mask-image: linear-gradient(180deg, #000 58%, transparent 96%);
+  mask-image: linear-gradient(180deg, #000 58%, transparent 96%);
 }
 
 /* destellos flotantes alrededor del modelo */
@@ -265,13 +263,13 @@ h1 {
   position: absolute;
   z-index: 2;
   pointer-events: none;
-  filter: drop-shadow(0 8px 10px rgba(232, 137, 189, 0.35));
+  filter: drop-shadow(0 8px 10px rgba(224, 96, 154, 0.3));
 }
 
 .hero-banner::before {
   content: "✦";
-  top: 170px;
-  right: calc(max(16px, calc(50% - 600px)) + 470px);
+  top: 150px;
+  right: calc(max(16px, calc(50% - 600px)) + 560px);
   color: var(--pink);
   font-size: 34px;
   animation: pastel-twinkle 2.6s ease-in-out infinite;
@@ -320,7 +318,7 @@ h1 {
 .hero-content .countdown,
 .hero-content .time-note,
 .hero-content .hero-actions {
-  max-width: 560px;
+  max-width: 520px;
 }
 
 .hero-content h1 {
@@ -331,7 +329,6 @@ h1 {
 
 .channel-name {
   color: var(--pink) !important;
-  text-shadow: 0 3px 0 var(--pink-shadow);
   white-space: nowrap;
 }
 
@@ -425,72 +422,6 @@ h1 {
   color: var(--ink-soft);
 }
 
-/* ---------- paneles de la home ---------- */
-
-.home-grid {
-  margin-top: -30px;
-  gap: 20px;
-}
-
-.panel-card {
-  padding: 22px;
-  transition: transform 0.3s var(--bounce), box-shadow 0.3s ease;
-}
-
-.panel-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 24px 40px -20px rgba(232, 137, 189, 0.7);
-}
-
-.panel-header {
-  flex-wrap: wrap;
-  row-gap: 10px;
-}
-
-.panel-header h2 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--ink);
-  font-size: 19px;
-  letter-spacing: 0;
-  white-space: nowrap;
-}
-
-.panel-header h2::before {
-  width: 34px;
-  height: 34px;
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: var(--pink-50);
-  border: 2px solid var(--pink-100);
-  font-size: 16px;
-}
-
-.streams-panel .panel-header h2::before {
-  content: "📺";
-}
-
-.braincells-panel .panel-header h2::before {
-  content: "🧠";
-}
-
-.fanart-spotlight-card .panel-header h2::before {
-  content: "🎨";
-}
-
-.panel-month {
-  padding: 4px 12px;
-  border-radius: var(--r-pill);
-  background: var(--peach-100);
-  border: 2px solid var(--peach-300);
-  color: #a4532c;
-  font-weight: 800;
-}
-
 .view-all-button {
   min-height: 34px;
   padding: 0 14px;
@@ -503,26 +434,130 @@ h1 {
   transition: transform 0.2s var(--bounce), background 0.2s ease;
 }
 
-.view-all-button::after {
-  content: "↗";
-  margin-left: 6px;
-  font-size: 12px;
-}
-
 .view-all-button:hover {
   color: var(--on-pink);
   background: var(--pink-100);
   transform: translateY(-1px) scale(1.04);
 }
 
+/* ---------- secciones de la home (sin card, una debajo de otra) ---------- */
+
+.home-sections {
+  position: relative;
+  z-index: 3;
+  width: min(1120px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(72px, 9vw, 112px);
+  padding-bottom: 24px;
+}
+
+.home-section {
+  opacity: 0;
+  transform: translateY(26px);
+  filter: blur(8px);
+  animation: card-enter 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.streams-section {
+  animation-delay: 0.14s;
+}
+
+.braincells-section {
+  animation-delay: 0.2s;
+}
+
+.fanart-section {
+  animation-delay: 0.26s;
+}
+
+.section-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 34px;
+  text-align: center;
+}
+
+.section-icon {
+  font-size: 40px;
+  line-height: 1;
+  filter: drop-shadow(0 8px 10px rgba(224, 96, 154, 0.3));
+  animation: pastel-bob 3.6s ease-in-out infinite;
+}
+
+.section-head h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(34px, 4.4vw, 50px);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.section-head p {
+  max-width: 560px;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 17px;
+  line-height: 1.5;
+}
+
+.section-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 34px;
+}
+
+.panel-month {
+  padding: 4px 14px;
+  border-radius: var(--r-pill);
+  background: var(--peach-100);
+  border: 2px solid var(--peach-300);
+  color: #a4532c;
+  font-weight: 800;
+}
+
+/* Latest Streams: cada stream es su propia card */
+
 .vods-message {
   color: var(--ink-soft);
+  text-align: center;
+}
+
+.vods-viewport {
+  margin: -8px 0 -24px;
+  padding: 8px 0 24px;
+}
+
+.vods-page,
+.vods-skeleton-grid {
+  gap: 20px;
+}
+
+.vod-card,
+.vod-skeleton-card {
+  padding: 8px 8px 14px;
+  border: 2px solid var(--line);
+  border-radius: 26px;
+  background: #fff;
+  box-shadow: var(--shadow-card);
+}
+
+.vod-card {
+  color: var(--ink);
+  transition: transform 0.3s var(--bounce), box-shadow 0.3s ease;
+}
+
+.vod-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 22px 36px -20px rgba(224, 96, 154, 0.7);
 }
 
 .vod-skeleton-thumb,
 .vod-thumbnail-wrap {
-  border: 2px solid var(--line);
-  border-radius: 18px;
+  border: 0;
+  border-radius: 19px;
   background: var(--pink-50);
 }
 
@@ -533,11 +568,8 @@ h1 {
 }
 
 .vod-skeleton-line {
+  margin-left: 6px;
   background: var(--pink-100);
-}
-
-.vod-card {
-  color: var(--ink);
 }
 
 .vod-duration {
@@ -546,9 +578,14 @@ h1 {
   background: rgba(90, 57, 70, 0.82);
 }
 
+.vod-info {
+  padding: 12px 8px 0;
+}
+
 .vod-info h3 {
   color: var(--ink);
   font-family: var(--font-body), sans-serif;
+  font-size: 14px;
   font-weight: 800;
 }
 
@@ -562,19 +599,42 @@ h1 {
 }
 
 .vods-arrow-button {
+  top: 38%;
+  width: 44px;
+  height: 44px;
   border: 2px solid var(--pink-200);
   background: #fff;
   box-shadow: 0 4px 0 var(--pink-200);
+}
+
+.vods-arrow-left {
+  left: -20px;
+}
+
+.vods-arrow-right {
+  right: -20px;
 }
 
 .vods-arrow-button:hover {
   background: var(--pink-50);
 }
 
+/* Monthly Braincells: dos tarjetas lado a lado, números planos */
+
+.braincells-stack {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  width: min(760px, 100%);
+  margin: 0 auto;
+}
+
 .braincell-feature {
-  border: 2px solid var(--pink-100);
-  border-radius: var(--r-md);
+  min-height: 0;
+  padding: 26px 20px 24px;
+  border: 2px solid var(--pink-200);
+  border-radius: var(--r-lg);
   background: linear-gradient(160deg, var(--pink-50), #fff 70%);
+  box-shadow: var(--shadow-card);
 }
 
 .braincell-feature p {
@@ -582,15 +642,19 @@ h1 {
 }
 
 .braincell-feature strong {
+  margin-top: 10px;
   color: var(--pink);
-  font-family: var(--font-display), sans-serif;
-  font-weight: 600;
-  letter-spacing: 0;
-  text-shadow: 0 3px 0 var(--pink-shadow);
+  font-family: var(--font-body), sans-serif;
+  font-size: clamp(48px, 6vw, 68px);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
 }
 
 .braincell-feature span {
+  margin-top: 10px;
   color: var(--ink);
+  font-size: 15px;
 }
 
 .braincell-feature-low {
@@ -599,30 +663,53 @@ h1 {
 }
 
 .braincell-feature-low strong {
-  color: #ffb07f;
-  text-shadow: 0 3px 0 #e8946a;
+  color: var(--peach-500);
 }
 
-.fanart-spotlight {
-  color: var(--ink);
+/* Art Gallery: fila de fotos tipo sticker */
+
+.home-fanart-row {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
 }
 
-.fanart-spotlight img {
-  border: 6px solid #fff;
-  border-radius: var(--r-md);
-  box-shadow: 0 0 0 2px var(--pink-200), var(--shadow-soft);
-  transform: rotate(-1.5deg);
-  transition: transform 0.4s var(--bounce);
+.home-fanart-item {
+  flex: 0 1 200px;
+  min-width: 0;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border: 7px solid #fff;
+  border-radius: 24px;
+  background: var(--pink-50);
+  box-shadow: 0 0 0 2px var(--pink-200), 0 18px 34px -18px rgba(224, 96, 154, 0.65);
+  transform: rotate(-3deg);
+  transition: transform 0.35s var(--bounce), box-shadow 0.3s ease;
 }
 
-.fanart-spotlight:hover img {
-  opacity: 1;
-  transform: rotate(0) scale(1.02);
+.home-fanart-item:nth-child(even) {
+  transform: rotate(2.5deg) translateY(10px);
 }
 
-.fanart-spotlight p {
-  color: var(--ink-soft);
+.home-fanart-item:nth-child(3n) {
+  transform: rotate(-1deg) translateY(-4px);
 }
+
+.home-fanart-item:hover {
+  z-index: 2;
+  transform: rotate(0) translateY(-8px) scale(1.04);
+  box-shadow: 0 0 0 2px var(--pink), 0 26px 40px -18px rgba(224, 96, 154, 0.8);
+}
+
+.home-fanart-item img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: 17px;
+}
+
+/* ---------- comunidad y footer ---------- */
 
 .community-cta {
   border: 2px solid var(--line);
@@ -694,7 +781,7 @@ h1 {
   border: 8px solid #fff;
   border-radius: 26px;
   background: var(--pink-50);
-  box-shadow: 0 0 0 2px var(--pink-200), 0 18px 34px -18px rgba(232, 137, 189, 0.7);
+  box-shadow: 0 0 0 2px var(--pink-200), 0 18px 34px -18px rgba(224, 96, 154, 0.65);
   transform: rotate(-2deg);
   transition: transform 0.35s var(--bounce), box-shadow 0.3s ease;
 }
@@ -710,7 +797,7 @@ h1 {
 .fanart-item:hover {
   z-index: 2;
   transform: rotate(0) translateY(-6px) scale(1.03);
-  box-shadow: 0 0 0 2px var(--pink), 0 26px 40px -18px rgba(232, 137, 189, 0.85);
+  box-shadow: 0 0 0 2px var(--pink), 0 26px 40px -18px rgba(224, 96, 154, 0.8);
 }
 
 .fanart-item img {
@@ -743,14 +830,14 @@ h1 {
 }
 
 .fanart-modal {
-  background: rgba(255, 243, 250, 0.9);
+  background: rgba(255, 243, 248, 0.9);
 }
 
 .fanart-preview {
   border: 8px solid #fff;
   border-radius: 28px;
   background: var(--pink-50);
-  box-shadow: 0 0 0 2px var(--pink-200), 0 30px 60px -24px rgba(232, 137, 189, 0.75);
+  box-shadow: 0 0 0 2px var(--pink-200), 0 30px 60px -24px rgba(224, 96, 154, 0.7);
 }
 
 .fanart-modal-content p {
@@ -769,7 +856,7 @@ h1 {
 .goals-image-card {
   border: 10px solid #fff;
   border-radius: var(--r-xl);
-  box-shadow: 0 30px 60px -28px rgba(232, 137, 189, 0.7), 0 0 0 2px var(--pink-200);
+  box-shadow: 0 30px 60px -28px rgba(224, 96, 154, 0.65), 0 0 0 2px var(--pink-200);
 }
 
 .goals-page .goals-grid {
@@ -848,8 +935,8 @@ h1 {
 
 @media (max-width: 1080px) {
   .hero-model {
-    height: 560px;
-    max-width: 46%;
+    height: 520px;
+    max-width: 48%;
   }
 
   .hero-banner::before {
@@ -859,7 +946,15 @@ h1 {
   .hero-content h1,
   .hero-content .stream-title,
   .hero-content .hero-actions {
-    max-width: 52%;
+    max-width: 50%;
+  }
+
+  .home-fanart-row {
+    flex-wrap: wrap;
+  }
+
+  .home-fanart-item {
+    flex-basis: 180px;
   }
 }
 
@@ -884,9 +979,10 @@ h1 {
     position: relative;
     right: auto;
     order: -1;
-    height: min(420px, 100vw);
+    height: auto;
+    width: min(420px, 100%);
     max-width: 100%;
-    margin: 80px auto -40px;
+    margin: 76px auto -30px;
   }
 
   .hero-content {
@@ -909,8 +1005,27 @@ h1 {
     right: 18px;
   }
 
-  .home-grid {
-    margin-top: 0;
+  .braincells-stack {
+    grid-template-columns: 1fr;
+  }
+
+  .vods-arrow-left {
+    left: -10px;
+  }
+
+  .vods-arrow-right {
+    right: -10px;
+  }
+
+  .home-fanart-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .home-fanart-item:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: 50%;
   }
 }
 
@@ -932,8 +1047,16 @@ h1 {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .home-section {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    animation: none;
+  }
+
   .hero-banner::before,
   .hero-banner::after,
+  .section-icon,
   .community-cta-icon,
   .fanart-gallery-hero::before,
   .live-dot::before,

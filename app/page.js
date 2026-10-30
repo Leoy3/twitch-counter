@@ -29,6 +29,7 @@ const BRAINCELLS_TOP = {
   }
 };
 
+// Fanarts que se muestran en fila en la home (podés agregar o sacar)
 const HOME_FANARTS = [
   {
     image: "/fanart/fanart-01.png",
@@ -37,8 +38,27 @@ const HOME_FANARTS = [
   {
     image: "/fanart/fanart-02.png",
     artist: ""
+  },
+  {
+    image: "/fanart/fanart-03.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-05.png",
+    artist: ""
+  },
+  {
+    image: "/fanart/fanart-06.png",
+    artist: ""
   }
 ];
+
+// Texto introductorio debajo del título de cada sección de la home
+const SECTION_INTROS = {
+  streams: "Missed a stream? Catch up on the latest broadcasts.",
+  braincells: "Who had the most (and the fewest) braincells this month.",
+  fanart: "Artwork made with love by the community."
+};
 
 const SOCIAL_LINKS = [
   {
@@ -558,7 +578,6 @@ export default function Home() {
   const vods = getVisibleVods();
   const vodPages = chunkVods(vods);
   const videosUrl = vodsData?.videosUrl || `${channelUrl}/videos`;
-  const featuredFanart = HOME_FANARTS[0] || null;
 
   const canGoPrevious = vodPageIndex > 0;
   const canGoNext = vodPageIndex < vodPages.length - 1;
@@ -660,14 +679,12 @@ export default function Home() {
         />
       </section>
 
-      <section className="home-grid">
-        <section className="card panel-card streams-panel">
-          <div className="panel-header">
+      <section className="home-sections">
+        <section className="home-section streams-section">
+          <div className="section-head">
+            <span className="section-icon" aria-hidden="true">📺</span>
             <h2>Latest Streams</h2>
-
-            <a className="view-all-button" href={videosUrl} target="_blank" rel="noreferrer">
-              View all
-            </a>
+            <p>{SECTION_INTROS.streams}</p>
           </div>
 
           {vodsError ? (
@@ -754,11 +771,19 @@ export default function Home() {
               ) : null}
             </div>
           )}
+
+          <div className="section-actions">
+            <a className="button secondary" href={videosUrl} target="_blank" rel="noreferrer">
+              View all streams
+            </a>
+          </div>
         </section>
 
-        <section className="card panel-card braincells-panel" ref={braincellsSectionRef}>
-          <div className="panel-header">
+        <section className="home-section braincells-section" ref={braincellsSectionRef}>
+          <div className="section-head">
+            <span className="section-icon" aria-hidden="true">🧠</span>
             <h2>Monthly Braincells</h2>
+            <p>{SECTION_INTROS.braincells}</p>
             <span className="panel-month">{BRAINCELLS_TOP.month}</span>
           </div>
 
@@ -777,32 +802,34 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="card panel-card fanart-spotlight-card">
-          <div className="panel-header">
+        <section className="home-section fanart-section">
+          <div className="section-head">
+            <span className="section-icon" aria-hidden="true">🎨</span>
             <h2>Art Gallery</h2>
-
-            <a className="view-all-button" href="/fanart">
-              View all
-            </a>
+            <p>{SECTION_INTROS.fanart}</p>
           </div>
 
-          {featuredFanart ? (
-            <a className="fanart-spotlight" href="/fanart">
-              <FanartImage
-                src={featuredFanart.image}
-                alt={featuredFanart.artist || "Artwork"}
-                sizes="(max-width: 760px) 100vw, 360px"
-              />
-
-              {featuredFanart.artist ? (
-                <p>art by {featuredFanart.artist}</p>
-              ) : (
-                <p>Community artwork</p>
-              )}
-            </a>
+          {HOME_FANARTS.length > 0 ? (
+            <div className="home-fanart-row">
+              {HOME_FANARTS.map((fanart, index) => (
+                <a className="home-fanart-item" href="/fanart" key={`${fanart.image}-${index}`}>
+                  <FanartImage
+                    src={fanart.image}
+                    alt={fanart.artist ? `Art by ${fanart.artist}` : "Community artwork"}
+                    sizes="(max-width: 760px) 45vw, 220px"
+                  />
+                </a>
+              ))}
+            </div>
           ) : (
             <p className="vods-message">No artwork added yet.</p>
           )}
+
+          <div className="section-actions">
+            <a className="button" href="/fanart">
+              Open gallery
+            </a>
+          </div>
         </section>
       </section>
 
