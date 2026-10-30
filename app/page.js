@@ -11,6 +11,10 @@ const STREAM_MINUTE_US = 0;
 const WAIT_AFTER_STREAM_MS = 60 * 60 * 1000;
 const VODS_PER_PAGE = 3;
 
+// Imagen del modelo en la home: subí tu PNG a public/home/ con este mismo nombre
+// (o cambiá el nombre acá si tu archivo se llama distinto)
+const HERO_MODEL_IMAGE = "/home/model.png";
+
 const BRAINCELLS_TOP = {
   month: "October",
   highest: {
@@ -645,6 +649,15 @@ export default function Home() {
             </>
           )}
         </div>
+
+        <FanartImage
+          className="hero-model"
+          src={HERO_MODEL_IMAGE}
+          alt=""
+          sizes="(max-width: 760px) 90vw, 560px"
+          quality={90}
+          loading="eager"
+        />
       </section>
 
       <section className="home-grid">
