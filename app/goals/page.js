@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Poppins } from "next/font/google";
 
 const poppins = Poppins({
@@ -52,6 +52,21 @@ const GOALS = [
 
 const GOALS_PER_ROW = 3;
 
+// Texto que separa las goals con "???" del resto (va antes de la primera "???")
+const EXTENDED_GOALS_LABEL = "EXTENDED GOALS";
+
+const FIRST_EXTENDED_INDEX = GOALS.findIndex((goal) => goal.points === "???");
+
+// Posición de la card dentro de su fila, contando desde el separador
+function getRowPosition(index) {
+  const start =
+    FIRST_EXTENDED_INDEX !== -1 && index >= FIRST_EXTENDED_INDEX
+      ? FIRST_EXTENDED_INDEX
+      : 0;
+
+  return (index - start) % GOALS_PER_ROW;
+}
+
 function getGoalClassName(goal, isVisible) {
   const classNames = ["goal-card"];
 
@@ -98,7 +113,7 @@ export default function GoalsPage() {
       }
     );
 
-    element.querySelectorAll(".goal-card").forEach((card) => {
+    element.querySelectorAll(".goal-card, .goals-divider").forEach((card) => {
       observer.observe(card);
     });
 
@@ -118,22 +133,36 @@ export default function GoalsPage() {
       {SHOW_GOALS ? (
         <ul className={`goals-grid ${poppins.className}`} ref={goalsListRef}>
           {GOALS.map((goal, index) => (
-            <li
-              className={getGoalClassName(goal, visibleGoals[index])}
-              key={`${goal.title}-${index}`}
-              data-index={index}
-              style={{ "--goal-delay": `${(index % GOALS_PER_ROW) * 90}ms` }}
-            >
-              <div className="goal-points">
-                <strong>{goal.points}</strong>
-                <span>{POINTS_LABEL}</span>
-              </div>
+            <Fragment key={`${goal.title}-${index}`}>
+              {index === FIRST_EXTENDED_INDEX ? (
+                <li
+                  className={
+                    visibleGoals.extended
+                      ? "goals-divider goals-divider-visible"
+                      : "goals-divider"
+                  }
+                  data-index="extended"
+                >
+                  <span>{EXTENDED_GOALS_LABEL}</span>
+                </li>
+              ) : null}
 
-              <div className="goal-text">
-                <h3>{goal.title}</h3>
-                {goal.subtitle ? <p>{goal.subtitle}</p> : null}
-              </div>
-            </li>
+              <li
+                className={getGoalClassName(goal, visibleGoals[index])}
+                data-index={index}
+                style={{ "--goal-delay": `${getRowPosition(index) * 90}ms` }}
+              >
+                <div className="goal-points">
+                  <strong>{goal.points}</strong>
+                  <span>{POINTS_LABEL}</span>
+                </div>
+
+                <div className="goal-text">
+                  <h3>{goal.title}</h3>
+                  {goal.subtitle ? <p>{goal.subtitle}</p> : null}
+                </div>
+              </li>
+            </Fragment>
           ))}
         </ul>
       ) : null}
