@@ -935,9 +935,96 @@ h1 {
   box-shadow: 0 30px 60px -28px rgba(224, 96, 154, 0.65), 0 0 0 2px var(--pink-200);
 }
 
+.goals-content {
+  width: min(1120px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* cards de info (Time / Points / Incentives), una al lado de la otra */
+.goals-info {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.goals-info-card {
+  padding: 18px 22px 22px;
+  border: 2px solid var(--pink-200);
+  border-radius: var(--r-md);
+  background: linear-gradient(160deg, #fff 0%, var(--pink-50) 100%);
+  box-shadow: var(--shadow-card);
+  color: var(--ink);
+  font-family: var(--font-body), sans-serif;
+  opacity: 0;
+  transform: translateY(26px);
+  filter: blur(8px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--goal-delay, 0s),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--goal-delay, 0s),
+    filter 0.7s cubic-bezier(0.16, 1, 0.3, 1) var(--goal-delay, 0s);
+}
+
+.goals-info-card-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+.goals-info-card h2 {
+  width: fit-content;
+  margin: 0 auto 16px;
+  padding: 6px 22px;
+  border-radius: var(--r-pill);
+  background: var(--pink);
+  box-shadow: 0 4px 0 var(--pink-shadow);
+  color: var(--on-pink);
+  font-family: var(--font-display), sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.goals-info-card ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.goals-info-card li {
+  position: relative;
+  padding-left: 20px;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.goals-info-card li::before {
+  content: "";
+  position: absolute;
+  top: 0.45em;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--pink);
+}
+
+/* flex en vez de grid: si la última card de un grupo queda sola, va al medio */
 .goals-page .goals-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
   gap: 18px;
   font-family: var(--font-body), sans-serif;
+}
+
+.goals-page .goal-card {
+  flex: 0 0 calc((100% - 36px) / 3);
 }
 
 .goal-card {
@@ -1028,7 +1115,7 @@ h1 {
 
 /* separador "EXTENDED GOALS": ocupa toda la fila, con líneas a los costados */
 .goals-divider {
-  grid-column: 1 / -1;
+  flex: 0 0 100%;
   display: flex;
   align-items: center;
   gap: 18px;
@@ -1093,7 +1180,17 @@ h1 {
   }
 }
 
+@media (max-width: 900px) {
+  .goals-page .goal-card {
+    flex-basis: calc((100% - 18px) / 2);
+  }
+}
+
 @media (max-width: 760px) {
+  .goals-info {
+    grid-template-columns: 1fr;
+  }
+
   .site-nav,
   .site-nav-icon {
     background: rgba(255, 255, 255, 0.9);
@@ -1175,6 +1272,10 @@ h1 {
     transform: none;
   }
 
+  .goals-page .goal-card {
+    flex-basis: 100%;
+  }
+
   .goals-divider {
     gap: 10px;
   }
@@ -1193,6 +1294,7 @@ h1 {
     transition: none;
   }
 
+  .goals-info-card,
   .goals-divider {
     opacity: 1;
     transform: none;
