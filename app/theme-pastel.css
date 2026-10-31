@@ -23,15 +23,6 @@
   --peach-500: #f39a5f;
   --leaf: #a3d29c;
   --leaf-deep: #7fb879;
-  /* superficies: blancas en modo claro, se oscurecen en modo oscuro */
-  --surface: #fff;
-  --surface-glass: rgba(255, 255, 255, 0.82);
-  --surface-glass-strong: rgba(255, 255, 255, 0.9);
-  --frame: #fff;
-  --glow-peach: #fff0e6;
-  --shimmer: rgba(255, 255, 255, 0.75);
-  /* texto sobre fondos rosa clarito */
-  --on-tint: var(--on-pink);
   --r-md: 22px;
   --r-lg: 32px;
   --r-xl: 44px;
@@ -39,7 +30,6 @@
   --shadow-card: 0 10px 30px -14px rgba(224, 96, 154, 0.4), 0 2px 0 rgba(255, 255, 255, 0.9) inset;
   --shadow-soft: 0 14px 40px -18px rgba(224, 96, 154, 0.5);
   --bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-  color-scheme: light;
 }
 
 html,
@@ -52,7 +42,7 @@ body {
 body {
   background-image:
     radial-gradient(1200px 600px at 100% -10%, var(--pink-100) 0%, transparent 60%),
-    radial-gradient(900px 500px at -10% 30%, var(--glow-peach) 0%, transparent 60%);
+    radial-gradient(900px 500px at -10% 30%, #fff0e6 0%, transparent 60%);
 }
 
 h1,
@@ -66,9 +56,9 @@ h3 {
 
 .site-nav {
   padding: 0 10px 0 12px;
-  border: 2px solid var(--frame);
+  border: 2px solid #fff;
   border-radius: var(--r-pill);
-  background: var(--surface-glass);
+  background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   box-shadow: var(--shadow-soft);
@@ -116,7 +106,7 @@ h3 {
 
 .site-nav-link:hover,
 .site-nav-link-active {
-  color: var(--on-tint);
+  color: var(--on-pink);
   background: var(--pink-100);
 }
 
@@ -168,66 +158,9 @@ h3 {
 }
 
 .site-nav-icon:hover {
-  color: var(--on-tint);
+  color: var(--on-pink);
   background: var(--pink-100);
   transform: translateY(-2px) scale(1.06);
-}
-
-/* redes + botón de modo oscuro, a la derecha de la navbar */
-.site-nav-end {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.theme-toggle {
-  width: 38px;
-  height: 38px;
-  flex: 0 0 auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  border: 2px solid var(--pink-200);
-  border-radius: 50%;
-  background: var(--pink-100);
-  color: var(--rose);
-  cursor: pointer;
-  box-shadow: 0 3px 0 var(--pink-200);
-  transition: transform 0.3s var(--bounce), background 0.2s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.theme-toggle:hover {
-  background: var(--pink-200);
-  transform: translateY(-2px) rotate(-14deg) scale(1.06);
-}
-
-.theme-toggle:active {
-  transform: translateY(1px) scale(0.94);
-}
-
-.theme-toggle:focus-visible {
-  outline: 3px solid var(--pink);
-  outline-offset: 3px;
-}
-
-.theme-toggle svg {
-  width: 18px;
-  height: 18px;
-  display: block;
-}
-
-/* luna en modo claro, sol en modo oscuro */
-.theme-toggle .theme-toggle-sun,
-:root[data-theme="dark"] .theme-toggle .theme-toggle-moon {
-  display: none;
-}
-
-:root[data-theme="dark"] .theme-toggle .theme-toggle-sun {
-  display: block;
-  color: #ffd36b;
 }
 
 /* ---------- base de páginas ---------- */
@@ -239,7 +172,7 @@ h3 {
 .card {
   border: 2px solid var(--line);
   border-radius: var(--r-lg);
-  background: var(--surface);
+  background: #fff;
   backdrop-filter: none;
   box-shadow: var(--shadow-card);
 }
@@ -250,7 +183,7 @@ h3 {
   gap: 8px;
   padding: 7px 16px;
   border-radius: var(--r-pill);
-  background: var(--surface);
+  background: #fff;
   border: 2px solid var(--line);
   color: var(--rose);
   font-family: var(--font-display), sans-serif;
@@ -404,7 +337,7 @@ h1 {
   padding: 34px 38px 38px;
   border: 2px solid var(--line);
   border-radius: var(--r-lg);
-  background: var(--surface);
+  background: #fff;
   box-shadow: var(--shadow-card);
 }
 
@@ -489,8 +422,8 @@ h1 {
 }
 
 .button.secondary {
-  background: var(--surface);
-  color: var(--on-tint);
+  background: #fff;
+  color: var(--on-pink);
   border: 2px solid var(--pink-200);
   box-shadow: 0 5px 0 var(--pink-200);
 }
@@ -505,7 +438,7 @@ h1 {
   gap: 8px;
   padding: 8px 20px;
   border-radius: var(--r-pill);
-  background: var(--surface);
+  background: #fff;
   border: 2px solid var(--line);
   box-shadow: var(--shadow-card);
 }
@@ -526,7 +459,7 @@ h1 {
   padding: 0 14px;
   border: 2px solid var(--pink-200);
   background: var(--pink-50);
-  color: var(--on-tint);
+  color: var(--on-pink);
   font-family: var(--font-display), sans-serif;
   font-size: 14px;
   font-weight: 600;
@@ -534,7 +467,7 @@ h1 {
 }
 
 .view-all-button:hover {
-  color: var(--on-tint);
+  color: var(--on-pink);
   background: var(--pink-100);
   transform: translateY(-1px) scale(1.04);
 }
@@ -654,7 +587,7 @@ h1 {
   padding: 8px 8px 14px;
   border: 2px solid var(--line);
   border-radius: 26px;
-  background: var(--surface);
+  background: #fff;
   box-shadow: var(--shadow-card);
 }
 
@@ -678,7 +611,7 @@ h1 {
 .vod-skeleton-thumb::after,
 .fanart-item::after,
 .fanart-preview::before {
-  background: linear-gradient(90deg, transparent, var(--shimmer), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
 }
 
 .vod-skeleton-line {
@@ -717,7 +650,7 @@ h1 {
   width: 44px;
   height: 44px;
   border: 2px solid var(--pink-200);
-  background: var(--surface);
+  background: #fff;
   box-shadow: 0 4px 0 var(--pink-200);
 }
 
@@ -748,7 +681,7 @@ h1 {
   padding: 26px 20px 24px;
   border: 2px solid var(--pink-200);
   border-radius: var(--r-lg);
-  background: linear-gradient(160deg, var(--pink-50), var(--surface) 70%);
+  background: linear-gradient(160deg, var(--pink-50), #fff 70%);
   box-shadow: var(--shadow-card);
 }
 
@@ -760,7 +693,7 @@ h1 {
   right: -12px;
   width: 46px;
   height: 46px;
-  border: 4px solid var(--frame);
+  border: 4px solid #fff;
   border-radius: 50%;
   background-color: var(--pink);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 19V5M5.5 11.5 12 5l6.5 6.5' fill='none' stroke='white' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
@@ -795,7 +728,7 @@ h1 {
 /* lowest: tonos rojos, como algo malo */
 .braincell-feature-low {
   border-color: #ffb9b9;
-  background: linear-gradient(160deg, #ffe4e4, var(--surface) 70%);
+  background: linear-gradient(160deg, #ffe4e4, #fff 70%);
 }
 
 .braincell-feature-low strong {
@@ -844,7 +777,7 @@ h1 {
   margin-right: 22px;
   aspect-ratio: 3 / 4;
   overflow: hidden;
-  border: 7px solid var(--frame);
+  border: 7px solid #fff;
   border-radius: 24px;
   background: var(--pink-50);
   box-shadow: 0 0 0 2px var(--pink-200), 0 18px 34px -18px rgba(224, 96, 154, 0.65);
@@ -884,7 +817,7 @@ h1 {
   border-radius: var(--r-lg);
   background:
     radial-gradient(circle at left, var(--pink-100), transparent 40%),
-    var(--surface);
+    #fff;
   backdrop-filter: none;
   box-shadow: var(--shadow-card);
 }
@@ -938,7 +871,7 @@ h1 {
 }
 
 .fanart-item {
-  border: 8px solid var(--frame);
+  border: 8px solid #fff;
   border-radius: 26px;
   background: var(--pink-50);
   box-shadow: 0 0 0 2px var(--pink-200), 0 18px 34px -18px rgba(224, 96, 154, 0.65);
@@ -973,7 +906,7 @@ h1 {
 }
 
 .fanart-preview {
-  border: 8px solid var(--frame);
+  border: 8px solid #fff;
   border-radius: 28px;
   background: var(--pink-50);
   box-shadow: 0 0 0 2px var(--pink-200), 0 30px 60px -24px rgba(224, 96, 154, 0.7);
@@ -989,8 +922,7 @@ h1 {
 
 .fanart-modal-close {
   border: 2px solid var(--pink-200);
-  background: var(--surface);
-  color: var(--on-tint);
+  color: var(--on-pink);
   font-family: var(--font-display), sans-serif;
   box-shadow: 0 4px 0 var(--pink-200);
 }
@@ -998,7 +930,7 @@ h1 {
 /* ---------- Goals ---------- */
 
 .goals-image-card {
-  border: 10px solid var(--frame);
+  border: 10px solid #fff;
   border-radius: var(--r-xl);
   box-shadow: 0 30px 60px -28px rgba(224, 96, 154, 0.65), 0 0 0 2px var(--pink-200);
 }
@@ -1017,7 +949,7 @@ h1 {
   position: relative;
   border: 2px solid var(--goal-line);
   border-radius: var(--r-md);
-  background: linear-gradient(120deg, var(--surface) 0%, var(--goal-to) 100%);
+  background: linear-gradient(120deg, #fff 0%, var(--goal-to) 100%);
   box-shadow: var(--shadow-card);
   color: var(--ink);
   /* la demora escalonada solo aplica a la aparición, no al hover */
@@ -1059,7 +991,7 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid var(--frame);
+  border: 3px solid #fff;
   border-radius: 50%;
   background: var(--leaf-deep);
   color: #fff;
@@ -1094,69 +1026,6 @@ h1 {
   color: var(--ink-soft);
 }
 
-/* ---------- modo oscuro (botón luna/sol de la navbar) ---------- */
-
-/* los colores de todo el sitio salen de estas variables */
-:root[data-theme="dark"] {
-  color-scheme: dark;
-  --bg: #1b1118;
-  --ink: #fbe6ef;
-  --ink-soft: #c9a2b4;
-  --line: #48293a;
-  --pink-50: #2b1822;
-  --pink-100: #3b1f2f;
-  --pink-200: #5c3048;
-  --rose: #ff9ccb;
-  --surface: #25161f;
-  --surface-glass: rgba(37, 22, 31, 0.82);
-  --surface-glass-strong: rgba(37, 22, 31, 0.92);
-  --frame: #382230;
-  --glow-peach: rgba(255, 160, 110, 0.07);
-  --shimmer: rgba(255, 255, 255, 0.08);
-  --on-tint: var(--ink);
-  --shadow-card: 0 14px 34px -16px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(255, 255, 255, 0.05) inset;
-  --shadow-soft: 0 14px 40px -18px rgba(0, 0, 0, 0.75);
-}
-
-:root[data-theme="dark"] .site-nav-link.site-nav-link-gold,
-:root[data-theme="dark"] .site-nav-link.site-nav-link-gold:hover {
-  color: #ffd77a;
-  background: linear-gradient(135deg, #3d2c0c, #5e430c);
-}
-
-:root[data-theme="dark"] .game-name {
-  background: #1c2b1c;
-  border-color: #36553a;
-  color: #a6dca0;
-}
-
-:root[data-theme="dark"] .braincell-feature-low {
-  border-color: #6b2d32;
-  background: linear-gradient(160deg, #3b191d, var(--surface) 70%);
-}
-
-:root[data-theme="dark"] .braincell-feature-low strong {
-  color: #ff6b6b;
-}
-
-:root[data-theme="dark"] .goal-card-completed {
-  --goal-to: #1e3320;
-  --goal-line: #36553a;
-}
-
-:root[data-theme="dark"] .fanart-modal {
-  background: rgba(22, 12, 18, 0.92);
-}
-
-/* flechitas del carrusel de streams en rosa clarito */
-:root[data-theme="dark"] .vods-arrow-left::before {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M15 5L8 12L15 19" fill="none" stroke="%23ffd0e6" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-}
-
-:root[data-theme="dark"] .vods-arrow-right::before {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 5L16 12L9 19" fill="none" stroke="%23ffd0e6" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round"/></svg>');
-}
-
 /* ---------- responsive ---------- */
 
 @media (max-width: 1080px) {
@@ -1178,22 +1047,11 @@ h1 {
 @media (max-width: 760px) {
   .site-nav,
   .site-nav-icon {
-    background: var(--surface-glass-strong);
+    background: rgba(255, 255, 255, 0.9);
   }
 
   .site-nav-link {
     padding: 0 12px;
-  }
-
-  /* en celular las redes se ocultan, pero el botón de modo oscuro queda */
-  .site-nav {
-    grid-template-columns: auto 1fr auto;
-    gap: 10px;
-  }
-
-  .theme-toggle {
-    width: 34px;
-    height: 34px;
   }
 
   .hero-banner {
