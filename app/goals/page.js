@@ -123,7 +123,7 @@ export default function GoalsPage() {
               className={getGoalClassName(goal, visibleGoals[index])}
               key={`${goal.title}-${index}`}
               data-index={index}
-              style={{ transitionDelay: `${(index % GOALS_PER_ROW) * 90}ms` }}
+              style={{ "--goal-delay": `${(index % GOALS_PER_ROW) * 90}ms` }}
             >
               <div className="goal-points">
                 <strong>{goal.points}</strong>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import FanartImage from "./FanartImage";
+import FanartImage, { preloadFanartImage } from "./FanartImage";
 
 const US_TIMEZONE = "America/New_York";
 
@@ -14,6 +14,13 @@ const VODS_PER_PAGE = 3;
 // Imagen del modelo en la home: subí tu PNG a public/home/ con este mismo nombre
 // (o cambiá el nombre acá si tu archivo se llama distinto)
 const HERO_MODEL_IMAGE = "/home/model.png";
+const HERO_MODEL_SIZES = "(max-width: 760px) 90vw, 800px";
+
+// Imagen sorpresa: cada click en el modelo tiene esta chance de mostrarla
+// (0.2 = 20%). Si no sale, vuelve la imagen normal
+const HERO_SURPRISE_IMAGE = "/home/sixseven.png";
+const HERO_SURPRISE_SIZES = "(max-width: 760px) 76vw, 500px";
+const HERO_SURPRISE_CHANCE = 0.2;
 
 const BRAINCELLS_TOP = {
   month: "October",
@@ -310,6 +317,7 @@ export default function Home() {
   const braincellsSectionRef = useRef(null);
   const braincellsAnimationDoneRef = useRef(false);
   const braincellsAnimationFrameRef = useRef(null);
+  const heroModelButtonRef = useRef(null);
 
   const [status, setStatus] = useState(null);
   const [statusLoaded, setStatusLoaded] = useState(false);
@@ -327,6 +335,7 @@ export default function Home() {
     lowest: 0
   });
   const [heroModelLoaded, setHeroModelLoaded] = useState(false);
+  const [showHeroSurprise, setShowHeroSurprise] = useState(false);
 
   async function loadStatus() {
     try {
@@ -418,6 +427,35 @@ export default function Home() {
       top: 0,
       behavior: prefersReducedMotion ? "auto" : "smooth"
     });
+  }
+
+  function preloadHeroSurprise() {
+    preloadFanartImage({
+      src: HERO_SURPRISE_IMAGE,
+      sizes: HERO_SURPRISE_SIZES,
+      quality: 90
+    });
+  }
+
+  function handleHeroModelClick() {
+    setShowHeroSurprise(Math.random() < HERO_SURPRISE_CHANCE);
+
+    const button = heroModelButtonRef.current;
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (button && button.animate && !prefersReducedMotion) {
+      button.animate(
+        [
+          { transform: "scale(1)" },
+          { transform: "scale(0.94)" },
+          { transform: "scale(1.05)" },
+          { transform: "scale(1)" }
+        ],
+        { duration: 450, easing: "ease-out" }
+      );
+    }
   }
 
   const startBraincellsAnimation = useCallback(() => {
@@ -666,15 +704,30 @@ export default function Home() {
           )}
         </div>
 
-        <FanartImage
-          className={heroModelLoaded ? "hero-model hero-model-loaded" : "hero-model"}
-          src={HERO_MODEL_IMAGE}
-          alt=""
-          sizes="(max-width: 760px) 90vw, 800px"
-          quality={90}
-          loading="eager"
-          onLoad={() => setHeroModelLoaded(true)}
-        />
+        <button
+          ref={heroModelButtonRef}
+          className={
+            showHeroSurprise
+              ? "hero-model-button hero-model-surprise"
+              : "hero-model-button"
+          }
+          type="button"
+          aria-label="Click me!"
+          onClick={handleHeroModelClick}
+          onPointerEnter={preloadHeroSurprise}
+          onPointerDown={preloadHeroSurprise}
+          onFocus={preloadHeroSurprise}
+        >
+          <FanartImage
+            className={heroModelLoaded ? "hero-model hero-model-loaded" : "hero-model"}
+            src={showHeroSurprise ? HERO_SURPRISE_IMAGE : HERO_MODEL_IMAGE}
+            alt=""
+            sizes={showHeroSurprise ? HERO_SURPRISE_SIZES : HERO_MODEL_SIZES}
+            quality={90}
+            loading="eager"
+            onLoad={() => setHeroModelLoaded(true)}
+          />
+        </button>
       </section>
 
       <section className="home-sections">
