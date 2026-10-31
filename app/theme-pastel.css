@@ -272,7 +272,7 @@ h1 {
 
 /* imagen sorpresa (cuerpo entero): tiene otras proporciones, va con su propio tamaño */
 .hero-model-surprise {
-  right: calc(max(0px, calc(50% - 640px)) + 60px);
+  right: max(0px, calc(50% - 680px));
   bottom: 10px;
   height: 680px;
 }
@@ -1035,7 +1035,7 @@ h1 {
   }
 
   .hero-model-surprise {
-    right: calc(max(0px, calc(50% - 640px)) + 40px);
+    right: 0;
     height: 560px;
   }
 
