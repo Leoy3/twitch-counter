@@ -2,12 +2,65 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { THEME_STORAGE_KEY } from "./theme";
 
 // Texto dorado de la navbar: cambiá "label" para mostrar otro texto
 const GOLD_LINK = {
   label: "Soon",
   href: "/goals"
 };
+
+// Botón luna/sol: cambia entre modo claro y oscuro y lo recuerda en el navegador
+function ThemeToggle() {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    setIsDark(document.documentElement.dataset.theme === "dark");
+  }, []);
+
+  function toggleTheme() {
+    const nextTheme = isDark ? "light" : "dark";
+
+    document.documentElement.dataset.theme = nextTheme;
+    setIsDark(!isDark);
+
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+    } catch {
+      // sin acceso al almacenamiento: el cambio dura hasta recargar
+    }
+  }
+
+  return (
+    <button
+      className="theme-toggle"
+      type="button"
+      onClick={toggleTheme}
+      aria-label="Dark mode"
+      aria-pressed={isDark}
+      title={isDark ? "Light mode" : "Dark mode"}
+    >
+      <svg className="theme-toggle-moon" viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M20.2 14.6A8.5 8.5 0 0 1 9.4 3.8a.6.6 0 0 0-.8-.7A9.5 9.5 0 1 0 20.9 15.4a.6.6 0 0 0-.7-.8Z"
+        />
+      </svg>
+
+      <svg className="theme-toggle-sun" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4.6" fill="currentColor" />
+        <path
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.4"
+          strokeLinecap="round"
+          d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"
+        />
+      </svg>
+    </button>
+  );
+}
 
 function getLinkClassName(isActive) {
   return isActive
@@ -69,85 +122,89 @@ export default function SiteNav() {
 
       </div>
 
-      <div className="site-nav-socials">
-        <a
-          className="site-nav-icon"
-          href="https://www.twitch.tv/eatfreshbrains"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="Twitch"
-          title="Twitch"
-        >
-          <MaskIcon
-            url="https://upload.wikimedia.org/wikipedia/commons/4/41/Twitch_Glitch_Logo_White.svg"
-            width={18}
-            height={18}
-          />
-        </a>
-
-        <a
-          className="site-nav-icon"
-          href="https://x.com/soybrains"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="X"
-          title="X"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              fill="currentColor"
-              d="M14.2 10.4 21.3 2h-1.7l-6.2 7.3L8.5 2H2.8l7.5 11-7.5 9h1.7l6.6-7.8 5.3 7.8h5.7l-7.9-11.6Zm-2.3 2.7-.8-1.1-6-8.6h2.6l4.8 6.9.8 1.1 6.3 9.1H17l-5.1-7.4Z"
+      <div className="site-nav-end">
+        <div className="site-nav-socials">
+          <a
+            className="site-nav-icon"
+            href="https://www.twitch.tv/eatfreshbrains"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Twitch"
+            title="Twitch"
+          >
+            <MaskIcon
+              url="https://upload.wikimedia.org/wikipedia/commons/4/41/Twitch_Glitch_Logo_White.svg"
+              width={18}
+              height={18}
             />
-          </svg>
-        </a>
+          </a>
 
-        <a
-          className="site-nav-icon"
-          href="https://www.tiktok.com/@imbrains"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="TikTok"
-          title="TikTok"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              fill="currentColor"
-              d="M15.5 2c.3 2.5 1.7 4.1 4.1 4.4v3.2c-1.4.1-2.8-.3-4.1-1.1v6.2c0 4.5-4.9 7.3-8.8 5.1-3.8-2.1-3.8-7.6.1-9.7 1.1-.6 2.3-.8 3.6-.6v3.4c-.6-.2-1.2-.1-1.8.2-1.4.8-1.5 2.8-.1 3.7 1.4.9 3.3-.1 3.3-1.8V2h3.7Z"
+          <a
+            className="site-nav-icon"
+            href="https://x.com/soybrains"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="X"
+            title="X"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M14.2 10.4 21.3 2h-1.7l-6.2 7.3L8.5 2H2.8l7.5 11-7.5 9h1.7l6.6-7.8 5.3 7.8h5.7l-7.9-11.6Zm-2.3 2.7-.8-1.1-6-8.6h2.6l4.8 6.9.8 1.1 6.3 9.1H17l-5.1-7.4Z"
+              />
+            </svg>
+          </a>
+
+          <a
+            className="site-nav-icon"
+            href="https://www.tiktok.com/@imbrains"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="TikTok"
+            title="TikTok"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M15.5 2c.3 2.5 1.7 4.1 4.1 4.4v3.2c-1.4.1-2.8-.3-4.1-1.1v6.2c0 4.5-4.9 7.3-8.8 5.1-3.8-2.1-3.8-7.6.1-9.7 1.1-.6 2.3-.8 3.6-.6v3.4c-.6-.2-1.2-.1-1.8.2-1.4.8-1.5 2.8-.1 3.7 1.4.9 3.3-.1 3.3-1.8V2h3.7Z"
+              />
+            </svg>
+          </a>
+
+          <a
+            className="site-nav-icon"
+            href="https://vgen.co/eatfreshbrains"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="VGen"
+            title="VGen"
+            style={{ width: "28px" }}
+          >
+            <MaskIcon
+              url="https://help.vgen.co/hc/article_attachments/13004249258519"
+              width={26}
+              height={21}
             />
-          </svg>
-        </a>
+          </a>
 
-        <a
-          className="site-nav-icon"
-          href="https://vgen.co/eatfreshbrains"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="VGen"
-          title="VGen"
-          style={{ width: "28px" }}
-        >
-          <MaskIcon
-            url="https://help.vgen.co/hc/article_attachments/13004249258519"
-            width={26}
-            height={21}
-          />
-        </a>
+          <a
+            className="site-nav-icon"
+            href="https://throne.com/brains"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Throne"
+            title="Throne"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M4 9.3 8.2 13 12 5l3.8 8L20 9.3V19H4V9.3Zm2.2 4.8V17h11.6v-2.9l-2.7 2.4-3.1-6.4-3.1 6.4-2.7-2.4Z"
+              />
+            </svg>
+          </a>
+        </div>
 
-        <a
-          className="site-nav-icon"
-          href="https://throne.com/brains"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="Throne"
-          title="Throne"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              fill="currentColor"
-              d="M4 9.3 8.2 13 12 5l3.8 8L20 9.3V19H4V9.3Zm2.2 4.8V17h11.6v-2.9l-2.7 2.4-3.1-6.4-3.1 6.4-2.7-2.4Z"
-            />
-          </svg>
-        </a>
+        <ThemeToggle />
       </div>
     </nav>
   );
