@@ -1177,6 +1177,38 @@ h1 {
   white-space: nowrap;
 }
 
+/* footer chiquito debajo de las goals */
+.goals-footer {
+  width: min(640px, 100%);
+  margin: 0 auto;
+  padding-top: 18px;
+  border-top: 2px dashed var(--pink-200);
+  color: var(--ink-soft);
+  font-family: var(--font-body), sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(26px);
+  filter: blur(8px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.goals-footer-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+.goals-footer p {
+  margin: 0;
+  text-wrap: balance;
+}
+
 /* ---------- responsive ---------- */
 
 @media (max-width: 1080px) {
@@ -1310,7 +1342,8 @@ h1 {
   }
 
   .goals-info-card,
-  .goals-divider {
+  .goals-divider,
+  .goals-footer {
     opacity: 1;
     transform: none;
     filter: none;

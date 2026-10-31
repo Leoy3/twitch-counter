@@ -82,6 +82,12 @@ const INFO_CARDS = [
 // Texto que separa las goals con "???" del resto (va antes de la primera "???")
 const EXTENDED_GOALS_LABEL = "EXTENDED GOALS";
 
+// Footer debajo de las goals (se muestra y oculta junto con las goals), un renglón por texto
+const FOOTER_LINES = [
+  "Most funds will go into stocking up for cats (food / litter)",
+  "The rest into stream and ton of hot cheeto bags"
+];
+
 const FIRST_EXTENDED_INDEX = GOALS.findIndex((goal) => goal.points === "???");
 
 // Posición de la card dentro de su fila, contando desde el separador
@@ -141,7 +147,9 @@ export default function GoalsPage() {
     );
 
     element
-      .querySelectorAll(".goals-info-card, .goal-card, .goals-divider")
+      .querySelectorAll(
+        ".goals-info-card, .goal-card, .goals-divider, .goals-footer"
+      )
       .forEach((card) => {
         observer.observe(card);
       });
@@ -217,6 +225,19 @@ export default function GoalsPage() {
               </Fragment>
             ))}
           </ul>
+
+          <footer
+            className={
+              visibleGoals.footer
+                ? "goals-footer goals-footer-visible"
+                : "goals-footer"
+            }
+            data-index="footer"
+          >
+            {FOOTER_LINES.map((line) => (
+              <p key={line}>{line}</p>
+            ))}
+          </footer>
         </div>
       ) : null}
     </main>
