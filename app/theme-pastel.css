@@ -270,11 +270,11 @@ h1 {
   border-radius: 28px;
 }
 
-/* imagen sorpresa (cuerpo entero): más chica y apoyada más cerca del centro */
+/* imagen sorpresa (cuerpo entero): tiene otras proporciones, va con su propio tamaño */
 .hero-model-surprise {
-  right: calc(max(0px, calc(50% - 640px)) + 150px);
-  bottom: 24px;
-  height: 600px;
+  right: calc(max(0px, calc(50% - 640px)) + 60px);
+  bottom: 10px;
+  height: 680px;
 }
 
 .hero-model {
@@ -1035,8 +1035,8 @@ h1 {
   }
 
   .hero-model-surprise {
-    right: calc(max(0px, calc(50% - 640px)) + 100px);
-    height: 480px;
+    right: calc(max(0px, calc(50% - 640px)) + 40px);
+    height: 560px;
   }
 
   .hero-content {
@@ -1073,7 +1073,7 @@ h1 {
   }
 
   .hero-model-surprise {
-    width: min(290px, 76%);
+    width: min(330px, 86%);
     margin-bottom: 10px;
   }
 

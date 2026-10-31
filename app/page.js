@@ -17,10 +17,10 @@ const HERO_MODEL_IMAGE = "/home/model.png";
 const HERO_MODEL_SIZES = "(max-width: 760px) 90vw, 800px";
 
 // Imagen sorpresa: cada click en el modelo tiene esta chance de mostrarla
-// (0.2 = 20%). Si no sale, vuelve la imagen normal
+// (0.067 = 6.7%). Una vez que sale, se queda hasta recargar la página
 const HERO_SURPRISE_IMAGE = "/home/sixseven.png";
-const HERO_SURPRISE_SIZES = "(max-width: 760px) 76vw, 500px";
-const HERO_SURPRISE_CHANCE = 0.2;
+const HERO_SURPRISE_SIZES = "(max-width: 760px) 86vw, 560px";
+const HERO_SURPRISE_CHANCE = 0.067;
 
 const BRAINCELLS_TOP = {
   month: "October",
@@ -438,7 +438,9 @@ export default function Home() {
   }
 
   function handleHeroModelClick() {
-    setShowHeroSurprise(Math.random() < HERO_SURPRISE_CHANCE);
+    if (!showHeroSurprise && Math.random() < HERO_SURPRISE_CHANCE) {
+      setShowHeroSurprise(true);
+    }
 
     const button = heroModelButtonRef.current;
     const prefersReducedMotion = window.matchMedia(
