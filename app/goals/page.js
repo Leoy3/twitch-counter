@@ -52,8 +52,41 @@ const GOALS = [
 
 const GOALS_PER_ROW = 3;
 
+// Cards de info arriba de las goals (se muestran y ocultan junto con las goals)
+// title = título de la card, lines = cada renglón
+const INFO_CARDS = [
+  {
+    title: "Time",
+    lines: ["1 Sub = 5 Minutes", "$1 Dono = 2 Minutes", "100 bits = 1 Minute"]
+  },
+  {
+    title: "Points",
+    lines: [
+      "Tier 1 Sub = 3 Points",
+      "Tier 2 Sub = 5 Points",
+      "Tier 3 Sub = 10 Points",
+      "$1/100 Bits = 1 Point"
+    ]
+  },
+  {
+    title: "Incentives",
+    lines: [
+      "Every 20 Points I spin the wheel",
+      "5 Points : Sticky note on model",
+      "30 Points : VIP/Custom Discord Role or can ask for spins",
+      "Top 5 Supporters: Personalized signed digital Polaroid"
+    ]
+  }
+];
+
 // Texto que separa las goals con "???" del resto (va antes de la primera "???")
 const EXTENDED_GOALS_LABEL = "EXTENDED GOALS";
+
+// Footer debajo de las goals (se muestra y oculta junto con las goals), un renglón por texto
+const FOOTER_LINES = [
+  "Most funds will go into stocking up for cats (food / litter)",
+  "The rest into stream and ton of hot cheeto bags"
+];
 
 const FIRST_EXTENDED_INDEX = GOALS.findIndex((goal) => goal.points === "???");
 
@@ -82,11 +115,11 @@ function getGoalClassName(goal, isVisible) {
 }
 
 export default function GoalsPage() {
-  const goalsListRef = useRef(null);
+  const goalsContentRef = useRef(null);
   const [visibleGoals, setVisibleGoals] = useState({});
 
   useEffect(() => {
-    const element = goalsListRef.current;
+    const element = goalsContentRef.current;
 
     if (!element) {
       return undefined;
@@ -113,9 +146,13 @@ export default function GoalsPage() {
       }
     );
 
-    element.querySelectorAll(".goal-card, .goals-divider").forEach((card) => {
-      observer.observe(card);
-    });
+    element
+      .querySelectorAll(
+        ".goals-info-card, .goal-card, .goals-divider, .goals-footer"
+      )
+      .forEach((card) => {
+        observer.observe(card);
+      });
 
     return () => observer.disconnect();
   }, []);
@@ -131,40 +168,77 @@ export default function GoalsPage() {
       </section>
 
       {SHOW_GOALS ? (
-        <ul className={`goals-grid ${poppins.className}`} ref={goalsListRef}>
-          {GOALS.map((goal, index) => (
-            <Fragment key={`${goal.title}-${index}`}>
-              {index === FIRST_EXTENDED_INDEX ? (
-                <li
-                  className={
-                    visibleGoals.extended
-                      ? "goals-divider goals-divider-visible"
-                      : "goals-divider"
-                  }
-                  data-index="extended"
-                >
-                  <span>{EXTENDED_GOALS_LABEL}</span>
-                </li>
-              ) : null}
-
-              <li
-                className={getGoalClassName(goal, visibleGoals[index])}
-                data-index={index}
-                style={{ "--goal-delay": `${getRowPosition(index) * 90}ms` }}
+        <div className="goals-content" ref={goalsContentRef}>
+          <div className="goals-info">
+            {INFO_CARDS.map((info, index) => (
+              <section
+                className={
+                  visibleGoals[`info-${index}`]
+                    ? "goals-info-card goals-info-card-visible"
+                    : "goals-info-card"
+                }
+                key={info.title}
+                data-index={`info-${index}`}
+                style={{ "--goal-delay": `${index * 90}ms` }}
               >
-                <div className="goal-points">
-                  <strong>{goal.points}</strong>
-                  <span>{POINTS_LABEL}</span>
-                </div>
+                <h2>{info.title}</h2>
+                <ul>
+                  {info.lines.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
 
-                <div className="goal-text">
-                  <h3>{goal.title}</h3>
-                  {goal.subtitle ? <p>{goal.subtitle}</p> : null}
-                </div>
-              </li>
-            </Fragment>
-          ))}
-        </ul>
+          <ul className={`goals-grid ${poppins.className}`}>
+            {GOALS.map((goal, index) => (
+              <Fragment key={`${goal.title}-${index}`}>
+                {index === FIRST_EXTENDED_INDEX ? (
+                  <li
+                    className={
+                      visibleGoals.extended
+                        ? "goals-divider goals-divider-visible"
+                        : "goals-divider"
+                    }
+                    data-index="extended"
+                  >
+                    <span>{EXTENDED_GOALS_LABEL}</span>
+                  </li>
+                ) : null}
+
+                <li
+                  className={getGoalClassName(goal, visibleGoals[index])}
+                  data-index={index}
+                  style={{ "--goal-delay": `${getRowPosition(index) * 90}ms` }}
+                >
+                  <div className="goal-points">
+                    <strong>{goal.points}</strong>
+                    <span>{POINTS_LABEL}</span>
+                  </div>
+
+                  <div className="goal-text">
+                    <h3>{goal.title}</h3>
+                    {goal.subtitle ? <p>{goal.subtitle}</p> : null}
+                  </div>
+                </li>
+              </Fragment>
+            ))}
+          </ul>
+
+          <footer
+            className={
+              visibleGoals.footer
+                ? "goals-footer goals-footer-visible"
+                : "goals-footer"
+            }
+            data-index="footer"
+          >
+            {FOOTER_LINES.map((line) => (
+              <p key={line}>{line}</p>
+            ))}
+          </footer>
+        </div>
       ) : null}
     </main>
   );
