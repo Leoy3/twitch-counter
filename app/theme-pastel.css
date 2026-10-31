@@ -1026,6 +1026,55 @@ h1 {
   color: var(--ink-soft);
 }
 
+/* separador "EXTENDED GOALS": ocupa toda la fila, con líneas a los costados */
+.goals-divider {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 18px 0 4px;
+  opacity: 0;
+  transform: translateY(26px);
+  filter: blur(8px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.goals-divider-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+.goals-divider::before,
+.goals-divider::after {
+  content: "";
+  flex: 1;
+  height: 3px;
+  border-radius: var(--r-pill);
+  background: linear-gradient(90deg, transparent, var(--pink-200));
+}
+
+.goals-divider::after {
+  background: linear-gradient(90deg, var(--pink-200), transparent);
+}
+
+.goals-divider span {
+  padding: 9px 24px;
+  border: 2px solid var(--pink-200);
+  border-radius: var(--r-pill);
+  background: #fff;
+  box-shadow: 0 4px 0 var(--pink-200);
+  color: var(--rose);
+  font-family: var(--font-display), sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
 /* ---------- responsive ---------- */
 
 @media (max-width: 1080px) {
@@ -1125,6 +1174,15 @@ h1 {
   .fanart-item:nth-child(3n) {
     transform: none;
   }
+
+  .goals-divider {
+    gap: 10px;
+  }
+
+  .goals-divider span {
+    padding: 8px 16px;
+    font-size: 17px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1132,6 +1190,13 @@ h1 {
   .hero-model-button,
   .goal-card {
     transform: none;
+    transition: none;
+  }
+
+  .goals-divider {
+    opacity: 1;
+    transform: none;
+    filter: none;
     transition: none;
   }
 
