@@ -31,7 +31,7 @@ const GOALS = [
   { points: 40, title: "UNLOCK SURPRISE", subtitle: "", completed: false },
   { points: 55, title: "1hr Spanish", subtitle: "(Subtitles will be provided)", completed: false },
   { points: 67, title: "Spooky stories", subtitle: "(Every night during Brainathon)", completed: false },
-  { points: 80, title: "Doodles", subtitle: "", completed: false },
+  { points: 80, title: "Doodles", subtitle: "Simple Doodles for chat", completed: false },
   { points: 100, title: "Mods take over", subtitle: "", completed: false },
   { points: 120, title: "Anime nights", subtitle: "(Chat choice 2 seasons MAX)", completed: false },
   { points: 150, title: "Karaoke night", subtitle: "", completed: false },
