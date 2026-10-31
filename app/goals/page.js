@@ -147,9 +147,7 @@ export default function GoalsPage() {
     );
 
     element
-      .querySelectorAll(
-        ".goals-info-card, .goal-card, .goals-divider, .goals-footer"
-      )
+      .querySelectorAll(".goals-info-card, .goal-card, .goals-divider")
       .forEach((card) => {
         observer.observe(card);
       });
@@ -226,13 +224,14 @@ export default function GoalsPage() {
             ))}
           </ul>
 
+          {/* aparece junto con la última goal: al final de la página el footer
+              nunca llega a la zona donde se detecta la entrada en pantalla */}
           <footer
             className={
-              visibleGoals.footer
+              visibleGoals[GOALS.length - 1]
                 ? "goals-footer goals-footer-visible"
                 : "goals-footer"
             }
-            data-index="footer"
           >
             {FOOTER_LINES.map((line) => (
               <p key={line}>{line}</p>
