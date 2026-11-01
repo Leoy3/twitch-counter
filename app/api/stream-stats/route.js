@@ -22,13 +22,21 @@ export async function GET(request) {
     const month = /^\d{4}-(0[1-9]|1[0-2])$/.test(requested) ? requested : getMonthKey(new Date());
     const stats = await getStreamStats(month);
 
+    // portadas de las categorías: las del Top y las de cada día del calendario
     try {
-      const covers = await getCategoryCovers(stats.categories.map((category) => category.id));
+      const days = Object.values(stats.days);
+      const ids = new Set([
+        ...stats.categories.map((category) => category.id),
+        ...days.flatMap((day) => day.categories.map((category) => category.id))
+      ]);
+      const covers = await getCategoryCovers([...ids]);
+      const withCover = (category) => ({ ...category, coverUrl: covers[category.id] || "" });
 
-      stats.categories = stats.categories.map((category) => ({
-        ...category,
-        coverUrl: covers[category.id] || ""
-      }));
+      stats.categories = stats.categories.map(withCover);
+
+      for (const day of days) {
+        day.categories = day.categories.map(withCover);
+      }
     } catch {
       // sin portadas, las categorías se muestran igual
     }

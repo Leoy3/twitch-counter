@@ -10,7 +10,7 @@ const PAGE_INTRO = "Hours, streams and top categories of the month. Everything s
 const STATS_TIMEZONE = "America/New_York";
 
 // Etiquetas al costado de la cuadrícula: una fila por día, de lunes a domingo
-const WEEKDAY_LABELS = ["Mon", "", "Wed", "", "Fri", "", "Sun"];
+const WEEKDAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 // Colores de la cuadrícula según cuántas horas se streameó ese día
 const CALENDAR_LEVELS = [
@@ -19,6 +19,9 @@ const CALENDAR_LEVELS = [
   { maxHours: 6, label: "4h to 6h" },
   { maxHours: Infinity, label: "6h or more" }
 ];
+
+// Cuántas portadas entran en el recuadro del día (el resto se muestra como "+2")
+const DAY_COVERS_COUNT = 3;
 
 const monthName = new Intl.DateTimeFormat("en-US", { month: "long", timeZone: "UTC" });
 const dayName = new Intl.DateTimeFormat("en-US", {
@@ -47,18 +50,9 @@ function formatDuration(seconds) {
   return `${hours}h ${String(minutes).padStart(2, "0")}m`;
 }
 
-function formatHours(seconds) {
-  return seconds > 0 && seconds < 3600
-    ? `${Math.round(seconds / 60)}m`
-    : `${Math.round(seconds / 3600)}h`;
-}
-
-function formatViews(viewCount) {
-  if (viewCount === 1) {
-    return "1 view";
-  }
-
-  return `${new Intl.NumberFormat("en-US").format(viewCount || 0)} views`;
+// Igual que formatDuration, pero sin el "0h" cuando es menos de una hora
+function formatTime(seconds) {
+  return seconds < 3600 ? `${Math.round(seconds / 60)}m` : formatDuration(seconds);
 }
 
 // Sin los comandos del chat del final (!braincells !lurk ...)
@@ -87,9 +81,6 @@ function getMonthCells(monthKey) {
   return cells;
 }
 
-// Cuántas categorías entran en el recuadro del día (el resto se muestra como "+2")
-const DAY_CATEGORIES_COUNT = 3;
-
 function getDayLabel(key, day) {
   const date = dayName.format(keyToDate(key));
 
@@ -101,14 +92,38 @@ function getLatestDay(days) {
   return Object.keys(days).sort().at(-1) || "";
 }
 
+// Portadas de las categorías del día, abiertas como cartas en abanico.
+// categories = null cuando ese día no hubo stream
+function DayCovers({ categories }) {
+  const shown = categories ? categories.slice(0, DAY_COVERS_COUNT) : [];
+  const extra = categories ? categories.length - shown.length : 0;
+
+  return (
+    <div className="stats-day-covers" style={{ "--count": Math.max(shown.length, 1) }} aria-hidden="true">
+      {shown.length > 0 ? (
+        shown.map((category, index) => (
+          <span className="stats-day-cover" key={category.id} style={{ "--i": index }}>
+            {category.coverUrl ? <img src={category.coverUrl} alt="" /> : <span>🎮</span>}
+          </span>
+        ))
+      ) : (
+        <span className="stats-day-cover stats-day-cover-empty" style={{ "--i": 0 }}>
+          <span>{categories ? "🎮" : "💤"}</span>
+        </span>
+      )}
+
+      {extra > 0 ? <span className="stats-day-more">+{extra}</span> : null}
+    </div>
+  );
+}
+
 export default function StatsPage() {
   const [month, setMonth] = useState("");
   const [stats, setStats] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  // día elegido con un click y día que tiene el cursor encima (se muestra ese mientras tanto)
-  const [selectedDay, setSelectedDay] = useState("");
-  const [hoveredDay, setHoveredDay] = useState("");
+  // día que se muestra abajo de la cuadrícula: el último que tuvo el cursor encima
+  const [activeDay, setActiveDay] = useState("");
 
   useEffect(() => {
     let ignore = false;
@@ -126,8 +141,7 @@ export default function StatsPage() {
           setError("Couldn't load stream stats right now.");
         } else {
           setStats(data);
-          setSelectedDay(getLatestDay(data.days));
-          setHoveredDay("");
+          setActiveDay(getLatestDay(data.days));
           setError("");
         }
 
@@ -151,14 +165,8 @@ export default function StatsPage() {
 
   const numberCards = stats
     ? [
-        { icon: "⏰", value: formatHours(stats.monthSeconds), label: `Hours ${inMonth}` },
+        { icon: "⏰", value: formatDuration(stats.monthSeconds), label: "Total time streamed" },
         { icon: "🎮", value: stats.streamCount, label: `Streams ${inMonth}` },
-        {
-          icon: "⏳",
-          value: formatDuration(stats.monthSeconds),
-          label: "Total time streamed",
-          note: monthLabel
-        },
         {
           icon: "🏆",
           value: stats.longest ? formatDuration(stats.longest.seconds) : "—",
@@ -168,8 +176,10 @@ export default function StatsPage() {
       ]
     : [];
 
-  const shownKey = hoveredDay || selectedDay;
-  const shownDay = stats && shownKey ? stats.days[shownKey] : null;
+  const shownDay = stats && activeDay ? stats.days[activeDay] : null;
+  const shownGames = shownDay
+    ? shownDay.categories.map((category) => `${category.name} ${formatTime(category.seconds)}`).join(" · ")
+    : "";
 
   const emptyNote = isCurrentMonth
     ? "No streams yet this month. See you at the next one ♡"
@@ -178,7 +188,6 @@ export default function StatsPage() {
   return (
     <main className="page stats-page">
       <section className="stats-hero">
-        <p className="label">Brains</p>
         <h1>{PAGE_TITLE}</h1>
         <p>{PAGE_INTRO}</p>
       </section>
@@ -224,9 +233,9 @@ export default function StatsPage() {
               </div>
 
               <div className="stats-calendar-body">
-                <div className="stats-grid" onMouseLeave={() => setHoveredDay("")}>
-                  {WEEKDAY_LABELS.map((label, index) => (
-                    <span className="stats-grid-label" key={`label-${index}`} aria-hidden="true">
+                <div className="stats-grid">
+                  {WEEKDAY_LABELS.map((label) => (
+                    <span className="stats-grid-label" key={label} aria-hidden="true">
                       {label}
                     </span>
                   ))}
@@ -237,9 +246,10 @@ export default function StatsPage() {
                     }
 
                     const day = stats.days[key];
+                    const isPast = key <= stats.today;
                     const classNames = ["stats-cell"];
 
-                    if (key > stats.today) {
+                    if (!isPast) {
                       classNames.push("stats-cell-future");
                     }
 
@@ -247,88 +257,58 @@ export default function StatsPage() {
                       classNames.push("stats-cell-today");
                     }
 
-                    if (!day) {
-                      return (
-                        <span
-                          className={classNames.join(" ")}
-                          key={key}
-                          onMouseEnter={() => setHoveredDay(key <= stats.today ? key : "")}
-                        ></span>
-                      );
+                    if (day) {
+                      classNames.push("stats-cell-stream", `stats-level-${getLevel(day.seconds)}`);
                     }
 
-                    classNames.push("stats-cell-stream", `stats-level-${getLevel(day.seconds)}`);
-
-                    if (key === selectedDay) {
-                      classNames.push("stats-cell-selected");
+                    if (key === activeDay) {
+                      classNames.push("stats-cell-active");
                     }
 
                     return (
-                      <button
+                      <span
                         className={classNames.join(" ")}
-                        type="button"
                         key={key}
-                        aria-label={getDayLabel(key, day)}
-                        aria-pressed={key === selectedDay}
-                        onClick={() => setSelectedDay(key)}
-                        onMouseEnter={() => setHoveredDay(key)}
-                        onFocus={() => setHoveredDay(key)}
-                        onBlur={() => setHoveredDay("")}
-                      ></button>
+                        tabIndex={day ? 0 : undefined}
+                        aria-label={day ? getDayLabel(key, day) : undefined}
+                        onMouseEnter={isPast ? () => setActiveDay(key) : undefined}
+                        onFocus={day ? () => setActiveDay(key) : undefined}
+                      ></span>
                     );
                   })}
                 </div>
               </div>
 
-              {/* datos del día elegido: alto fijo para que la card no cambie de tamaño */}
+              {/* datos del día: alto fijo para que la card no cambie de tamaño */}
               <div className="stats-day-details" aria-live="polite">
-                {!shownKey ? (
+                {!activeDay ? (
                   <p className="stats-day-empty">{emptyNote}</p>
-                ) : !shownDay ? (
-                  <>
-                    <div className="stats-day-head">
-                      <strong>{dayName.format(keyToDate(shownKey))}</strong>
-                    </div>
-                    <p className="stats-day-muted">No stream this day</p>
-                  </>
                 ) : (
                   <>
-                    <div className="stats-day-head">
-                      <strong>{dayName.format(keyToDate(shownKey))}</strong>
-                      <span className="stats-day-time">{formatDuration(shownDay.seconds)}</span>
-                      {shownDay.streams.length > 1 ? (
-                        <span className="stats-day-count">{shownDay.streams.length} streams</span>
-                      ) : null}
-                      <a
-                        className="stats-day-vod"
-                        href={shownDay.streams[0].url}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        Watch VOD ↗
-                      </a>
-                    </div>
+                    <DayCovers categories={shownDay ? shownDay.categories : null} />
 
-                    <p className="stats-day-title" title={cleanTitle(shownDay.streams[0].title)}>
-                      {cleanTitle(shownDay.streams[0].title)}
-                    </p>
+                    <div className="stats-day-info">
+                      <div className="stats-day-head">
+                        <strong>{dayName.format(keyToDate(activeDay))}</strong>
+                        {shownDay ? (
+                          <span className="stats-day-time">{formatDuration(shownDay.seconds)}</span>
+                        ) : null}
+                        {shownDay && shownDay.streams.length > 1 ? (
+                          <span className="stats-day-count">{shownDay.streams.length} streams</span>
+                        ) : null}
+                      </div>
 
-                    <div className="stats-day-categories">
-                      {shownDay.categories.length > 0 ? (
+                      {shownDay ? (
                         <>
-                          {shownDay.categories.slice(0, DAY_CATEGORIES_COUNT).map((category) => (
-                            <span className="stats-day-category" key={category.id} title={category.name}>
-                              {category.name} · {formatDuration(category.seconds)}
-                            </span>
-                          ))}
-                          {shownDay.categories.length > DAY_CATEGORIES_COUNT ? (
-                            <span className="stats-day-category">
-                              +{shownDay.categories.length - DAY_CATEGORIES_COUNT}
-                            </span>
-                          ) : null}
+                          <p className="stats-day-title" title={cleanTitle(shownDay.streams[0].title)}>
+                            {cleanTitle(shownDay.streams[0].title)}
+                          </p>
+                          <p className="stats-day-games" title={shownGames}>
+                            {shownGames || "No categories recorded for this stream"}
+                          </p>
                         </>
                       ) : (
-                        <span className="stats-day-muted">No categories recorded for this stream</span>
+                        <p className="stats-day-games">No stream this day</p>
                       )}
                     </div>
                   </>
@@ -371,7 +351,7 @@ export default function StatsPage() {
                       <div className="stats-category-info">
                         <div className="stats-category-top">
                           <strong>{category.name}</strong>
-                          <span>{formatDuration(category.seconds)}</span>
+                          <span>{formatTime(category.seconds)}</span>
                         </div>
 
                         <span className="stats-category-bar">
@@ -393,46 +373,6 @@ export default function StatsPage() {
               )}
             </section>
           </div>
-
-          {stats.mostWatched.length > 0 ? (
-            <section className="stats-most-watched">
-              <div className="section-head">
-                <span className="section-icon" aria-hidden="true">{"♥︎"}</span>
-                <h2>Most Watched</h2>
-              </div>
-
-              <div className="stats-vods">
-                {stats.mostWatched.map((vod, index) => (
-                  <a
-                    key={vod.id}
-                    className="vod-card"
-                    href={vod.url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <div className="vod-thumbnail-wrap">
-                      {vod.thumbnailUrl ? (
-                        <img className="vod-thumbnail" src={vod.thumbnailUrl} alt={vod.title} />
-                      ) : (
-                        <div className="vod-thumbnail-placeholder"></div>
-                      )}
-
-                      <span className="stats-rank">#{index + 1}</span>
-                      <span className="vod-duration">{vod.duration}</span>
-                    </div>
-
-                    <div className="vod-info">
-                      <h3>{vod.title}</h3>
-
-                      <p>
-                        {shortDate.format(new Date(vod.createdAt))} · {formatViews(vod.viewCount)}
-                      </p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </section>
-          ) : null}
         </div>
       )}
     </main>
