@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 // Textos de arriba de la página
 const PAGE_TITLE = "Stream Stats";
-const PAGE_INTRO = "Hours, streaks and favorite days from the streams saved on Twitch.";
+const PAGE_INTRO = "Hours, streams and top categories of the month. Everything starts fresh every month.";
 
-// Cuántos streams se muestran en "Most Watched"
-const MOST_WATCHED_COUNT = 3;
+// Los días se cuentan en la hora de los streams (la misma del contador)
+const STATS_TIMEZONE = "America/New_York";
 
-const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+// Etiquetas al costado de la cuadrícula: una fila por día, de lunes a domingo
+const WEEKDAY_LABELS = ["Mon", "", "Wed", "", "Fri", "", "Sun"];
 
-// Colores del calendario según cuántas horas duró el stream de ese día
+// Colores de la cuadrícula según cuántas horas se streameó ese día
 const CALENDAR_LEVELS = [
   { maxHours: 2, label: "Under 2h" },
   { maxHours: 4, label: "2h to 4h" },
@@ -19,18 +20,24 @@ const CALENDAR_LEVELS = [
   { maxHours: Infinity, label: "6h or more" }
 ];
 
-const shortDate = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" });
-const longDate = new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric" });
-const monthName = new Intl.DateTimeFormat("en-US", { month: "short" });
-const clockTime = new Intl.DateTimeFormat("en-US", { hour: "numeric", minute: "2-digit" });
+const monthName = new Intl.DateTimeFormat("en-US", { month: "long", timeZone: "UTC" });
+const dayName = new Intl.DateTimeFormat("en-US", {
+  weekday: "short",
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC"
+});
+const shortDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  timeZone: STATS_TIMEZONE
+});
 
-// "5h57m30s" → segundos
-function parseDuration(duration) {
-  const hours = Number((duration.match(/(\d+)h/) || [])[1] || 0);
-  const minutes = Number((duration.match(/(\d+)m/) || [])[1] || 0);
-  const seconds = Number((duration.match(/(\d+)s/) || [])[1] || 0);
+// "2026-11" o "2026-11-05" → fecha (a medianoche UTC, solo para mostrar el nombre)
+function keyToDate(key) {
+  const [year, month, day = 1] = key.split("-").map(Number);
 
-  return hours * 3600 + minutes * 60 + seconds;
+  return new Date(Date.UTC(year, month - 1, day));
 }
 
 function formatDuration(seconds) {
@@ -38,6 +45,12 @@ function formatDuration(seconds) {
   const minutes = Math.round((seconds % 3600) / 60);
 
   return `${hours}h ${String(minutes).padStart(2, "0")}m`;
+}
+
+function formatHours(seconds) {
+  return seconds > 0 && seconds < 3600
+    ? `${Math.round(seconds / 60)}m`
+    : `${Math.round(seconds / 3600)}h`;
 }
 
 function formatViews(viewCount) {
@@ -53,138 +66,53 @@ function cleanTitle(title) {
   return title.replace(/\s*![\w-]+/g, "").trim();
 }
 
-// Día en la hora local de quien mira la página
-function getDayKey(date) {
-  return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-}
-
-function addDays(date, days) {
-  const next = new Date(date);
-  next.setDate(next.getDate() + days);
-
-  return next;
-}
-
-// Lunes de la semana de esa fecha
-function getWeekStart(date) {
-  const start = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-
-  return addDays(start, -((start.getDay() + 6) % 7));
-}
-
 function getLevel(seconds) {
-  const hours = seconds / 3600;
-
-  return CALENDAR_LEVELS.findIndex((level) => hours < level.maxHours) + 1;
+  return CALENDAR_LEVELS.findIndex((level) => seconds / 3600 < level.maxHours) + 1;
 }
 
-function buildStats(vods) {
-  const streams = vods
-    .map((vod) => ({
-      ...vod,
-      start: new Date(vod.createdAt),
-      seconds: parseDuration(vod.duration || "")
-    }))
-    .filter((stream) => stream.seconds > 0)
-    .sort((a, b) => a.start - b.start);
+// Días del mes ordenados por semana (de lunes a domingo); null = casillero vacío
+function getMonthCells(monthKey) {
+  const date = keyToDate(monthKey);
+  const daysInMonth = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0)).getUTCDate();
+  const cells = Array((date.getUTCDay() + 6) % 7).fill(null);
 
-  if (streams.length === 0) {
-    return null;
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    cells.push(`${monthKey}-${String(day).padStart(2, "0")}`);
   }
 
-  const totalSeconds = streams.reduce((total, stream) => total + stream.seconds, 0);
-  const longest = streams.reduce((best, stream) => (stream.seconds > best.seconds ? stream : best));
-
-  // streams agrupados por día
-  const days = new Map();
-
-  for (const stream of streams) {
-    const key = getDayKey(stream.start);
-    const day = days.get(key) || { seconds: 0, streams: [] };
-
-    day.seconds += stream.seconds;
-    day.streams.push(stream);
-    days.set(key, day);
+  while (cells.length % 7 !== 0) {
+    cells.push(null);
   }
 
-  // semanas del calendario: desde la semana del primer stream hasta la actual
-  const today = new Date();
-  const todayKey = getDayKey(today);
-  const calendar = [];
-
-  for (
-    let date = getWeekStart(streams[0].start);
-    date <= addDays(getWeekStart(today), 6);
-    date = addDays(date, 1)
-  ) {
-    calendar.push({
-      key: getDayKey(date),
-      date,
-      isFuture: date > today && getDayKey(date) !== todayKey,
-      isToday: getDayKey(date) === todayKey,
-      stream: days.get(getDayKey(date)) || null
-    });
-  }
-
-  // racha: días seguidos con stream, contando desde hoy (o desde ayer si hoy todavía no hubo)
-  let streak = 0;
-  let streakDate = days.has(todayKey) ? today : addDays(today, -1);
-
-  while (days.has(getDayKey(streakDate))) {
-    streak += 1;
-    streakDate = addDays(streakDate, -1);
-  }
-
-  // en qué días de la semana hay más streams
-  const weekdayCounts = [0, 0, 0, 0, 0, 0, 0];
-
-  for (const stream of streams) {
-    weekdayCounts[(stream.start.getDay() + 6) % 7] += 1;
-  }
-
-  // horario de inicio más común (la mediana), redondeado a 15 minutos
-  const startMinutes = streams
-    .map((stream) => stream.start.getHours() * 60 + stream.start.getMinutes())
-    .sort((a, b) => a - b);
-  const medianMinutes = startMinutes[Math.floor(startMinutes.length / 2)];
-  const roundedMinutes = Math.round(medianMinutes / 15) * 15;
-  const usualStart = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 0, roundedMinutes);
-
-  const weeks = Math.max(1, (today - streams[0].start) / (7 * 86400000));
-
-  return {
-    count: streams.length,
-    firstDate: streams[0].start,
-    totalSeconds,
-    averageSeconds: totalSeconds / streams.length,
-    longest,
-    calendar,
-    streak,
-    weekdayCounts,
-    usualStart,
-    streamsPerWeek: Math.round(streams.length / weeks),
-    mostWatched: [...streams]
-      .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
-      .slice(0, MOST_WATCHED_COUNT)
-  };
+  return cells;
 }
 
-function getDayNote(day) {
-  const first = day.stream.streams[0];
-  const extra = day.stream.streams.length > 1 ? ` · ${day.stream.streams.length} streams` : "";
+function getDayNote(key, day) {
+  if (!day) {
+    return `${dayName.format(keyToDate(key))} · No stream`;
+  }
 
-  return `${longDate.format(day.date)} · ${formatDuration(day.stream.seconds)}${extra} · ${cleanTitle(first.title)}`;
+  const extra = day.streams.length > 1 ? ` · ${day.streams.length} streams` : "";
+
+  return `${dayName.format(keyToDate(key))} · ${formatDuration(day.seconds)}${extra} · ${cleanTitle(
+    day.streams[0].title
+  )}`;
 }
 
 export default function StatsPage() {
-  const [vods, setVods] = useState(null);
+  const [month, setMonth] = useState("");
+  const [stats, setStats] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeDay, setActiveDay] = useState(null);
+  const [note, setNote] = useState("");
 
   useEffect(() => {
     let ignore = false;
 
-    fetch("/api/vod-history", { cache: "no-store" })
+    setIsLoading(true);
+    setNote("");
+
+    fetch(`/api/stream-stats${month ? `?month=${month}` : ""}`, { cache: "no-store" })
       .then((response) => response.json())
       .then((data) => {
         if (ignore) {
@@ -194,35 +122,50 @@ export default function StatsPage() {
         if (data.error) {
           setError("Couldn't load stream stats right now.");
         } else {
-          setVods(data.vods || []);
+          setStats(data);
+          setError("");
         }
+
+        setIsLoading(false);
       })
       .catch(() => {
         if (!ignore) {
           setError("Couldn't load stream stats right now.");
+          setIsLoading(false);
         }
       });
 
     return () => {
       ignore = true;
     };
-  }, []);
+  }, [month]);
 
-  const stats = useMemo(() => (vods ? buildStats(vods) : null), [vods]);
-  const topWeekdayCount = stats ? Math.max(...stats.weekdayCounts) : 0;
+  const isCurrentMonth = stats ? stats.month === stats.months[0] : true;
+  const monthLabel = stats ? monthName.format(keyToDate(stats.month)) : "";
+  const inMonth = isCurrentMonth ? "this month" : `in ${monthLabel}`;
 
   const numberCards = stats
     ? [
-        { icon: "⏰", value: `${Math.round(stats.totalSeconds / 3600)}h`, label: "Hours streamed" },
-        { icon: "🎮", value: stats.count, label: "Streams" },
-        { icon: "⏳", value: formatDuration(stats.averageSeconds), label: "Average stream" },
+        { icon: "⏰", value: formatHours(stats.monthSeconds), label: `Hours ${inMonth}` },
+        { icon: "🎮", value: stats.streamCount, label: `Streams ${inMonth}` },
+        {
+          icon: "⏳",
+          value: formatDuration(stats.allTimeSeconds),
+          label: "Total time streamed",
+          note: stats.trackedSince ? `since ${shortDate.format(new Date(stats.trackedSince))}` : ""
+        },
         {
           icon: "🏆",
-          value: formatDuration(stats.longest.seconds),
-          label: `Longest stream · ${shortDate.format(stats.longest.start)}`
+          value: stats.longest ? formatDuration(stats.longest.seconds) : "—",
+          label: "Longest stream",
+          note: stats.longest ? shortDate.format(new Date(stats.longest.createdAt)) : ""
         }
       ]
     : [];
+
+  const emptyNote = isCurrentMonth
+    ? "No streams yet this month. See you at the next one ♡"
+    : `No streams in ${monthLabel}.`;
 
   return (
     <main className="page stats-page">
@@ -232,17 +175,25 @@ export default function StatsPage() {
         <p>{PAGE_INTRO}</p>
       </section>
 
-      {error ? (
+      {!stats && error ? (
         <p className="vods-message">{error}</p>
-      ) : !vods ? (
-        <p className="vods-message">Loading stream stats...</p>
       ) : !stats ? (
-        <p className="vods-message">No streams saved on Twitch yet.</p>
+        <p className="vods-message">Loading stream stats...</p>
       ) : (
-        <div className="stats-content">
-          <p className="stats-range">
-            Since {shortDate.format(stats.firstDate)} · last {stats.count} streams
-          </p>
+        <div className={isLoading ? "stats-content stats-content-loading" : "stats-content"}>
+          <div className="stats-months">
+            {[...stats.months].reverse().map((key) => (
+              <button
+                className={key === stats.month ? "stats-month stats-month-active" : "stats-month"}
+                type="button"
+                key={key}
+                onClick={() => setMonth(key)}
+                aria-pressed={key === stats.month}
+              >
+                {monthName.format(keyToDate(key))}
+              </button>
+            ))}
+          </div>
 
           <div className="stats-numbers">
             {numberCards.map((card) => (
@@ -252,6 +203,7 @@ export default function StatsPage() {
                 </span>
                 <strong>{card.value}</strong>
                 <p>{card.label}</p>
+                {card.note ? <span className="stats-number-note">{card.note}</span> : null}
               </div>
             ))}
           </div>
@@ -260,158 +212,163 @@ export default function StatsPage() {
             <section className="stats-card stats-calendar-card">
               <div className="stats-card-head">
                 <h2>Stream Calendar</h2>
-                {stats.streak >= 2 ? (
-                  <span className="stats-streak">🔥 {stats.streak}-day streak</span>
-                ) : null}
+                <span className="stats-card-tag">{monthLabel}</span>
               </div>
 
               <div className="stats-calendar-body">
-                <div className="stats-calendar-weekdays" aria-hidden="true">
-                  {WEEKDAYS.map((weekday) => (
-                    <span key={weekday}>{weekday.slice(0, 1)}</span>
+                <div className="stats-grid">
+                  {WEEKDAY_LABELS.map((label, index) => (
+                    <span className="stats-grid-label" key={`label-${index}`} aria-hidden="true">
+                      {label}
+                    </span>
                   ))}
-                </div>
 
-                <div className="stats-calendar">
-                  {stats.calendar.map((day, index) => {
-                    const showMonth = index === 0 || day.date.getDate() === 1;
-                    const classNames = ["stats-day"];
-
-                    if (day.isFuture) {
-                      classNames.push("stats-day-future");
+                  {getMonthCells(stats.month).map((key, index) => {
+                    if (!key) {
+                      return <span className="stats-cell stats-cell-blank" key={`blank-${index}`}></span>;
                     }
 
-                    if (day.isToday) {
-                      classNames.push("stats-day-today");
+                    const day = stats.days[key];
+                    const classNames = ["stats-cell"];
+
+                    if (key > stats.today) {
+                      classNames.push("stats-cell-future");
                     }
 
-                    const content = (
-                      <>
-                        {showMonth ? (
-                          <span className="stats-day-month">{monthName.format(day.date)}</span>
-                        ) : null}
-                        {day.date.getDate()}
-                      </>
-                    );
+                    if (key === stats.today) {
+                      classNames.push("stats-cell-today");
+                    }
 
-                    if (!day.stream) {
+                    if (!day) {
                       return (
-                        <span className={classNames.join(" ")} key={day.key}>
-                          {content}
-                        </span>
+                        <span
+                          className={classNames.join(" ")}
+                          key={key}
+                          onMouseEnter={() => key <= stats.today && setNote(getDayNote(key, null))}
+                        ></span>
                       );
                     }
 
-                    classNames.push("stats-day-stream", `stats-day-level-${getLevel(day.stream.seconds)}`);
+                    classNames.push("stats-cell-stream", `stats-level-${getLevel(day.seconds)}`);
 
                     return (
                       <a
                         className={classNames.join(" ")}
-                        key={day.key}
-                        href={day.stream.streams[0].url}
+                        key={key}
+                        href={day.streams[0].url}
                         target="_blank"
                         rel="noreferrer"
-                        aria-label={getDayNote(day)}
-                        onMouseEnter={() => setActiveDay(day)}
-                        onFocus={() => setActiveDay(day)}
-                      >
-                        {content}
-                      </a>
+                        aria-label={getDayNote(key, day)}
+                        onMouseEnter={() => setNote(getDayNote(key, day))}
+                        onFocus={() => setNote(getDayNote(key, day))}
+                      ></a>
                     );
                   })}
                 </div>
               </div>
 
               <p className="stats-calendar-note" aria-live="polite">
-                {activeDay ? getDayNote(activeDay) : "Hover a pink day to see that stream ♡"}
+                {note || (stats.streamCount > 0 ? "Hover a square to see that day ♡" : emptyNote)}
               </p>
 
               <div className="stats-legend">
-                <span>Shorter</span>
+                <span>Less</span>
+                <span className="stats-legend-swatch stats-legend-empty" title="No stream"></span>
                 {CALENDAR_LEVELS.map((level, index) => (
                   <span
-                    className={`stats-legend-swatch stats-day-level-${index + 1}`}
+                    className={`stats-legend-swatch stats-level-${index + 1}`}
                     key={level.label}
                     title={level.label}
                   ></span>
                 ))}
-                <span>Longer</span>
+                <span>More</span>
               </div>
             </section>
 
-            <div className="stats-side">
-              <section className="stats-card stats-time-card">
-                <h2>Usually Live At</h2>
-                <strong>{clockTime.format(stats.usualStart)}</strong>
-                <p>your time · about {stats.streamsPerWeek} streams a week</p>
-              </section>
+            <section className="stats-card stats-categories-card">
+              <div className="stats-card-head">
+                <h2>Top Categories</h2>
+                <span className="stats-card-tag">{monthLabel}</span>
+              </div>
 
-              <section className="stats-card">
-                <h2>Favorite Days</h2>
+              {stats.categories.length > 0 ? (
+                <ol className="stats-categories">
+                  {stats.categories.map((category, index) => (
+                    <li className="stats-category" key={category.id}>
+                      <span className="stats-category-cover">
+                        {category.coverUrl ? (
+                          <img src={category.coverUrl} alt="" />
+                        ) : (
+                          <span aria-hidden="true">🎮</span>
+                        )}
+                        <span className="stats-category-rank">{index + 1}</span>
+                      </span>
 
-                <div className="stats-weekdays">
-                  {WEEKDAYS.map((weekday, index) => {
-                    const count = stats.weekdayCounts[index];
-                    const isTop = count > 0 && count === topWeekdayCount;
+                      <div className="stats-category-info">
+                        <div className="stats-category-top">
+                          <strong>{category.name}</strong>
+                          <span>{formatDuration(category.seconds)}</span>
+                        </div>
 
-                    return (
-                      <div
-                        className={isTop ? "stats-weekday stats-weekday-top" : "stats-weekday"}
-                        key={weekday}
-                      >
-                        <strong>{count}</strong>
-                        <span
-                          className="stats-weekday-bar"
-                          style={{
-                            height: `${topWeekdayCount ? (count / topWeekdayCount) * 100 : 0}%`
-                          }}
-                        ></span>
-                        <span>{weekday}</span>
+                        <span className="stats-category-bar">
+                          <span
+                            style={{
+                              width: `${(category.seconds / stats.categories[0].seconds) * 100}%`
+                            }}
+                          ></span>
+                        </span>
                       </div>
-                    );
-                  })}
-                </div>
-              </section>
-            </div>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <p className="stats-empty">
+                  <span aria-hidden="true">🎮</span>
+                  Categories show up here after each stream ♡
+                </p>
+              )}
+            </section>
           </div>
 
-          <section className="stats-most-watched">
-            <div className="section-head">
-              <span className="section-icon" aria-hidden="true">{"♥︎"}</span>
-              <h2>Most Watched</h2>
-            </div>
+          {stats.mostWatched.length > 0 ? (
+            <section className="stats-most-watched">
+              <div className="section-head">
+                <span className="section-icon" aria-hidden="true">{"♥︎"}</span>
+                <h2>Most Watched</h2>
+              </div>
 
-            <div className="stats-vods">
-              {stats.mostWatched.map((vod, index) => (
-                <a
-                  key={vod.id}
-                  className="vod-card"
-                  href={vod.url}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <div className="vod-thumbnail-wrap">
-                    {vod.thumbnailUrl ? (
-                      <img className="vod-thumbnail" src={vod.thumbnailUrl} alt={vod.title} />
-                    ) : (
-                      <div className="vod-thumbnail-placeholder"></div>
-                    )}
+              <div className="stats-vods">
+                {stats.mostWatched.map((vod, index) => (
+                  <a
+                    key={vod.id}
+                    className="vod-card"
+                    href={vod.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <div className="vod-thumbnail-wrap">
+                      {vod.thumbnailUrl ? (
+                        <img className="vod-thumbnail" src={vod.thumbnailUrl} alt={vod.title} />
+                      ) : (
+                        <div className="vod-thumbnail-placeholder"></div>
+                      )}
 
-                    <span className="stats-rank">#{index + 1}</span>
-                    <span className="vod-duration">{vod.duration}</span>
-                  </div>
+                      <span className="stats-rank">#{index + 1}</span>
+                      <span className="vod-duration">{vod.duration}</span>
+                    </div>
 
-                  <div className="vod-info">
-                    <h3>{vod.title}</h3>
+                    <div className="vod-info">
+                      <h3>{vod.title}</h3>
 
-                    <p>
-                      {shortDate.format(vod.start)} · {formatViews(vod.viewCount)}
-                    </p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </section>
+                      <p>
+                        {shortDate.format(new Date(vod.createdAt))} · {formatViews(vod.viewCount)}
+                      </p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          ) : null}
         </div>
       )}
     </main>
