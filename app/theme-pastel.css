@@ -1558,12 +1558,53 @@ h1 {
   box-shadow: 0 0 0 2px var(--pink-200), 0 8px 14px -8px rgba(0, 0, 0, 0.45);
   font-size: 22px;
   rotate: calc((var(--i) - (var(--count) - 1) / 2) * var(--spread));
-  transition: rotate 0.35s var(--bounce), translate 0.35s var(--bounce);
+  transition:
+    left 0.45s var(--bounce),
+    rotate 0.45s var(--bounce),
+    translate 0.45s var(--bounce),
+    opacity 0.3s ease;
 }
 
 .stats-day-details:hover .stats-day-cover {
   --spread: 14deg;
   translate: 0 -3px;
+}
+
+/* la portada de adelante sale volando hacia la izquierda y vuelve por atrás */
+.stats-day-covers .stats-day-cover.stats-day-cover-leaving {
+  opacity: 0;
+  translate: -36px 10px;
+  rotate: -26deg;
+  transition:
+    opacity 0.35s ease,
+    translate 0.35s ease,
+    rotate 0.35s ease;
+}
+
+/* al cambiar de día, las portadas entran como cartas repartidas (aunque sea una sola) */
+.stats-day-covers-deal .stats-day-cover {
+  animation: stats-cover-deal 0.5s var(--bounce) backwards;
+  animation-delay: calc(var(--i) * 70ms);
+}
+
+@keyframes stats-cover-deal {
+  from {
+    opacity: 0;
+    translate: 0 16px;
+    scale: 0.8;
+  }
+}
+
+/* la que aparece atrás cuando hay más categorías que lugares */
+.stats-day-cover-new {
+  animation: stats-cover-in 0.45s ease both;
+}
+
+@keyframes stats-cover-in {
+  from {
+    opacity: 0;
+    translate: 18px 4px;
+  }
 }
 
 .stats-day-cover img {
@@ -1654,6 +1695,11 @@ h1 {
   color: var(--ink-soft);
   font-size: 13px;
   font-weight: 800;
+}
+
+.stats-day-game-front {
+  color: var(--rose);
+  transition: color 0.3s ease;
 }
 
 .stats-day-empty {
@@ -2177,6 +2223,11 @@ h1 {
   .goal-card {
     transform: none;
     transition: none;
+  }
+
+  .stats-day-covers .stats-day-cover {
+    transition: none;
+    animation: none;
   }
 
   .goals-info-card,

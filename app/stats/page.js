@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
 // Textos de arriba de la página
 const PAGE_TITLE = "Stream Stats";
@@ -22,6 +22,13 @@ const CALENDAR_LEVELS = [
 
 // Cuántas portadas entran en el recuadro del día (el resto se muestra como "+2")
 const DAY_COVERS_COUNT = 3;
+
+// Las portadas del día van pasando al frente de a una, en loop:
+// en COVERS_LOOP_MS pasan todas (cada una se queda al menos MIN_COVER_MS adelante)
+const COVERS_LOOP_MS = 5000;
+const MIN_COVER_MS = 1250;
+// lo que dura la salida de la portada de adelante
+const COVER_EXIT_MS = 350;
 
 const monthName = new Intl.DateTimeFormat("en-US", { month: "long", timeZone: "UTC" });
 const dayName = new Intl.DateTimeFormat("en-US", {
@@ -92,28 +99,119 @@ function getLatestDay(days) {
   return Object.keys(days).sort().at(-1) || "";
 }
 
-// Portadas de las categorías del día, abiertas como cartas en abanico.
-// categories = null cuando ese día no hubo stream
-function DayCovers({ categories }) {
-  const shown = categories ? categories.slice(0, DAY_COVERS_COUNT) : [];
-  const extra = categories ? categories.length - shown.length : 0;
+// Cuenta las vueltas del abanico: cada vuelta la portada de adelante sale y pasa atrás
+function useCoverLoop(count) {
+  const [turn, setTurn] = useState(0);
+  const [isLeaving, setIsLeaving] = useState(false);
+
+  useEffect(() => {
+    if (count < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return undefined;
+    }
+
+    let exitTimer = null;
+
+    const interval = setInterval(() => {
+      setIsLeaving(true);
+
+      exitTimer = setTimeout(() => {
+        setTurn((current) => current + 1);
+        setIsLeaving(false);
+      }, COVER_EXIT_MS);
+    }, Math.max(COVERS_LOOP_MS / count, MIN_COVER_MS));
+
+    return () => {
+      clearInterval(interval);
+      clearTimeout(exitTimer);
+    };
+  }, [count]);
+
+  return { turn, isLeaving };
+}
+
+// Recuadro del día: portadas de las categorías abiertas como cartas en abanico,
+// fecha, duración, título y lo que se jugó. day = null cuando ese día no hubo stream
+function DayDetails({ dateKey, day }) {
+  const categories = day ? day.categories : [];
+  const { turn, isLeaving } = useCoverLoop(categories.length);
+  // las categorías empezando por la que está adelante
+  const ordered = categories.map((_, index) => categories[(index + turn) % categories.length]);
+  const shown = ordered.slice(0, DAY_COVERS_COUNT);
+  const extra = categories.length - shown.length;
+  const games = categories
+    .map((category) => `${category.name} ${formatTime(category.seconds)}`)
+    .join(" · ");
 
   return (
-    <div className="stats-day-covers" style={{ "--count": Math.max(shown.length, 1) }} aria-hidden="true">
-      {shown.length > 0 ? (
-        shown.map((category, index) => (
-          <span className="stats-day-cover" key={category.id} style={{ "--i": index }}>
-            {category.coverUrl ? <img src={category.coverUrl} alt="" /> : <span>🎮</span>}
-          </span>
-        ))
-      ) : (
-        <span className="stats-day-cover stats-day-cover-empty" style={{ "--i": 0 }}>
-          <span>{categories ? "🎮" : "💤"}</span>
-        </span>
-      )}
+    <>
+      {/* recién elegido el día (antes de la primera vuelta) las portadas entran repartidas como cartas */}
+      <div
+        className={turn === 0 ? "stats-day-covers stats-day-covers-deal" : "stats-day-covers"}
+        style={{ "--count": Math.max(shown.length, 1) }}
+        aria-hidden="true"
+      >
+        {shown.length > 0 ? (
+          shown.map((category, rank) => {
+            const classNames = ["stats-day-cover"];
 
-      {extra > 0 ? <span className="stats-day-more">+{extra}</span> : null}
-    </div>
+            if (rank === 0 && isLeaving) {
+              classNames.push("stats-day-cover-leaving");
+            }
+
+            // la que aparece atrás cuando hay más categorías que lugares
+            if (turn > 0 && extra > 0 && rank === shown.length - 1) {
+              classNames.push("stats-day-cover-new");
+            }
+
+            return (
+              <span className={classNames.join(" ")} key={category.id} style={{ "--i": rank }}>
+                {category.coverUrl ? <img src={category.coverUrl} alt="" /> : <span>🎮</span>}
+              </span>
+            );
+          })
+        ) : (
+          <span className="stats-day-cover stats-day-cover-empty" style={{ "--i": 0 }}>
+            <span>{day ? "🎮" : "💤"}</span>
+          </span>
+        )}
+
+        {extra > 0 ? <span className="stats-day-more">+{extra}</span> : null}
+      </div>
+
+      <div className="stats-day-info">
+        <div className="stats-day-head">
+          <strong>{dayName.format(keyToDate(dateKey))}</strong>
+          {day ? <span className="stats-day-time">{formatDuration(day.seconds)}</span> : null}
+          {day && day.streams.length > 1 ? (
+            <span className="stats-day-count">{day.streams.length} streams</span>
+          ) : null}
+        </div>
+
+        {day ? (
+          <>
+            <p className="stats-day-title" title={cleanTitle(day.streams[0].title)}>
+              {cleanTitle(day.streams[0].title)}
+            </p>
+
+            {/* la categoría de la portada de adelante se resalta */}
+            <p className="stats-day-games" title={games}>
+              {categories.length > 0
+                ? categories.map((category, index) => (
+                    <Fragment key={category.id}>
+                      {index > 0 ? " · " : null}
+                      <span className={category === ordered[0] ? "stats-day-game-front" : undefined}>
+                        {category.name} {formatTime(category.seconds)}
+                      </span>
+                    </Fragment>
+                  ))
+                : "No categories recorded for this stream"}
+            </p>
+          </>
+        ) : (
+          <p className="stats-day-games">No stream this day</p>
+        )}
+      </div>
+    </>
   );
 }
 
@@ -175,11 +273,6 @@ export default function StatsPage() {
         }
       ]
     : [];
-
-  const shownDay = stats && activeDay ? stats.days[activeDay] : null;
-  const shownGames = shownDay
-    ? shownDay.categories.map((category) => `${category.name} ${formatTime(category.seconds)}`).join(" · ")
-    : "";
 
   const emptyNote = isCurrentMonth
     ? "No streams yet this month. See you at the next one ♡"
@@ -284,34 +377,8 @@ export default function StatsPage() {
                 {!activeDay ? (
                   <p className="stats-day-empty">{emptyNote}</p>
                 ) : (
-                  <>
-                    <DayCovers categories={shownDay ? shownDay.categories : null} />
-
-                    <div className="stats-day-info">
-                      <div className="stats-day-head">
-                        <strong>{dayName.format(keyToDate(activeDay))}</strong>
-                        {shownDay ? (
-                          <span className="stats-day-time">{formatDuration(shownDay.seconds)}</span>
-                        ) : null}
-                        {shownDay && shownDay.streams.length > 1 ? (
-                          <span className="stats-day-count">{shownDay.streams.length} streams</span>
-                        ) : null}
-                      </div>
-
-                      {shownDay ? (
-                        <>
-                          <p className="stats-day-title" title={cleanTitle(shownDay.streams[0].title)}>
-                            {cleanTitle(shownDay.streams[0].title)}
-                          </p>
-                          <p className="stats-day-games" title={shownGames}>
-                            {shownGames || "No categories recorded for this stream"}
-                          </p>
-                        </>
-                      ) : (
-                        <p className="stats-day-games">No stream this day</p>
-                      )}
-                    </div>
-                  </>
+                  // key: al cambiar de día el abanico arranca de nuevo
+                  <DayDetails key={activeDay} dateKey={activeDay} day={stats.days[activeDay] || null} />
                 )}
               </div>
 
