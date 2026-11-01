@@ -62,7 +62,6 @@ export function getCategoryTimes(segments, endTime) {
 /* ---------- base de datos (Upstash Redis por REST) ---------- */
 
 const KEYS = {
-  months: "stats:months",
   live: "stats:live",
   subscribed: "stats:subscribed",
   vods: (month) => `stats:vods:${month}`,
@@ -123,25 +122,19 @@ export async function saveVods(vods) {
     return;
   }
 
-  await storeCommands([
-    ...[...byMonth].map(([month, fields]) => ["HSET", KEYS.vods(month), ...fields]),
-    ["SADD", KEYS.months, ...byMonth.keys()]
-  ]);
+  await storeCommands([...byMonth].map(([month, fields]) => ["HSET", KEYS.vods(month), ...fields]));
 }
 
-// VODs de todos los meses guardados, categorías del mes pedido y el stream en vivo (si hay)
+// VODs y categorías guardados del mes pedido, y el stream en vivo (si hay)
 async function readStoredStats(month) {
-  const [months, categories, live] = await storeCommands([
-    ["SMEMBERS", KEYS.months],
+  const [vods, categories, live] = await storeCommands([
+    ["HVALS", KEYS.vods(month)],
     ["HVALS", KEYS.categories(month)],
     ["GET", KEYS.live]
   ]);
 
-  const vodLists =
-    months.length > 0 ? await storeCommands(months.map((item) => ["HVALS", KEYS.vods(item)])) : [];
-
   return {
-    vods: vodLists.flat().map((item) => JSON.parse(item)),
+    vods: vods.map((item) => JSON.parse(item)),
     categoryStreams: categories.map((item) => JSON.parse(item)),
     live: live ? JSON.parse(live) : null
   };
@@ -162,7 +155,6 @@ async function finishLiveStream(live, endTime) {
 
   await storeCommands([
     ["HSET", KEYS.categories(month), live.streamId, JSON.stringify({ startedAt: live.startedAt, categories })],
-    ["SADD", KEYS.months, month],
     ["DEL", KEYS.live]
   ]);
 }
@@ -329,11 +321,11 @@ export function buildMonthStats({ vods, categoryStreams = [], live = null, month
     unique.set(vod.id, { ...vod, seconds: parseDuration(vod.duration) });
   }
 
-  const allStreams = [...unique.values()]
-    .filter((vod) => vod.seconds > 0)
+  // solo los streams del mes pedido: todo se reinicia cada mes
+  const streams = [...unique.values()]
+    .filter((vod) => vod.seconds > 0 && getMonthKey(new Date(vod.createdAt)) === month)
     .sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
 
-  const streams = allStreams.filter((vod) => getMonthKey(new Date(vod.createdAt)) === month);
   const days = {};
 
   for (const stream of streams) {
@@ -355,8 +347,6 @@ export function buildMonthStats({ vods, categoryStreams = [], live = null, month
     monthSeconds: streams.reduce((total, stream) => total + stream.seconds, 0),
     streamCount: streams.length,
     longest: longest ? { seconds: longest.seconds, createdAt: longest.createdAt, url: longest.url } : null,
-    allTimeSeconds: allStreams.reduce((total, stream) => total + stream.seconds, 0),
-    trackedSince: allStreams.length > 0 ? allStreams[0].createdAt : null,
     days,
     categories: getTopCategories(categoryStreams, live, month, now),
     mostWatched: [...streams]

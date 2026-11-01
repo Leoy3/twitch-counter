@@ -150,9 +150,9 @@ export default function StatsPage() {
         { icon: "🎮", value: stats.streamCount, label: `Streams ${inMonth}` },
         {
           icon: "⏳",
-          value: formatDuration(stats.allTimeSeconds),
+          value: formatDuration(stats.monthSeconds),
           label: "Total time streamed",
-          note: stats.trackedSince ? `since ${shortDate.format(new Date(stats.trackedSince))}` : ""
+          note: monthLabel
         },
         {
           icon: "🏆",
