@@ -1246,10 +1246,6 @@ h1 {
   animation-delay: 0.16s;
 }
 
-.stats-content > :nth-child(4) {
-  animation-delay: 0.24s;
-}
-
 .stats-hero {
   position: relative;
   z-index: 2;
@@ -1491,7 +1487,6 @@ h1 {
 }
 
 .stats-cell-stream {
-  cursor: pointer;
   transition: transform 0.25s var(--bounce), box-shadow 0.2s ease;
 }
 
@@ -1501,14 +1496,9 @@ h1 {
   box-shadow: 0 3px 0 var(--pink-shadow);
 }
 
+/* el día que se está mostrando abajo (el último con el cursor encima) */
+.stats-cell-active,
 .stats-cell-stream:focus-visible {
-  outline: 3px solid var(--pink);
-  outline-offset: 2px;
-}
-
-/* el día que se está mostrando abajo */
-.stats-cell-selected,
-.stats-cell-selected:focus-visible {
   outline: 3px solid var(--rose);
   outline-offset: 2px;
 }
@@ -1535,14 +1525,81 @@ h1 {
 .stats-day-details {
   height: 124px;
   margin-top: 20px;
-  padding: 14px 18px;
+  padding: 12px 18px 12px 12px;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 8px;
+  align-items: center;
+  gap: 14px;
   overflow: hidden;
   border-radius: 18px;
   background: var(--pink-50);
+}
+
+/* portadas de las categorías del día, abiertas en abanico (hasta 3, el resto es "+N") */
+.stats-day-covers {
+  position: relative;
+  flex: 0 0 96px;
+  height: 96px;
+}
+
+.stats-day-cover {
+  --spread: 9deg;
+  position: absolute;
+  top: 10px;
+  left: calc((96px - 54px - (var(--count) - 1) * 17px) / 2 + var(--i) * 17px);
+  z-index: calc(10 - var(--i));
+  width: 54px;
+  aspect-ratio: 3 / 4;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 3px solid var(--frame);
+  border-radius: 9px;
+  background: var(--pink-100);
+  box-shadow: 0 0 0 2px var(--pink-200), 0 8px 14px -8px rgba(0, 0, 0, 0.45);
+  font-size: 22px;
+  rotate: calc((var(--i) - (var(--count) - 1) / 2) * var(--spread));
+  transition: rotate 0.35s var(--bounce), translate 0.35s var(--bounce);
+}
+
+.stats-day-details:hover .stats-day-cover {
+  --spread: 14deg;
+  translate: 0 -3px;
+}
+
+.stats-day-cover img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.stats-day-cover-empty {
+  border-style: dashed;
+  border-color: var(--pink-200);
+  background: var(--surface);
+  box-shadow: none;
+}
+
+.stats-day-more {
+  position: absolute;
+  right: 0;
+  bottom: 2px;
+  z-index: 20;
+  padding: 2px 8px;
+  border-radius: var(--r-pill);
+  background: var(--pink);
+  box-shadow: 0 2px 0 var(--pink-shadow);
+  color: var(--on-pink);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.stats-day-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .stats-day-head {
@@ -1579,67 +1636,32 @@ h1 {
   color: var(--rose);
 }
 
-.stats-day-vod {
-  flex: 0 0 auto;
-  margin-left: auto;
-  padding: 3px 12px;
-  border: 2px solid var(--pink-200);
-  border-radius: var(--r-pill);
-  background: var(--surface);
-  color: var(--rose);
-  font-size: 13px;
-  font-weight: 800;
-  text-decoration: none;
+.stats-day-title,
+.stats-day-games {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
-  transition: background 0.2s ease, transform 0.2s var(--bounce);
-}
-
-.stats-day-vod:hover {
-  background: var(--pink-100);
-  transform: translateY(-1px);
 }
 
 .stats-day-title {
-  margin: 0;
-  overflow: hidden;
   color: var(--ink);
   font-size: 14px;
   font-weight: 700;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.stats-day-categories {
-  min-width: 0;
-  display: flex;
-  gap: 6px;
-  overflow: hidden;
-}
-
-.stats-day-category {
-  flex: 0 1 auto;
-  min-width: 0;
-  padding: 3px 10px;
-  overflow: hidden;
-  border: 2px solid var(--pink-200);
-  border-radius: var(--r-pill);
-  background: var(--surface);
-  color: var(--ink);
-  font-size: 12px;
+.stats-day-games {
+  color: var(--ink-soft);
+  font-size: 13px;
   font-weight: 800;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.stats-day-muted,
 .stats-day-empty {
+  width: 100%;
   margin: 0;
   color: var(--ink-soft);
   font-size: 13px;
   font-weight: 700;
-}
-
-.stats-day-empty {
   text-align: center;
 }
 
@@ -1782,31 +1804,6 @@ h1 {
 .stats-empty span {
   font-size: 38px;
   animation: pastel-bob 3.6s ease-in-out infinite;
-}
-
-.stats-most-watched {
-  margin-top: 40px;
-}
-
-.stats-vods {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
-}
-
-.stats-rank {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1;
-  padding: 3px 12px;
-  border-radius: var(--r-pill);
-  background: var(--pink);
-  box-shadow: 0 3px 0 var(--pink-shadow);
-  color: var(--on-pink);
-  font-family: var(--font-display), sans-serif;
-  font-size: 15px;
-  font-weight: 600;
 }
 
 /* ---------- botón de modo oscuro (abajo a la izquierda) ---------- */
@@ -2032,10 +2029,6 @@ h1 {
   .stats-row {
     grid-template-columns: minmax(0, 1fr);
   }
-
-  .stats-vods {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 760px) {
@@ -2170,10 +2163,6 @@ h1 {
 
   .stats-category-cover {
     width: 40px;
-  }
-
-  .stats-vods {
-    grid-template-columns: 1fr;
   }
 }
 

@@ -2,14 +2,14 @@
 // (Upstash Redis, conectada desde Vercel) para no perder nada cuando Twitch borra los VODs viejos.
 // Sin base de datos conectada, la página igual funciona con los VODs que Twitch tiene guardados.
 
+import { getPastCategories } from "./past-categories";
 import { getArchiveVods, getChannelCategory, getChannelId, twitchFetch } from "./twitch";
 
 // Los meses y los días se cuentan en la hora de los streams (la misma del contador)
 export const STATS_TIMEZONE = "America/New_York";
 
-// Cuántas categorías se muestran en "Top Categories" y cuántos streams en "Most Watched"
+// Cuántas categorías se muestran en "Top Categories"
 const TOP_CATEGORIES_COUNT = 5;
-const MOST_WATCHED_COUNT = 3;
 
 const dayFormat = new Intl.DateTimeFormat("en-CA", {
   timeZone: STATS_TIMEZONE,
@@ -341,26 +341,37 @@ export function buildMonthStats({ vods, categoryStreams = [], live = null, month
     monthCategories.push([live.streamId, getCategoryTimes(live.segments, now)]);
   }
 
-  const categoriesByStream = new Map(monthCategories);
+  const recorded = new Map(monthCategories);
   const days = {};
+  const lists = [];
 
   for (const stream of streams) {
     const key = getDayKey(new Date(stream.createdAt));
-    const day = days[key] || { seconds: 0, streams: [] };
+    const day = days[key] || { seconds: 0, streams: [], lists: [] };
+    // registradas por los avisos de Twitch, o las de la lista de streams viejos
+    const categories =
+      recorded.get(stream.streamId) || getPastCategories(stream.id, stream.seconds);
 
     day.seconds += stream.seconds;
-    day.streams.push({
-      title: stream.title,
-      url: stream.url,
-      seconds: stream.seconds,
-      categories: categoriesByStream.get(stream.streamId) || []
-    });
+    day.streams.push({ title: stream.title, seconds: stream.seconds });
+    day.lists.push(categories);
+    lists.push(categories);
     days[key] = day;
   }
 
   // lo jugado en todo el día (por si hubo más de un stream)
   for (const day of Object.values(days)) {
-    day.categories = sumCategories(day.streams.map((stream) => stream.categories));
+    day.categories = sumCategories(day.lists);
+    delete day.lists;
+  }
+
+  // streams con categorías registradas pero sin VOD (por ejemplo, si se borró): también suman
+  const streamIds = new Set(streams.map((stream) => stream.streamId));
+
+  for (const [streamId, categories] of recorded) {
+    if (!streamIds.has(streamId)) {
+      lists.push(categories);
+    }
   }
 
   const longest = streams.reduce((best, stream) => (!best || stream.seconds > best.seconds ? stream : best), null);
@@ -372,24 +383,9 @@ export function buildMonthStats({ vods, categoryStreams = [], live = null, month
     today: getDayKey(new Date(now)),
     monthSeconds: streams.reduce((total, stream) => total + stream.seconds, 0),
     streamCount: streams.length,
-    longest: longest ? { seconds: longest.seconds, createdAt: longest.createdAt, url: longest.url } : null,
+    longest: longest ? { seconds: longest.seconds, createdAt: longest.createdAt } : null,
     days,
-    categories: sumCategories(monthCategories.map(([, categories]) => categories)).slice(
-      0,
-      TOP_CATEGORIES_COUNT
-    ),
-    mostWatched: [...streams]
-      .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
-      .slice(0, MOST_WATCHED_COUNT)
-      .map(({ id, title, url, thumbnailUrl, duration, viewCount, createdAt }) => ({
-        id,
-        title,
-        url,
-        thumbnailUrl,
-        duration,
-        viewCount,
-        createdAt
-      }))
+    categories: sumCategories(lists).slice(0, TOP_CATEGORIES_COUNT)
   };
 }
 
