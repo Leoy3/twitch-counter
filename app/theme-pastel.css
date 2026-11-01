@@ -1559,9 +1559,9 @@ h1 {
   font-size: 22px;
   rotate: calc((var(--i) - (var(--count) - 1) / 2) * var(--spread));
   transition:
-    left 0.45s var(--bounce),
-    rotate 0.45s var(--bounce),
-    translate 0.45s var(--bounce),
+    left 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    rotate 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    translate 0.4s var(--bounce),
     opacity 0.3s ease;
 }
 
@@ -1595,15 +1595,17 @@ h1 {
   }
 }
 
-/* la que aparece atrás cuando hay más categorías que lugares */
-.stats-day-cover-new {
-  animation: stats-cover-in 0.45s ease both;
+/* la que vuelve atrás después de cada vuelta: aparece directo en su lugar
+   (sin cruzar por detrás de las otras) y entra con un fundido suave */
+.stats-day-covers .stats-day-cover.stats-day-cover-return {
+  transition: none;
+  animation: stats-cover-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
 @keyframes stats-cover-in {
   from {
     opacity: 0;
-    translate: 18px 4px;
+    translate: 14px 4px;
   }
 }
 

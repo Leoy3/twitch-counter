@@ -27,8 +27,9 @@ const DAY_COVERS_COUNT = 3;
 // en COVERS_LOOP_MS pasan todas (cada una se queda al menos MIN_COVER_MS adelante)
 const COVERS_LOOP_MS = 5000;
 const MIN_COVER_MS = 1250;
-// lo que dura la salida de la portada de adelante
+// lo que dura la salida de la portada de adelante y su vuelta por atrás
 const COVER_EXIT_MS = 350;
+const COVER_RETURN_MS = 450;
 
 const monthName = new Intl.DateTimeFormat("en-US", { month: "long", timeZone: "UTC" });
 const dayName = new Intl.DateTimeFormat("en-US", {
@@ -103,6 +104,7 @@ function getLatestDay(days) {
 function useCoverLoop(count) {
   const [turn, setTurn] = useState(0);
   const [isLeaving, setIsLeaving] = useState(false);
+  const [isReturning, setIsReturning] = useState(false);
 
   useEffect(() => {
     if (count < 2 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -110,6 +112,7 @@ function useCoverLoop(count) {
     }
 
     let exitTimer = null;
+    let returnTimer = null;
 
     const interval = setInterval(() => {
       setIsLeaving(true);
@@ -117,23 +120,27 @@ function useCoverLoop(count) {
       exitTimer = setTimeout(() => {
         setTurn((current) => current + 1);
         setIsLeaving(false);
+        setIsReturning(true);
+
+        returnTimer = setTimeout(() => setIsReturning(false), COVER_RETURN_MS);
       }, COVER_EXIT_MS);
     }, Math.max(COVERS_LOOP_MS / count, MIN_COVER_MS));
 
     return () => {
       clearInterval(interval);
       clearTimeout(exitTimer);
+      clearTimeout(returnTimer);
     };
   }, [count]);
 
-  return { turn, isLeaving };
+  return { turn, isLeaving, isReturning };
 }
 
 // Recuadro del día: portadas de las categorías abiertas como cartas en abanico,
 // fecha, duración, título y lo que se jugó. day = null cuando ese día no hubo stream
 function DayDetails({ dateKey, day }) {
   const categories = day ? day.categories : [];
-  const { turn, isLeaving } = useCoverLoop(categories.length);
+  const { turn, isLeaving, isReturning } = useCoverLoop(categories.length);
   // las categorías empezando por la que está adelante
   const ordered = categories.map((_, index) => categories[(index + turn) % categories.length]);
   const shown = ordered.slice(0, DAY_COVERS_COUNT);
@@ -158,9 +165,9 @@ function DayDetails({ dateKey, day }) {
               classNames.push("stats-day-cover-leaving");
             }
 
-            // la que aparece atrás cuando hay más categorías que lugares
-            if (turn > 0 && extra > 0 && rank === shown.length - 1) {
-              classNames.push("stats-day-cover-new");
+            // la que vuelve atrás después de cada vuelta (o aparece, si hay más categorías que lugares)
+            if (isReturning && rank === shown.length - 1) {
+              classNames.push("stats-day-cover-return");
             }
 
             return (
