@@ -87,16 +87,18 @@ function getMonthCells(monthKey) {
   return cells;
 }
 
-function getDayNote(key, day) {
-  if (!day) {
-    return `${dayName.format(keyToDate(key))} · No stream`;
-  }
+// Cuántas categorías entran en el recuadro del día (el resto se muestra como "+2")
+const DAY_CATEGORIES_COUNT = 3;
 
-  const extra = day.streams.length > 1 ? ` · ${day.streams.length} streams` : "";
+function getDayLabel(key, day) {
+  const date = dayName.format(keyToDate(key));
 
-  return `${dayName.format(keyToDate(key))} · ${formatDuration(day.seconds)}${extra} · ${cleanTitle(
-    day.streams[0].title
-  )}`;
+  return day ? `${date}, ${formatDuration(day.seconds)}: ${cleanTitle(day.streams[0].title)}` : date;
+}
+
+// El último día con stream del mes (es el que se muestra al entrar)
+function getLatestDay(days) {
+  return Object.keys(days).sort().at(-1) || "";
 }
 
 export default function StatsPage() {
@@ -104,13 +106,14 @@ export default function StatsPage() {
   const [stats, setStats] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const [note, setNote] = useState("");
+  // día elegido con un click y día que tiene el cursor encima (se muestra ese mientras tanto)
+  const [selectedDay, setSelectedDay] = useState("");
+  const [hoveredDay, setHoveredDay] = useState("");
 
   useEffect(() => {
     let ignore = false;
 
     setIsLoading(true);
-    setNote("");
 
     fetch(`/api/stream-stats${month ? `?month=${month}` : ""}`, { cache: "no-store" })
       .then((response) => response.json())
@@ -123,6 +126,8 @@ export default function StatsPage() {
           setError("Couldn't load stream stats right now.");
         } else {
           setStats(data);
+          setSelectedDay(getLatestDay(data.days));
+          setHoveredDay("");
           setError("");
         }
 
@@ -162,6 +167,9 @@ export default function StatsPage() {
         }
       ]
     : [];
+
+  const shownKey = hoveredDay || selectedDay;
+  const shownDay = stats && shownKey ? stats.days[shownKey] : null;
 
   const emptyNote = isCurrentMonth
     ? "No streams yet this month. See you at the next one ♡"
@@ -216,7 +224,7 @@ export default function StatsPage() {
               </div>
 
               <div className="stats-calendar-body">
-                <div className="stats-grid">
+                <div className="stats-grid" onMouseLeave={() => setHoveredDay("")}>
                   {WEEKDAY_LABELS.map((label, index) => (
                     <span className="stats-grid-label" key={`label-${index}`} aria-hidden="true">
                       {label}
@@ -244,32 +252,88 @@ export default function StatsPage() {
                         <span
                           className={classNames.join(" ")}
                           key={key}
-                          onMouseEnter={() => key <= stats.today && setNote(getDayNote(key, null))}
+                          onMouseEnter={() => setHoveredDay(key <= stats.today ? key : "")}
                         ></span>
                       );
                     }
 
                     classNames.push("stats-cell-stream", `stats-level-${getLevel(day.seconds)}`);
 
+                    if (key === selectedDay) {
+                      classNames.push("stats-cell-selected");
+                    }
+
                     return (
-                      <a
+                      <button
                         className={classNames.join(" ")}
+                        type="button"
                         key={key}
-                        href={day.streams[0].url}
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label={getDayNote(key, day)}
-                        onMouseEnter={() => setNote(getDayNote(key, day))}
-                        onFocus={() => setNote(getDayNote(key, day))}
-                      ></a>
+                        aria-label={getDayLabel(key, day)}
+                        aria-pressed={key === selectedDay}
+                        onClick={() => setSelectedDay(key)}
+                        onMouseEnter={() => setHoveredDay(key)}
+                        onFocus={() => setHoveredDay(key)}
+                        onBlur={() => setHoveredDay("")}
+                      ></button>
                     );
                   })}
                 </div>
               </div>
 
-              <p className="stats-calendar-note" aria-live="polite">
-                {note || (stats.streamCount > 0 ? "Hover a square to see that day ♡" : emptyNote)}
-              </p>
+              {/* datos del día elegido: alto fijo para que la card no cambie de tamaño */}
+              <div className="stats-day-details" aria-live="polite">
+                {!shownKey ? (
+                  <p className="stats-day-empty">{emptyNote}</p>
+                ) : !shownDay ? (
+                  <>
+                    <div className="stats-day-head">
+                      <strong>{dayName.format(keyToDate(shownKey))}</strong>
+                    </div>
+                    <p className="stats-day-muted">No stream this day</p>
+                  </>
+                ) : (
+                  <>
+                    <div className="stats-day-head">
+                      <strong>{dayName.format(keyToDate(shownKey))}</strong>
+                      <span className="stats-day-time">{formatDuration(shownDay.seconds)}</span>
+                      {shownDay.streams.length > 1 ? (
+                        <span className="stats-day-count">{shownDay.streams.length} streams</span>
+                      ) : null}
+                      <a
+                        className="stats-day-vod"
+                        href={shownDay.streams[0].url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Watch VOD ↗
+                      </a>
+                    </div>
+
+                    <p className="stats-day-title" title={cleanTitle(shownDay.streams[0].title)}>
+                      {cleanTitle(shownDay.streams[0].title)}
+                    </p>
+
+                    <div className="stats-day-categories">
+                      {shownDay.categories.length > 0 ? (
+                        <>
+                          {shownDay.categories.slice(0, DAY_CATEGORIES_COUNT).map((category) => (
+                            <span className="stats-day-category" key={category.id} title={category.name}>
+                              {category.name} · {formatDuration(category.seconds)}
+                            </span>
+                          ))}
+                          {shownDay.categories.length > DAY_CATEGORIES_COUNT ? (
+                            <span className="stats-day-category">
+                              +{shownDay.categories.length - DAY_CATEGORIES_COUNT}
+                            </span>
+                          ) : null}
+                        </>
+                      ) : (
+                        <span className="stats-day-muted">No categories recorded for this stream</span>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
 
               <div className="stats-legend">
                 <span>Less</span>

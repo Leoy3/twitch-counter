@@ -64,6 +64,7 @@ export function getCategoryTimes(segments, endTime) {
 const KEYS = {
   live: "stats:live",
   subscribed: "stats:subscribed",
+  alerts: "stats:alerts",
   vods: (month) => `stats:vods:${month}`,
   categories: (month) => `stats:categories:${month}`,
   message: (id) => `stats:message:${id}`
@@ -125,18 +126,21 @@ export async function saveVods(vods) {
   await storeCommands([...byMonth].map(([month, fields]) => ["HSET", KEYS.vods(month), ...fields]));
 }
 
-// VODs y categorías guardados del mes pedido, y el stream en vivo (si hay)
+// VODs y categorías guardados del mes pedido, el stream en vivo (si hay)
+// y qué avisos de Twitch ya quedaron confirmados
 async function readStoredStats(month) {
-  const [vods, categories, live] = await storeCommands([
+  const [vods, categories, live, alerts] = await storeCommands([
     ["HVALS", KEYS.vods(month)],
     ["HVALS", KEYS.categories(month)],
-    ["GET", KEYS.live]
+    ["GET", KEYS.live],
+    ["HKEYS", KEYS.alerts]
   ]);
 
   return {
     vods: vods.map((item) => JSON.parse(item)),
     categoryStreams: categories.map((item) => JSON.parse(item)),
-    live: live ? JSON.parse(live) : null
+    live: live ? JSON.parse(live) : null,
+    twitchAlerts: alerts
   };
 }
 
@@ -154,7 +158,12 @@ async function finishLiveStream(live, endTime) {
   const categories = getCategoryTimes(live.segments, endTime);
 
   await storeCommands([
-    ["HSET", KEYS.categories(month), live.streamId, JSON.stringify({ startedAt: live.startedAt, categories })],
+    [
+      "HSET",
+      KEYS.categories(month),
+      live.streamId,
+      JSON.stringify({ streamId: live.streamId, startedAt: live.startedAt, categories })
+    ],
     ["DEL", KEYS.live]
   ]);
 }
@@ -234,9 +243,14 @@ export async function markMessageHandled(id) {
   await storeCommands([["SET", KEYS.message(id), "1", "EX", "900"]]);
 }
 
+// Twitch confirmó que esta página recibe ese aviso
+export async function markAlertConfirmed(type) {
+  await storeCommands([["HSET", KEYS.alerts, type, new Date().toISOString()]]);
+}
+
 // Si Twitch da de baja un aviso, se vuelve a pedir en la próxima visita
-export async function forgetSubscriptions() {
-  await storeCommands([["DEL", KEYS.subscribed]]);
+export async function forgetSubscriptions(type) {
+  await storeCommands([["DEL", KEYS.subscribed], ...(type ? [["HDEL", KEYS.alerts, type]] : [])]);
 }
 
 // Le pide a Twitch que avise de los streams. Solo en el sitio publicado, como mucho una vez por día
@@ -290,14 +304,9 @@ export async function ensureEventSubscriptions() {
 
 /* ---------- cálculo de lo que muestra la página ---------- */
 
-function getTopCategories(categoryStreams, live, month, now) {
+// Suma el tiempo de cada categoría de varias listas, de la más jugada a la menos jugada
+function sumCategories(lists) {
   const totals = new Map();
-  const lists = categoryStreams.map((stream) => stream.categories);
-
-  // el stream en vivo también suma, hasta este momento
-  if (live && getMonthKey(new Date(live.startedAt)) === month) {
-    lists.push(getCategoryTimes(live.segments, now));
-  }
 
   for (const category of lists.flat()) {
     const current = totals.get(category.id) || { ...category, seconds: 0 };
@@ -308,8 +317,7 @@ function getTopCategories(categoryStreams, live, month, now) {
 
   return [...totals.values()]
     .filter((category) => category.seconds > 0)
-    .sort((a, b) => b.seconds - a.seconds)
-    .slice(0, TOP_CATEGORIES_COUNT);
+    .sort((a, b) => b.seconds - a.seconds);
 }
 
 // vods = todos los conocidos (de Twitch y de la base de datos)
@@ -326,6 +334,14 @@ export function buildMonthStats({ vods, categoryStreams = [], live = null, month
     .filter((vod) => vod.seconds > 0 && getMonthKey(new Date(vod.createdAt)) === month)
     .sort((a, b) => Date.parse(a.createdAt) - Date.parse(b.createdAt));
 
+  // categorías de cada stream (el que está en vivo cuenta hasta este momento)
+  const monthCategories = categoryStreams.map((stream) => [stream.streamId, stream.categories]);
+
+  if (live && getMonthKey(new Date(live.startedAt)) === month) {
+    monthCategories.push([live.streamId, getCategoryTimes(live.segments, now)]);
+  }
+
+  const categoriesByStream = new Map(monthCategories);
   const days = {};
 
   for (const stream of streams) {
@@ -333,8 +349,18 @@ export function buildMonthStats({ vods, categoryStreams = [], live = null, month
     const day = days[key] || { seconds: 0, streams: [] };
 
     day.seconds += stream.seconds;
-    day.streams.push({ title: stream.title, url: stream.url, seconds: stream.seconds });
+    day.streams.push({
+      title: stream.title,
+      url: stream.url,
+      seconds: stream.seconds,
+      categories: categoriesByStream.get(stream.streamId) || []
+    });
     days[key] = day;
+  }
+
+  // lo jugado en todo el día (por si hubo más de un stream)
+  for (const day of Object.values(days)) {
+    day.categories = sumCategories(day.streams.map((stream) => stream.categories));
   }
 
   const longest = streams.reduce((best, stream) => (!best || stream.seconds > best.seconds ? stream : best), null);
@@ -348,7 +374,10 @@ export function buildMonthStats({ vods, categoryStreams = [], live = null, month
     streamCount: streams.length,
     longest: longest ? { seconds: longest.seconds, createdAt: longest.createdAt, url: longest.url } : null,
     days,
-    categories: getTopCategories(categoryStreams, live, month, now),
+    categories: sumCategories(monthCategories.map(([, categories]) => categories)).slice(
+      0,
+      TOP_CATEGORIES_COUNT
+    ),
     mostWatched: [...streams]
       .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
       .slice(0, MOST_WATCHED_COUNT)
@@ -370,7 +399,7 @@ export async function getStreamStats(month) {
   const twitchVods = await getArchiveVods(channelId);
 
   if (!hasStore()) {
-    return { ...buildMonthStats({ vods: twitchVods, month }), isTracking: false };
+    return { ...buildMonthStats({ vods: twitchVods, month }), isTracking: false, twitchAlerts: [] };
   }
 
   try {
@@ -380,10 +409,11 @@ export async function getStreamStats(month) {
 
     return {
       ...buildMonthStats({ ...stored, vods: [...stored.vods, ...twitchVods], month }),
-      isTracking: true
+      isTracking: true,
+      twitchAlerts: stored.twitchAlerts
     };
   } catch {
     // si la base de datos falla, se muestra lo que tiene Twitch
-    return { ...buildMonthStats({ vods: twitchVods, month }), isTracking: false };
+    return { ...buildMonthStats({ vods: twitchVods, month }), isTracking: false, twitchAlerts: [] };
   }
 }

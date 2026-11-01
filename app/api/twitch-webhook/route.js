@@ -5,6 +5,7 @@ import {
   handleStreamOffline,
   handleStreamOnline,
   hasStore,
+  markAlertConfirmed,
   markMessageHandled,
   wasMessageHandled
 } from "../../lib/stream-stats";
@@ -47,6 +48,14 @@ export async function POST(request) {
 
   // Twitch confirma que esta dirección es nuestra
   if (type === "webhook_callback_verification") {
+    try {
+      if (hasStore()) {
+        await markAlertConfirmed(message.subscription.type);
+      }
+    } catch {
+      // la confirmación sigue aunque no se pueda anotar
+    }
+
     return new Response(message.challenge, {
       status: 200,
       headers: { "Content-Type": "text/plain" }
@@ -59,7 +68,7 @@ export async function POST(request) {
 
   try {
     if (type === "revocation") {
-      await forgetSubscriptions();
+      await forgetSubscriptions(message.subscription.type);
     }
 
     if (type === "notification" && !(await wasMessageHandled(id))) {
