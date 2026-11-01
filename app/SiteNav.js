@@ -43,6 +43,7 @@ export default function SiteNav() {
   const isHome = pathname === "/";
   const isArtGallery = pathname.startsWith("/fanart");
   const isGoldLink = pathname.startsWith(GOLD_LINK.href);
+  const isStats = pathname.startsWith("/stats");
 
   return (
     <nav className="site-nav">
@@ -65,6 +66,10 @@ export default function SiteNav() {
     
         <Link className={getLinkClassName(isArtGallery)} href="/fanart">
           Art Gallery
+        </Link>
+
+        <Link className={getLinkClassName(isStats)} href="/stats">
+          Stats
         </Link>
 
       </div>

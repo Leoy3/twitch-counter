@@ -1,5 +1,7 @@
 import { Fredoka, Nunito } from "next/font/google";
 import SiteNav from "./SiteNav";
+import ThemeToggle from "./ThemeToggle";
+import { THEME_INIT_SCRIPT } from "./theme";
 import "./globals.css";
 import "./theme-pastel.css";
 
@@ -29,10 +31,15 @@ export default function RootLayout({ children }) {
       lang="en"
       translate="no"
       className={`notranslate ${fredoka.variable} ${nunito.variable}`}
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body translate="no">
         <SiteNav />
         {children}
+        <ThemeToggle />
       </body>
     </html>
   );
