@@ -55,12 +55,6 @@ function formatTime(seconds) {
   return seconds < 3600 ? `${Math.round(seconds / 60)}m` : formatDuration(seconds);
 }
 
-function formatHours(seconds) {
-  return seconds > 0 && seconds < 3600
-    ? `${Math.round(seconds / 60)}m`
-    : `${Math.round(seconds / 3600)}h`;
-}
-
 // Sin los comandos del chat del final (!braincells !lurk ...)
 function cleanTitle(title) {
   return title.replace(/\s*![\w-]+/g, "").trim();
@@ -171,14 +165,8 @@ export default function StatsPage() {
 
   const numberCards = stats
     ? [
-        { icon: "⏰", value: formatHours(stats.monthSeconds), label: `Hours ${inMonth}` },
+        { icon: "⏰", value: formatDuration(stats.monthSeconds), label: "Total time streamed" },
         { icon: "🎮", value: stats.streamCount, label: `Streams ${inMonth}` },
-        {
-          icon: "⏳",
-          value: formatDuration(stats.monthSeconds),
-          label: "Total time streamed",
-          note: monthLabel
-        },
         {
           icon: "🏆",
           value: stats.longest ? formatDuration(stats.longest.seconds) : "—",
