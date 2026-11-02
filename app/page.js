@@ -26,13 +26,13 @@ const BRAINCELLS_TOP = {
   month: "November",
   highest: {
     title: "Highest braincells",
-    username: "No records yet",
-    braincells: 0
+    username: "AstolfoOfCharlemagne",
+    braincells: 9549
   },
   lowest: {
     title: "Lowest braincells",
-    username: "No records yet",
-    braincells: 0
+    username: "Leoy",
+    braincells: 1391
   }
 };
 
