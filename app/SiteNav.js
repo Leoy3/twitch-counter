@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 // Texto dorado de la navbar: cambiá "label" para mostrar otro texto
 const GOLD_LINK = {
-  label: "Soon",
+  label: "Brain-a-thon",
   href: "/goals"
 };
 
