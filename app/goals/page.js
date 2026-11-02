@@ -41,7 +41,7 @@ const GOALS = [
   { points: 250, title: "8 hours to timer", subtitle: "", completed: false },
   { points: 300, title: "Spicy water Challenge", subtitle: "", completed: false },
   { points: 350, title: "Spooky game", subtitle: "Chat picks - Will ty to finish", completed: false },
-  { points: "???", title: "Art comm", subtitle: "(Vote for next comm must be SFW", completed: false },
+  { points: "???", title: "Art comm", subtitle: "(Vote for next comm must be SFW)", completed: false },
   { points: "???", title: "Elden Ring", subtitle: "", completed: false },
   { points: "???", title: "I make a cover", subtitle: "(Maybe chat decides song?)", completed: false },
   { points: "???", title: "VR stream", subtitle: "", completed: false },
