@@ -23,16 +23,16 @@ const HERO_SURPRISE_SIZES = "(max-width: 760px) 86vw, 560px";
 const HERO_SURPRISE_CHANCE = 0.067;
 
 const BRAINCELLS_TOP = {
-  month: "October",
+  month: "November",
   highest: {
     title: "Highest braincells",
-    username: "xsireal",
-    braincells: 9987
+    username: "No records yet",
+    braincells: 0
   },
   lowest: {
     title: "Lowest braincells",
-    username: "blood_moon_sky",
-    braincells: 10
+    username: "No records yet",
+    braincells: 0
   }
 };
 
