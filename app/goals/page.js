@@ -25,9 +25,9 @@ const POINTS_LABEL = "PTS";
 // completed: true = verde (completado) / false = rosa (no completado)
 // Para agregar una card, copiá una línea y pegala donde quieras
 const GOALS = [
-  { points: 1, title: "Unmute", subtitle: "", completed: true },
-  { points: 10, title: "Discord PFP", subtitle: "(One month)", completed: true },
-  { points: 25, title: "Vote food", subtitle: "", completed: true },
+  { points: 1, title: "Unmute", subtitle: "", completed: false },
+  { points: 10, title: "Discord PFP", subtitle: "(One month)", completed: false },
+  { points: 25, title: "Vote food", subtitle: "", completed: false },
   { points: 40, title: "UNLOCK SURPRISE", subtitle: "", completed: false },
   { points: 55, title: "1hr Spanish", subtitle: "(Subtitles will be provided)", completed: false },
   { points: 67, title: "Spooky stories", subtitle: "(Every night during Brainathon)", completed: false },
