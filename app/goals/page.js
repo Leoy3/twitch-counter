@@ -10,14 +10,14 @@ const poppins = Poppins({
 
 // Imagen principal: subí tu imagen a public/goals/ con este mismo nombre
 // (o cambiá el nombre acá si tu archivo se llama distinto)
-const MAIN_IMAGE = "/goals/Soon.jpg";
+const MAIN_IMAGE = "/goals/Brainathon.jpg";
 
 // Alto máximo de la imagen en % de la pantalla (50 = media pantalla, 100 = pantalla entera)
 // La imagen siempre se muestra entera, sin recortes
 const IMAGE_SCREEN_HEIGHT = 80;
 
 // Mostrar las cards debajo de la imagen: true = se ven / false = ocultas
-const SHOW_GOALS = false;
+const SHOW_GOALS = true;
 
 const POINTS_LABEL = "PTS";
 
