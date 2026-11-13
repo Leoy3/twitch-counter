@@ -25,7 +25,7 @@ const POINTS_LABEL = "PTS";
 // completed: true = verde (completado) / false = rosa (no completado)
 // Para agregar una card, copiá una línea y pegala donde quieras
 const GOALS = [
-  { points: 1, title: "Unmute", subtitle: "", completed: false },
+  { points: 1, title: "Unmute", subtitle: "", completed: true },
   { points: 10, title: "Discord PFP", subtitle: "(One month)", completed: false },
   { points: 25, title: "Vote food", subtitle: "", completed: false },
   { points: 40, title: "UNLOCK SURPRISE", subtitle: "", completed: false },
@@ -40,14 +40,14 @@ const GOALS = [
   { points: 200, title: "Handcam", subtitle: "(For the rest of the month)", completed: false },
   { points: 250, title: "8 hours to timer", subtitle: "", completed: false },
   { points: 300, title: "Spicy water Challenge", subtitle: "", completed: false },
-  { points: 350, title: "Spooky game", subtitle: "Chat picks - Will ty to finish", completed: false },
-  { points: "???", title: "???", subtitle: "", completed: false },
-  { points: "???", title: "???", subtitle: "", completed: false },
-  { points: "???", title: "???", subtitle: "", completed: false },
-  { points: "???", title: "???", subtitle: "", completed: false },
-  { points: "???", title: "???", subtitle: "", completed: false },
-  { points: "???", title: "???", subtitle: "", completed: false },
-  { points: "???", title: "???", subtitle: "", completed: false }
+  { points: 350, title: "Spooky game", subtitle: "(Chat picks - Will ty to finish)", completed: false },
+  { points: "400", title: "Art comm", subtitle: "(Votes for the next comm must be SFW)", completed: false },
+  { points: "467", title: "Elden Ring", subtitle: "", completed: false },
+  { points: "550", title: "I make a cover", subtitle: "(Maybe chat decides song???)", completed: false },
+  { points: "600", title: "VR stream", subtitle: "", completed: false },
+  { points: "700", title: "Actually TRY ASMR", subtitle: "", completed: false },
+  { points: "800", title: "Merch", subtitle: "(Will be done by UWUMarket)", completed: false },
+  { points: "1000", title: "Y play LOL...", subtitle: "(For ONE stream and never again)", completed: false }
 ];
 
 const GOALS_PER_ROW = 3;
