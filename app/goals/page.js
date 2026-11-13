@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Poppins } from "next/font/google";
 
 const poppins = Poppins({
@@ -24,6 +24,8 @@ const POINTS_LABEL = "PTS";
 // Cards: points = número, title = texto principal, subtitle = texto secundario
 // completed: true = verde (completado) / false = rosa (no completado)
 // Para agregar una card, copiá una línea y pegala donde quieras
+// La línea { divider: "EXTENDED GOALS" } es el separador: movela para cambiar
+// dónde va, cambiale el texto, o borrala para sacarlo
 const GOALS = [
   { points: 1, title: "Unmute", subtitle: "", completed: true },
   { points: 10, title: "Discord PFP", subtitle: "(One month)", completed: false },
@@ -41,6 +43,7 @@ const GOALS = [
   { points: 250, title: "8 hours to timer", subtitle: "", completed: false },
   { points: 300, title: "Spicy water Challenge", subtitle: "", completed: false },
   { points: 350, title: "Spooky game", subtitle: "(Chat picks - Will ty to finish)", completed: false },
+  { divider: "EXTENDED GOALS" },
   { points: "400", title: "Art comm", subtitle: "(Votes for the next comm must be SFW)", completed: false },
   { points: "467", title: "Elden Ring", subtitle: "", completed: false },
   { points: "550", title: "I make a cover", subtitle: "(Maybe chat decides song???)", completed: false },
@@ -79,23 +82,22 @@ const INFO_CARDS = [
   }
 ];
 
-// Texto que separa las goals con "???" del resto (va antes de la primera "???")
-const EXTENDED_GOALS_LABEL = "EXTENDED GOALS";
-
 // Footer debajo de las goals (se muestra y oculta junto con las goals), un renglón por texto
 const FOOTER_LINES = [
   "Most funds will go into stocking up for cats (food / litter)",
   "The rest into stream and ton of hot cheeto bags"
 ];
 
-const FIRST_EXTENDED_INDEX = GOALS.findIndex((goal) => goal.points === "???");
+// La última goal de la lista (el footer aparece junto con ella)
+const LAST_GOAL_INDEX = GOALS.findLastIndex((goal) => !goal.divider);
 
-// Posición de la card dentro de su fila, contando desde el separador
+// Posición de la card dentro de su fila, contando desde el último separador
 function getRowPosition(index) {
-  const start =
-    FIRST_EXTENDED_INDEX !== -1 && index >= FIRST_EXTENDED_INDEX
-      ? FIRST_EXTENDED_INDEX
-      : 0;
+  let start = index;
+
+  while (start > 0 && !GOALS[start - 1].divider) {
+    start -= 1;
+  }
 
   return (index - start) % GOALS_PER_ROW;
 }
@@ -190,23 +192,23 @@ export default function GoalsPage() {
           </div>
 
           <ul className={`goals-grid ${poppins.className}`}>
-            {GOALS.map((goal, index) => (
-              <Fragment key={`${goal.title}-${index}`}>
-                {index === FIRST_EXTENDED_INDEX ? (
-                  <li
-                    className={
-                      visibleGoals.extended
-                        ? "goals-divider goals-divider-visible"
-                        : "goals-divider"
-                    }
-                    data-index="extended"
-                  >
-                    <span>{EXTENDED_GOALS_LABEL}</span>
-                  </li>
-                ) : null}
-
+            {GOALS.map((goal, index) =>
+              goal.divider ? (
+                <li
+                  className={
+                    visibleGoals[index]
+                      ? "goals-divider goals-divider-visible"
+                      : "goals-divider"
+                  }
+                  key={`divider-${index}`}
+                  data-index={index}
+                >
+                  <span>{goal.divider}</span>
+                </li>
+              ) : (
                 <li
                   className={getGoalClassName(goal, visibleGoals[index])}
+                  key={`${goal.title}-${index}`}
                   data-index={index}
                   style={{ "--goal-delay": `${getRowPosition(index) * 90}ms` }}
                 >
@@ -220,15 +222,15 @@ export default function GoalsPage() {
                     {goal.subtitle ? <p>{goal.subtitle}</p> : null}
                   </div>
                 </li>
-              </Fragment>
-            ))}
+              )
+            )}
           </ul>
 
           {/* aparece junto con la última goal: al final de la página el footer
               nunca llega a la zona donde se detecta la entrada en pantalla */}
           <footer
             className={
-              visibleGoals[GOALS.length - 1]
+              visibleGoals[LAST_GOAL_INDEX]
                 ? "goals-footer goals-footer-visible"
                 : "goals-footer"
             }
