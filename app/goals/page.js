@@ -28,12 +28,12 @@ const POINTS_LABEL = "PTS";
 // dónde va, cambiale el texto, o borrala para sacarlo
 const GOALS = [
   { points: 1, title: "Unmute", subtitle: "", completed: true },
-  { points: 10, title: "Discord PFP", subtitle: "(One month)", completed: false },
-  { points: 25, title: "Vote food", subtitle: "", completed: false },
-  { points: 40, title: "UNLOCK SURPRISE", subtitle: "", completed: false },
-  { points: 55, title: "1hr Spanish", subtitle: "(Subtitles will be provided)", completed: false },
-  { points: 67, title: "Spooky stories", subtitle: "(Every night during Brainathon)", completed: false },
-  { points: 80, title: "Doodles", subtitle: "Simple Doodles for chat", completed: false },
+  { points: 10, title: "Discord PFP", subtitle: "(One month)", completed: true },
+  { points: 25, title: "Vote food", subtitle: "", completed: true },
+  { points: 40, title: "UNLOCK SURPRISE", subtitle: "", completed: true },
+  { points: 55, title: "1hr Spanish", subtitle: "(Subtitles will be provided)", completed: true },
+  { points: 67, title: "Spooky stories", subtitle: "(Every night during Brainathon)", completed: true },
+  { points: 80, title: "Doodles", subtitle: "Simple Doodles for chat", completed: true },
   { points: 100, title: "Mods take over", subtitle: "", completed: false },
   { points: 120, title: "Anime nights", subtitle: "(Chat choice 2 seasons MAX)", completed: false },
   { points: 150, title: "Karaoke night", subtitle: "", completed: false },
