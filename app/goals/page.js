@@ -41,7 +41,7 @@ const GOALS = [
   { points: 180, title: "Giveaway", subtitle: "", completed: true },
   { points: 200, title: "Handcam", subtitle: "(For the rest of the month)", completed: true },
   { points: 250, title: "8 hours to timer", subtitle: "", completed: true },
-  { points: 300, title: "Spicy water Challenge", subtitle: "", completed: false },
+  { points: 300, title: "Spicy water Challenge", subtitle: "", completed: true },
   { points: 350, title: "Spooky game", subtitle: "(Chat picks - Will ty to finish)", completed: false },
   { divider: "EXTENDED GOALS" },
   { points: "400", title: "Art comm", subtitle: "(Votes for the next comm must be SFW)", completed: false },
