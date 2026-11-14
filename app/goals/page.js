@@ -47,7 +47,7 @@ const GOALS = [
   { points: "400", title: "Art comm", subtitle: "(Votes for the next comm must be SFW)", completed: true },
   { points: "467", title: "Elden Ring", subtitle: "", completed: true },
   { points: "550", title: "I make a cover", subtitle: "(Maybe chat decides song???)", completed: true },
-  { points: "600", title: "VR stream", subtitle: "", completed: false },
+  { points: "600", title: "VR stream", subtitle: "", completed: true },
   { points: "700", title: "Actually TRY ASMR", subtitle: "", completed: false },
   { points: "800", title: "Merch", subtitle: "(Will be done by UWUMarket)", completed: false },
   { points: "1000", title: "I play LOL...", subtitle: "(For ONE stream and never again)", completed: false }
