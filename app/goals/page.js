@@ -88,12 +88,15 @@ const FOOTER_LINES = [
   "The rest into stream and ton of hot cheeto bags"
 ];
 
-// Top donators, abajo de todo: name = usuario, points = total points.
+// Top supporters, abajo de todo: name = usuario, points = total points.
 // Se ordenan solos de mayor a menor: el primero va solo arriba en el medio y el resto en filas de 3.
 // Para actualizar, cambiá los puntos; para sumar a alguien, copiá una línea
-const TOP_DONATORS_TITLE = "TOP DONATORS";
+const TOP_SUPPORTERS_TITLE = "TOP SUPPORTERS";
 
-const TOP_DONATORS = [
+// Texto chiquito debajo del título
+const TOP_SUPPORTERS_NOTE = "The top 5 supporters will receive a signed digital Polaroid";
+
+const TOP_SUPPORTERS = [
   { name: "blood_moon_sky", points: 227 },
   { name: "infernalgram", points: 171 },
   { name: "ThatBoyDoughboy", points: 108 },
@@ -107,22 +110,19 @@ const TOP_DONATORS = [
 ];
 
 // Cuántos se llevan premio (cards rosas; el primero en dorado, el resto en blanco)
-const PRIZE_DONATORS = 5;
+const PRIZE_SUPPORTERS = 5;
 
-// Medallas de los tres primeros puestos (del cuarto en adelante se muestra el número)
-const DONATOR_MEDALS = ["🥇", "🥈", "🥉"];
+const SORTED_SUPPORTERS = [...TOP_SUPPORTERS].sort((a, b) => b.points - a.points);
 
-const SORTED_DONATORS = [...TOP_DONATORS].sort((a, b) => b.points - a.points);
-
-function getDonatorClassName(index, isVisible) {
+function getSupporterClassName(index, isVisible) {
   const tier =
-    index === 0 ? "donator-card-gold" : index < PRIZE_DONATORS ? "donator-card-prize" : "donator-card-plain";
+    index === 0 ? "supporter-card-gold" : index < PRIZE_SUPPORTERS ? "supporter-card-prize" : "supporter-card-plain";
 
-  return `${getGoalClassName({}, isVisible)} donator-card ${tier}`;
+  return `${getGoalClassName({}, isVisible)} supporter-card ${tier}`;
 }
 
 // El primero aparece apenas se ve el título; las filas de abajo, una después de la otra
-function getDonatorDelay(index) {
+function getSupporterDelay(index) {
   if (index === 0) {
     return 120;
   }
@@ -282,46 +282,50 @@ export default function GoalsPage() {
             ))}
           </footer>
 
-          {SORTED_DONATORS.length > 0 ? (
-            <ul className={`goals-grid goals-donators ${poppins.className}`}>
+          {SORTED_SUPPORTERS.length > 0 ? (
+            <ul className={`goals-grid goals-supporters ${poppins.className}`}>
               <li
                 className={
-                  visibleGoals.donators
+                  visibleGoals.supporters
                     ? "goals-divider goals-divider-visible"
                     : "goals-divider"
                 }
-                data-index="donators"
+                data-index="supporters"
               >
-                <span>{TOP_DONATORS_TITLE}</span>
+                <span>{TOP_SUPPORTERS_TITLE}</span>
               </li>
 
-              {SORTED_DONATORS.map((donator, index) => (
-                <Fragment key={donator.name}>
+              <li
+                className={
+                  visibleGoals.supporters
+                    ? "goals-supporters-note goals-supporters-note-visible"
+                    : "goals-supporters-note"
+                }
+              >
+                {TOP_SUPPORTERS_NOTE}
+              </li>
+
+              {SORTED_SUPPORTERS.map((supporter, index) => (
+                <Fragment key={supporter.name}>
                   {/* aparecen todas junto con el título: las de la última fila
                       quedan al final de la página y nunca entrarían en la zona de detección */}
                   <li
-                    className={getDonatorClassName(
+                    className={getSupporterClassName(
                       index,
-                      visibleGoals.donators || visibleGoals[`donator-${index}`]
+                      visibleGoals.supporters || visibleGoals[`supporter-${index}`]
                     )}
-                    data-index={`donator-${index}`}
-                    style={{ "--goal-delay": `${getDonatorDelay(index)}ms` }}
+                    data-index={`supporter-${index}`}
+                    style={{ "--goal-delay": `${getSupporterDelay(index)}ms` }}
                   >
-                    <span
-                      className={
-                        index < DONATOR_MEDALS.length ? "donator-rank donator-medal" : "donator-rank"
-                      }
-                    >
-                      {DONATOR_MEDALS[index] || `#${index + 1}`}
-                    </span>
+                    <span className="supporter-rank">#{index + 1}</span>
 
                     <div className="goal-points">
-                      <strong>{donator.points}</strong>
+                      <strong>{supporter.points}</strong>
                       <span>{POINTS_LABEL}</span>
                     </div>
 
                     <div className="goal-text">
-                      <h3>{donator.name}</h3>
+                      <h3>{supporter.name}</h3>
                     </div>
                   </li>
 
