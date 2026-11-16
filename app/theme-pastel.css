@@ -1221,6 +1221,79 @@ h1 {
   text-wrap: balance;
 }
 
+/* ---------- Top donators (abajo de todo en goals) ---------- */
+
+.goals-donators {
+  margin-top: 18px;
+}
+
+/* corte de fila invisible: deja al primero solo arriba, en el medio */
+.goals-row-break {
+  flex: 0 0 100%;
+  height: 0;
+  margin-top: -18px;
+}
+
+/* puesto: medalla para los tres primeros, número para el resto */
+.donator-rank {
+  position: absolute;
+  top: -12px;
+  left: -10px;
+  z-index: 1;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--frame);
+  border-radius: var(--r-pill);
+  background: var(--goal-badge);
+  box-shadow: 0 3px 0 var(--goal-badge-shadow);
+  color: var(--goal-badge-text);
+  font-family: var(--font-display), sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.donator-medal {
+  padding: 0;
+  background: var(--surface);
+  box-shadow: 0 3px 0 var(--goal-line);
+  font-size: 18px;
+}
+
+/* top 1: dorado, con un brillo alrededor */
+.donator-card-gold {
+  --goal-to: #ffe7a0;
+  --goal-line: #f0c45a;
+  --goal-badge: linear-gradient(135deg, #ffe9a8 0%, #f7c948 45%, #ffe08a 70%, #e0a128 100%);
+  --goal-badge-shadow: #b8860b;
+  --goal-badge-text: #4d3100;
+  box-shadow: var(--shadow-card), 0 0 26px -8px rgba(255, 190, 60, 0.75);
+}
+
+.donator-card-gold.goal-card-visible:hover {
+  border-color: #e2a200;
+  box-shadow: 0 22px 36px -18px rgba(214, 150, 20, 0.7), 0 0 26px -8px rgba(255, 190, 60, 0.75);
+}
+
+/* top 2 al 5 (también se llevan premio): el rosa de siempre de las goals */
+
+/* del 6 en adelante: card blanca, sin premio */
+.donator-card-plain {
+  --goal-to: var(--surface);
+  --goal-line: var(--line);
+  --goal-badge: var(--pink-50);
+  --goal-badge-shadow: var(--pink-200);
+  --goal-badge-text: var(--ink-soft);
+}
+
+.donator-card-plain .goal-points {
+  border: 2px solid var(--pink-200);
+}
+
 /* ---------- Stats ---------- */
 
 .stats-page {
@@ -2026,6 +2099,11 @@ h1 {
 
 :root[data-theme="dark"] .braincell-feature-low strong {
   color: #ff7676;
+}
+
+:root[data-theme="dark"] .donator-card-gold {
+  --goal-to: #4a3912;
+  --goal-line: #a8730f;
 }
 
 :root[data-theme="dark"] .goal-card-completed {

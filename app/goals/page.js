@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Poppins } from "next/font/google";
 
 const poppins = Poppins({
@@ -87,6 +87,48 @@ const FOOTER_LINES = [
   "Most funds will go into stocking up for cats (food / litter)",
   "The rest into stream and ton of hot cheeto bags"
 ];
+
+// Top donators, abajo de todo: name = usuario, points = total points.
+// Se ordenan solos de mayor a menor: el primero va solo arriba en el medio y el resto en filas de 3.
+// Para actualizar, cambiá los puntos; para sumar a alguien, copiá una línea
+const TOP_DONATORS_TITLE = "TOP DONATORS";
+
+const TOP_DONATORS = [
+  { name: "blood_moon_sky", points: 227 },
+  { name: "infernalgram", points: 171 },
+  { name: "ThatBoyDoughboy", points: 108 },
+  { name: "MagicalsDad", points: 102 },
+  { name: "bobabullets", points: 63 },
+  { name: "ParpleRS", points: 39 },
+  { name: "LunaticJAM", points: 33 },
+  { name: "FlimFlammerTV", points: 30 },
+  { name: "LinNinjaa", points: 30 },
+  { name: "nitothebean", points: 30 }
+];
+
+// Cuántos se llevan premio (cards rosas; el primero en dorado, el resto en blanco)
+const PRIZE_DONATORS = 5;
+
+// Medallas de los tres primeros puestos (del cuarto en adelante se muestra el número)
+const DONATOR_MEDALS = ["🥇", "🥈", "🥉"];
+
+const SORTED_DONATORS = [...TOP_DONATORS].sort((a, b) => b.points - a.points);
+
+function getDonatorClassName(index, isVisible) {
+  const tier =
+    index === 0 ? "donator-card-gold" : index < PRIZE_DONATORS ? "donator-card-prize" : "donator-card-plain";
+
+  return `${getGoalClassName({}, isVisible)} donator-card ${tier}`;
+}
+
+// El primero aparece apenas se ve el título; las filas de abajo, una después de la otra
+function getDonatorDelay(index) {
+  if (index === 0) {
+    return 120;
+  }
+
+  return 240 + Math.floor((index - 1) / GOALS_PER_ROW) * 120 + ((index - 1) % GOALS_PER_ROW) * 90;
+}
 
 // La última goal de la lista (el footer aparece junto con ella)
 const LAST_GOAL_INDEX = GOALS.findLastIndex((goal) => !goal.divider);
@@ -239,6 +281,56 @@ export default function GoalsPage() {
               <p key={line}>{line}</p>
             ))}
           </footer>
+
+          {SORTED_DONATORS.length > 0 ? (
+            <ul className={`goals-grid goals-donators ${poppins.className}`}>
+              <li
+                className={
+                  visibleGoals.donators
+                    ? "goals-divider goals-divider-visible"
+                    : "goals-divider"
+                }
+                data-index="donators"
+              >
+                <span>{TOP_DONATORS_TITLE}</span>
+              </li>
+
+              {SORTED_DONATORS.map((donator, index) => (
+                <Fragment key={donator.name}>
+                  {/* aparecen todas junto con el título: las de la última fila
+                      quedan al final de la página y nunca entrarían en la zona de detección */}
+                  <li
+                    className={getDonatorClassName(
+                      index,
+                      visibleGoals.donators || visibleGoals[`donator-${index}`]
+                    )}
+                    data-index={`donator-${index}`}
+                    style={{ "--goal-delay": `${getDonatorDelay(index)}ms` }}
+                  >
+                    <span
+                      className={
+                        index < DONATOR_MEDALS.length ? "donator-rank donator-medal" : "donator-rank"
+                      }
+                    >
+                      {DONATOR_MEDALS[index] || `#${index + 1}`}
+                    </span>
+
+                    <div className="goal-points">
+                      <strong>{donator.points}</strong>
+                      <span>{POINTS_LABEL}</span>
+                    </div>
+
+                    <div className="goal-text">
+                      <h3>{donator.name}</h3>
+                    </div>
+                  </li>
+
+                  {/* corte de fila: el primero queda solo arriba */}
+                  {index === 0 ? <li className="goals-row-break" aria-hidden="true"></li> : null}
+                </Fragment>
+              ))}
+            </ul>
+          ) : null}
         </div>
       ) : null}
     </main>
