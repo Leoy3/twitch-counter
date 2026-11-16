@@ -50,7 +50,7 @@ const GOALS = [
   { points: "600", title: "VR stream", subtitle: "", completed: true },
   { points: "700", title: "Actually TRY ASMR", subtitle: "", completed: true },
   { points: "800", title: "Merch", subtitle: "(Will be done by UWUMarket)", completed: true },
-  { points: "1000", title: "I play LOL...", subtitle: "(For ONE stream and never again)", completed: false }
+  { points: "1000", title: "I play LOL...", subtitle: "(For ONE stream and never again)", completed: true }
 ];
 
 const GOALS_PER_ROW = 3;
