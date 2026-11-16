@@ -1221,6 +1221,98 @@ h1 {
   text-wrap: balance;
 }
 
+/* ---------- Top supporters (abajo de todo en goals) ---------- */
+
+.goals-supporters {
+  margin-top: 18px;
+}
+
+/* texto chiquito debajo del título (aparece junto con él) */
+.goals-supporters-note {
+  flex: 0 0 100%;
+  margin: -8px 0 6px;
+  color: var(--ink-soft);
+  font-family: var(--font-body), sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  text-wrap: balance;
+  opacity: 0;
+  transform: translateY(26px);
+  filter: blur(8px);
+  transition:
+    opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s,
+    transform 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s,
+    filter 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.08s;
+}
+
+.goals-supporters-note-visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+
+/* corte de fila invisible: deja al primero solo arriba, en el medio */
+.goals-row-break {
+  flex: 0 0 100%;
+  height: 0;
+  margin-top: -18px;
+}
+
+/* número del puesto, en la esquina de la card */
+.supporter-rank {
+  position: absolute;
+  top: -12px;
+  left: -10px;
+  z-index: 1;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid var(--frame);
+  border-radius: var(--r-pill);
+  background: var(--goal-badge);
+  box-shadow: 0 3px 0 var(--goal-badge-shadow);
+  color: var(--goal-badge-text);
+  font-family: var(--font-display), sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* top 1: dorado, con un brillo alrededor */
+.supporter-card-gold {
+  --goal-to: #ffe7a0;
+  --goal-line: #f0c45a;
+  --goal-badge: linear-gradient(135deg, #ffe9a8 0%, #f7c948 45%, #ffe08a 70%, #e0a128 100%);
+  --goal-badge-shadow: #b8860b;
+  --goal-badge-text: #4d3100;
+  box-shadow: var(--shadow-card), 0 0 26px -8px rgba(255, 190, 60, 0.75);
+}
+
+.supporter-card-gold.goal-card-visible:hover {
+  border-color: #e2a200;
+  box-shadow: 0 22px 36px -18px rgba(214, 150, 20, 0.7), 0 0 26px -8px rgba(255, 190, 60, 0.75);
+}
+
+/* top 2 al 5 (también se llevan premio): el rosa de siempre de las goals */
+
+/* del 6 en adelante: card blanca, sin premio */
+.supporter-card-plain {
+  --goal-to: var(--surface);
+  --goal-line: var(--line);
+  --goal-badge: var(--pink-50);
+  --goal-badge-shadow: var(--pink-200);
+  --goal-badge-text: var(--ink-soft);
+}
+
+.supporter-card-plain .goal-points {
+  border: 2px solid var(--pink-200);
+}
+
 /* ---------- Stats ---------- */
 
 .stats-page {
@@ -2028,6 +2120,11 @@ h1 {
   color: #ff7676;
 }
 
+:root[data-theme="dark"] .supporter-card-gold {
+  --goal-to: #4a3912;
+  --goal-line: #a8730f;
+}
+
 :root[data-theme="dark"] .goal-card-completed {
   --goal-to: #1b3526;
   --goal-line: #305a3d;
@@ -2234,7 +2331,8 @@ h1 {
 
   .goals-info-card,
   .goals-divider,
-  .goals-footer {
+  .goals-footer,
+  .goals-supporters-note {
     opacity: 1;
     transform: none;
     filter: none;

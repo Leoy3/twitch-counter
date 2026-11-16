@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Poppins } from "next/font/google";
 
 const poppins = Poppins({
@@ -87,6 +87,48 @@ const FOOTER_LINES = [
   "Most funds will go into stocking up for cats (food / litter)",
   "The rest into stream and ton of hot cheeto bags"
 ];
+
+// Top supporters, abajo de todo: name = usuario, points = total points.
+// Se ordenan solos de mayor a menor: el primero va solo arriba en el medio y el resto en filas de 3.
+// Para actualizar, cambiá los puntos; para sumar a alguien, copiá una línea
+const TOP_SUPPORTERS_TITLE = "TOP SUPPORTERS";
+
+// Texto chiquito debajo del título
+const TOP_SUPPORTERS_NOTE = "The top 5 supporters will receive a signed digital Polaroid";
+
+const TOP_SUPPORTERS = [
+  { name: "blood_moon_sky", points: 227 },
+  { name: "infernalgram", points: 171 },
+  { name: "ThatBoyDoughboy", points: 108 },
+  { name: "MagicalsDad", points: 102 },
+  { name: "bobabullets", points: 63 },
+  { name: "ParpleRS", points: 39 },
+  { name: "LunaticJAM", points: 33 },
+  { name: "FlimFlammerTV", points: 30 },
+  { name: "LinNinjaa", points: 30 },
+  { name: "nitothebean", points: 30 }
+];
+
+// Cuántos se llevan premio (cards rosas; el primero en dorado, el resto en blanco)
+const PRIZE_SUPPORTERS = 5;
+
+const SORTED_SUPPORTERS = [...TOP_SUPPORTERS].sort((a, b) => b.points - a.points);
+
+function getSupporterClassName(index, isVisible) {
+  const tier =
+    index === 0 ? "supporter-card-gold" : index < PRIZE_SUPPORTERS ? "supporter-card-prize" : "supporter-card-plain";
+
+  return `${getGoalClassName({}, isVisible)} supporter-card ${tier}`;
+}
+
+// El primero aparece apenas se ve el título; las filas de abajo, una después de la otra
+function getSupporterDelay(index) {
+  if (index === 0) {
+    return 120;
+  }
+
+  return 240 + Math.floor((index - 1) / GOALS_PER_ROW) * 120 + ((index - 1) % GOALS_PER_ROW) * 90;
+}
 
 // La última goal de la lista (el footer aparece junto con ella)
 const LAST_GOAL_INDEX = GOALS.findLastIndex((goal) => !goal.divider);
@@ -239,6 +281,60 @@ export default function GoalsPage() {
               <p key={line}>{line}</p>
             ))}
           </footer>
+
+          {SORTED_SUPPORTERS.length > 0 ? (
+            <ul className={`goals-grid goals-supporters ${poppins.className}`}>
+              <li
+                className={
+                  visibleGoals.supporters
+                    ? "goals-divider goals-divider-visible"
+                    : "goals-divider"
+                }
+                data-index="supporters"
+              >
+                <span>{TOP_SUPPORTERS_TITLE}</span>
+              </li>
+
+              <li
+                className={
+                  visibleGoals.supporters
+                    ? "goals-supporters-note goals-supporters-note-visible"
+                    : "goals-supporters-note"
+                }
+              >
+                {TOP_SUPPORTERS_NOTE}
+              </li>
+
+              {SORTED_SUPPORTERS.map((supporter, index) => (
+                <Fragment key={supporter.name}>
+                  {/* aparecen todas junto con el título: las de la última fila
+                      quedan al final de la página y nunca entrarían en la zona de detección */}
+                  <li
+                    className={getSupporterClassName(
+                      index,
+                      visibleGoals.supporters || visibleGoals[`supporter-${index}`]
+                    )}
+                    data-index={`supporter-${index}`}
+                    style={{ "--goal-delay": `${getSupporterDelay(index)}ms` }}
+                  >
+                    <span className="supporter-rank">#{index + 1}</span>
+
+                    <div className="goal-points">
+                      <strong>{supporter.points}</strong>
+                      <span>{POINTS_LABEL}</span>
+                    </div>
+
+                    <div className="goal-text">
+                      <h3>{supporter.name}</h3>
+                    </div>
+                  </li>
+
+                  {/* corte de fila: el primero queda solo arriba */}
+                  {index === 0 ? <li className="goals-row-break" aria-hidden="true"></li> : null}
+                </Fragment>
+              ))}
+            </ul>
+          ) : null}
         </div>
       ) : null}
     </main>
