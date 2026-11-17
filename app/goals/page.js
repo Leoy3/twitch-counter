@@ -98,7 +98,7 @@ const TOP_SUPPORTERS_NOTE = "The top 5 supporters will receive a signed digital 
 
 const TOP_SUPPORTERS = [
   { name: "blood_moon_sky", points: 227 },
-  { name: "infernalgram", points: 171 },
+  { name: "infernalgram", points: 181 },
   { name: "ThatBoyDoughboy", points: 108 },
   { name: "MagicalsDad", points: 102 },
   { name: "bobabullets", points: 63 },
