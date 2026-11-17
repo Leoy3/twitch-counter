@@ -97,8 +97,8 @@ const TOP_SUPPORTERS_TITLE = "TOP SUPPORTERS";
 const TOP_SUPPORTERS_NOTE = "The top 5 supporters will receive a signed digital Polaroid";
 
 const TOP_SUPPORTERS = [
+  { name: "infernalgram", points: 250 },
   { name: "blood_moon_sky", points: 227 },
-  { name: "infernalgram", points: 181 },
   { name: "ThatBoyDoughboy", points: 108 },
   { name: "MagicalsDad", points: 102 },
   { name: "bobabullets", points: 63 },
