@@ -102,7 +102,7 @@ const TOP_SUPPORTERS = [
   { name: "ThatBoyDoughboy", points: 108 },
   { name: "MagicalsDad", points: 102 },
   { name: "bobabullets", points: 63 },
-  { name: "ParpleRS", points: 39 },
+  { name: "ParpleRS", points: 42 },
   { name: "LunaticJAM", points: 33 },
   { name: "FlimFlammerTV", points: 30 },
   { name: "LinNinjaa", points: 30 },
